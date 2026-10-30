@@ -64,20 +64,20 @@ Base de datos **SQLite** en `backend/data/aerosecure.db`, con las tablas definid
 La geometría (posición y tamaño en metros) se define en la semilla para formar un plano coherente: la zona lado tierra (hall, check-in y zona comercial) queda al frente, el filtro de seguridad y migración en el centro, y las salas, puertas y plataforma al fondo.
 
 ### 3.2 Fuentes
-- 15 cámaras `CAM-T1-001` a `CAM-T1-015`, con 1 o 2 por zona.
+- 15 cámaras `CAM-T1-001` a `CAM-T1-015`, con 1 o 2 por zona (asignación exacta en `specs/001-fundacion/data-model.md`; `CAM-T1-013` vigila la Puerta de servicio).
 - 5 sensores de acceso `SEN-T1-001` a `SEN-T1-005`, en las zonas de seguridad, migración, servicio y plataforma.
 - 2 fuentes lógicas: `MANUAL` (reporte de un operador) y `ANALISIS` (análisis de incidentes y patrones).
 
 ### 3.3 Equipos
 
-| id | Nombre | Especializado |
-|---|---|:-:|
-| `seg-t1` | Seguridad T1 | No |
-| `patrulla` | Patrulla de plataforma | No |
-| `operaciones` | Operaciones | No |
-| `eod` | Unidad antiexplosivos (EOD) | Sí |
-| `policia` | Policía aeroportuaria | Sí |
-| `medico` | Servicios médicos | Sí |
+| id | Nombre | Especialidad | Especializado |
+|---|---|---|:-:|
+| `seg-t1` | Seguridad T1 | Seguridad general | No |
+| `patrulla` | Patrulla de plataforma | Plataforma | No |
+| `operaciones` | Operaciones | Operaciones | No |
+| `eod` | Unidad antiexplosivos (EOD) | Explosivos | Sí |
+| `policia` | Policía aeroportuaria | Policial | Sí |
+| `medico` | Servicios médicos | Atención médica | Sí |
 
 ### 3.4 Usuarios
 

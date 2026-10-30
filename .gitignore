@@ -194,6 +194,7 @@ sketch
 # Base de datos local de la demo (se recrea con la semilla)
 backend/data/*.db
 backend/data/*.db-*
+backend/data/*.corrupt-*
 # Frontend (Bun + Vite)
 frontend/dist/
 frontend/node_modules/

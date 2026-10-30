@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+/* Tokens del sistema visual (doc 09 §5.1). */
+@theme {
+  --color-navy-950: #0b1b33;
+  --color-navy-900: #10264a;
+  --color-brand-600: #1d5fd1;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f6fa;
+  --color-sev-critica: #dc2626;
+  --color-sev-alta: #ea580c;
+  --color-sev-media: #d97706;
+  --color-sev-baja: #475569;
+  --color-ok: #16a34a;
+  --color-demo-bg: #fef3c7;
+  --color-demo-fg: #92400e;
+
+  /* Variantes de texto para contraste AA (>= 4,5:1) sobre fondos claros. */
+  --color-brand-700: #1a4fae;
+  --color-sev-critica-text: #b91c1c;
+  --color-sev-alta-text: #c2410c;
+  --color-sev-media-text: #b45309;
+  --color-ok-text: #15803d;
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-slate-900);
+    background-color: var(--color-surface-muted);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Foco visible global: anillo brand de 2 px (doc 09 §6). */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  dialog::backdrop {
+    background-color: rgb(11 27 51 / 0.55);
+  }
+}
+
+/* Números tabulares para KPIs, tablas y reloj. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

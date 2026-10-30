@@ -1,4 +1,4 @@
-# Comprueba backend (/api/health) y frontend (:5173)
+﻿# Comprueba backend (/api/health) y frontend (:5173)
 $ErrorActionPreference = 'SilentlyContinue'
 $api = Invoke-RestMethod -Uri 'http://localhost:8000/api/health' -TimeoutSec 3
 if ($api) { Write-Output "Backend OK: $($api | ConvertTo-Json -Compress)" } else { Write-Output 'Backend NO responde en :8000' }

@@ -30,6 +30,8 @@
 | 409 | `TRANSICION_INVALIDA` | La acción no está permitida en el estado actual |
 | 422 | `VALIDACION` | Campos faltantes o inválidos (`details.fields`) |
 | 422 | `EQUIPO_REQUERIDO` | Se intentó `start` sin un equipo asignado |
+| 405 | `METODO_NO_PERMITIDO` | Método HTTP no soportado por la ruta |
+| otros | `HTTP_<status>` | Cualquier otro error HTTP no contemplado arriba |
 | 500 | `ERROR_INTERNO` | Error no controlado (mensaje genérico) |
 
 ## 2. DTOs principales
@@ -82,6 +84,7 @@ interface TimelineEvent {
 | Método | Ruta | Respuesta |
 |---|---|---|
 | GET | `/api/users` | `UserRef[]` (para el login simulado) |
+| GET | `/api/me` | Usuario del `X-Actor-Id` (obligatorio); 401 `ACTOR_REQUERIDO` si falta o no existe. Lo usa el front para validar el perfil guardado |
 | GET | `/api/zones` | `Zone[]` con geometría y `riskLevel` actual (la severidad máxima activa o `normal`) |
 | GET | `/api/teams` | `TeamRef[]` con `specialized` |
 | GET | `/api/alert-types` | Tipos con severidad por defecto, umbral, recomendación y protocolo |
@@ -172,7 +175,7 @@ interface TimelineEvent {
 
 | UC | Endpoint |
 |---|---|
-| UC-01 | `GET /users` |
+| UC-01 | `GET /users`, `GET /me` |
 | UC-02 | `GET /dashboard/summary` |
 | UC-03 | `GET /alerts` + `GET /stream` |
 | UC-04 | `GET /zones` + `GET /alerts?status=activas` |

@@ -19,7 +19,7 @@ Referencia visual: `mockup-airsecure-webapp.png`, con los ajustes de severidades
    └─ /configuracion           Simulador, escenarios, umbrales, reinicio  [solo supervisor]
 ```
 
-- Si no hay perfil activo, cualquier ruta redirige a `/login`. Si un operador entra a una ruta de supervisor, se redirige a `/` con un toast informativo.
+- Si no hay perfil activo, cualquier ruta de la aplicación redirige a `/login` (la página "No encontrado" de rutas inexistentes es pública). Si un operador entra a una ruta de supervisor, se redirige a `/` con un toast informativo.
 - Los filtros viven en la **URL** (query string), de modo que se pueden compartir y se conservan al volver atrás.
 - El botón **"Críticas (N)"** de la barra superior lleva a `/alertas?status=activas&severity=critica`.
 
@@ -136,6 +136,7 @@ Layout de 2 columnas (8/4):
 | `sev-baja` | Baja | `#475569` |
 | `ok` | Resuelto o normal | `#16A34A` |
 | `demo` | Banner de demostración | `#FEF3C7` / `#92400E` |
+| `*-text` (solo texto) | Variantes oscuras para texto sobre fondo claro (contraste AA): `brand-700` `#1A4FAE`, `sev-critica-text` `#B91C1C`, `sev-alta-text` `#C2410C`, `sev-media-text` `#B45309`, `ok-text` `#15803D` | — |
 
 ### 5.2 Tipografía e iconos
 - **Inter** (variable, autoalojada con `@fontsource/inter`), con números tabulares en KPIs y tablas.

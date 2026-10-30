@@ -49,7 +49,11 @@
 
 **Puertos:** `services` define la interfaz `EventPublisher` y `infrastructure.event_bus` la implementa. Así el bus se puede sustituir (por ejemplo, por Redis) sin tocar los servicios. Del mismo modo, `ScoringService` usa una función de dominio que más adelante puede reemplazarse por un modelo real.
 
-**Errores:** el dominio lanza `DomainError(code, message, details)`. Un *exception handler* en `api` lo traduce a HTTP (ver doc 08).
+**Errores:** el dominio lanza `DomainError(code, message, details)` **sin código HTTP**. Un *exception handler* en `api/errors.py` mapea `code` → estado HTTP (ver doc 08 §1).
+
+**Excepciones permitidas y acotadas:**
+- `api/deps.py` puede importar `infrastructure.db` solo para proveer la sesión (`get_session`); `main.py` es la raíz de composición y puede importar cualquier capa.
+- `domain/models.py` puede usar tipos de SQLAlchemy (base de SQLModel) para columnas personalizadas (`UtcDateTime`, enums guardados por valor).
 
 ### 2.2 Frontend (`frontend/src/`)
 
