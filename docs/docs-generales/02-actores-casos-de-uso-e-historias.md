@@ -1,8 +1,8 @@
 # 02 · Actores, casos de uso e historias de usuario
 
 📊 Diagramas:
-- [Diagrama de casos de uso](diagramas/02-casos-de-uso/casos-de-uso.html)
-- [User journey del operador](diagramas/02-user-journey/user-journey.html)
+- [Diagrama de casos de uso](../diagramas/02-casos-de-uso/casos-de-uso.html)
+- [User journey del operador](../diagramas/02-user-journey/user-journey.html)
 
 ## 1. Actores
 
@@ -150,7 +150,7 @@ Formato: *Como … quiero … para …*. La prioridad usa MoSCoW: M = Must, S = 
 
 ## 5. User journey: resumen
 
-Ver el [diagrama](diagramas/02-user-journey/user-journey.html).
+Ver el [diagrama](../diagramas/02-user-journey/user-journey.html).
 
 | Fase | Hace | Siente | Touchpoint | Oportunidad |
 |---|---|---|---|---|

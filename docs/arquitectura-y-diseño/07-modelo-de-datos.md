@@ -1,6 +1,6 @@
 # 07 · Modelo de datos
 
-📊 Diagrama: [Modelo de datos (ERD)](diagramas/07-modelo-datos/modelo-datos.html)
+📊 Diagrama: [Modelo de datos (ERD)](../diagramas/07-modelo-datos/modelo-datos.html)
 
 Base de datos **SQLite** en `backend/data/aerosecure.db`, con las tablas definidas como clases SQLModel en `app/domain/models.py`. Las fechas se guardan en **UTC (ISO 8601)**. Los enums se guardan como texto (`varchar`).
 
@@ -20,7 +20,7 @@ Base de datos **SQLite** en `backend/data/aerosecure.db`, con las tablas definid
 
 | Tabla | Propósito | Notas |
 |---|---|---|
-| `alerts` | Alertas generadas | `origin`: `seed`, `simulador`, `escenario` o `manual`. `confidence` es nula en los reportes manuales. `evidence_key` apunta a `frontend/public/evidence/<key>.webp`. `reported_by` solo aplica en los reportes manuales |
+| `alerts` | Alertas generadas | `origin`: `seed`, `simulador`, `escenario` o `manual`. `confidence` es nula en los reportes manuales. `evidence_key` = `type_code`; apunta a `frontend/public/evidence/<key>.svg`. `reported_by` solo aplica en los reportes manuales |
 | `incidents` | Incidentes confirmados | `alert_id` es **único** (relación 1 a 1 con su alerta). La severidad, la zona y el tipo se leen de la alerta (con JOIN) |
 
 ### Auditoría y configuración

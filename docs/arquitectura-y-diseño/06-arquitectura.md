@@ -1,8 +1,8 @@
 # 06 · Arquitectura por capas
 
 📊 Diagramas:
-- [Arquitectura por capas](diagramas/06-arquitectura-capas/arquitectura-capas.html)
-- [Estructura propuesta del repositorio](diagramas/06-estructura-repositorio/estructura-repositorio.html)
+- [Arquitectura por capas](../diagramas/06-arquitectura-capas/arquitectura-capas.html)
+- [Estructura propuesta del repositorio](../diagramas/06-estructura-repositorio/estructura-repositorio.html)
 
 ## 1. Tecnologías y herramientas
 

@@ -1,8 +1,8 @@
 # 05 · Máquinas de estado y reglas de dominio
 
 📊 Diagramas:
-- [Ciclo de vida de una alerta](diagramas/05-estados-alerta/estados-alerta.html)
-- [Ciclo de vida de un incidente](diagramas/05-estados-incidente/estados-incidente.html)
+- [Ciclo de vida de una alerta](../diagramas/05-estados-alerta/estados-alerta.html)
+- [Ciclo de vida de un incidente](../diagramas/05-estados-incidente/estados-incidente.html)
 
 Las reglas de este documento viven en la capa **domain** del backend (`app/domain/state_machine.py`, `app/domain/scoring.py`), escritas en Python puro y sin dependencias. El frontend replica solo lo necesario para habilitar o deshabilitar botones (`src/domain/status.ts`). **La validación definitiva siempre la hace el backend.**
 

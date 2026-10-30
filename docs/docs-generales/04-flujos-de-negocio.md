@@ -1,9 +1,9 @@
 # 04 · Flujos de negocio
 
 📊 Diagramas:
-- [Flujo: atender una alerta crítica](diagramas/04-flujo-alerta-critica/flujo-alerta-critica.html)
-- [Flujo: descartar un falso positivo](diagramas/04-flujo-falso-positivo/flujo-falso-positivo.html)
-- [Flujo conceptual de la solución](diagramas/01-flujo-conceptual/flujo-conceptual.html)
+- [Flujo: atender una alerta crítica](../diagramas/04-flujo-alerta-critica/flujo-alerta-critica.html)
+- [Flujo: descartar un falso positivo](../diagramas/04-flujo-falso-positivo/flujo-falso-positivo.html)
+- [Flujo conceptual de la solución](../diagramas/01-flujo-conceptual/flujo-conceptual.html)
 
 ## 1. Flujo F1: atender una alerta crítica (flujo principal)
 

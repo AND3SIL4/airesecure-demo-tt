@@ -1,9 +1,9 @@
 # 08 · Especificación de la API
 
 📊 Diagramas de secuencia:
-- [Confirmar una alerta](diagramas/08-secuencia-confirmar-alerta/secuencia-confirmar-alerta.html)
-- [Alerta en tiempo real (SSE)](diagramas/08-secuencia-tiempo-real/secuencia-tiempo-real.html)
-- [Reiniciar la demo](diagramas/08-secuencia-reinicio-demo/secuencia-reinicio-demo.html)
+- [Confirmar una alerta](../diagramas/08-secuencia-confirmar-alerta/secuencia-confirmar-alerta.html)
+- [Alerta en tiempo real (SSE)](../diagramas/08-secuencia-tiempo-real/secuencia-tiempo-real.html)
+- [Reiniciar la demo](../diagramas/08-secuencia-reinicio-demo/secuencia-reinicio-demo.html)
 
 ## 1. Convenciones
 

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv sync*)",
+      "Bash(uv run *)",
+      "Bash(bun install*)",
+      "Bash(bun run *)",
+      "Bash(bun add *)",
+      "Bash(bunx tsc *)",
+      "Bash(bunx eslint *)",
+      "Bash(curl http://localhost:8000/*)",
+      "Bash(curl -s http://localhost:8000/*)",
+      "PowerShell(uv sync*)",
+      "PowerShell(uv run *)",
+      "PowerShell(bun install*)",
+      "PowerShell(bun run *)",
+      "PowerShell(bunx tsc *)",
+      "PowerShell(powershell -File .claude/skills/demo-ops/scripts/*)",
+      "PowerShell(powershell -File .specify/scripts/powershell/*)"
+    ]
+  }
+}

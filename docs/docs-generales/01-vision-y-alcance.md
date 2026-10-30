@@ -38,7 +38,7 @@ La demo debe ser un **MVP aceptable**: funcional, coherente y visualmente profes
 
 ## 4. Funcionamiento conceptual
 
-📊 Diagrama: [Flujo conceptual de la solución](diagramas/01-flujo-conceptual/flujo-conceptual.html)
+📊 Diagrama: [Flujo conceptual de la solución](../diagramas/01-flujo-conceptual/flujo-conceptual.html)
 
 | Etapa | En la solución final | En la demo |
 |---|---|---|
