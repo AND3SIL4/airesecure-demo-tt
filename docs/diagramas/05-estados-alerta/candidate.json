@@ -1,0 +1,26 @@
+{
+  "schema_version": 3,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "AeroSecure AI — Ciclo de vida de una alerta",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/05-estados-alerta/estados-alerta.html"
+  },
+  "mainPath": ["nueva", "en_revision", "confirmada"],
+  "states": [
+    { "id": "nueva", "type": "start", "label": "Nueva", "sublabel": "score ≥ umbral o reporte manual", "tag": "nueva", "step": "01" },
+    { "id": "en_revision", "type": "decision", "label": "En revisión", "sublabel": "un operador la abrió", "tag": "en_revision", "step": "02" },
+    { "id": "confirmada", "type": "success", "label": "Confirmada", "sublabel": "crea el incidente vinculado", "tag": "final", "step": "03" },
+    { "id": "descartada", "type": "neutral", "label": "Descartada", "sublabel": "falso positivo con motivo", "tag": "final" }
+  ],
+  "transitions": [
+    { "id": "t-review", "from": "nueva", "to": "en_revision", "label": "abrir detalle", "note": "automática; registra al actor" },
+    { "id": "t-confirm", "from": "en_revision", "to": "confirmada", "label": "confirmar", "note": "diálogo + nota opcional", "variant": "emphasis" },
+    { "id": "t-dismiss", "from": "en_revision", "to": "descartada", "label": "descartar", "note": "motivo obligatorio", "variant": "security" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Reglas", "items": ["Solo dos estados finales: confirmada y descartada", "Desde «nueva», confirmar o descartar registra antes una revisión implícita", "Comentar no cambia el estado"] },
+    { "dot": "rose", "title": "Errores", "items": ["Acción sobre un estado final → 409 TRANSICION_INVALIDA", "Descartar sin motivo → 422 VALIDACION"] }
+  ]
+}

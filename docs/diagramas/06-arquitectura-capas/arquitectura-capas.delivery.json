@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "7235d5a0-9a0f-4e8a-b7c4-cf3868130a61",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\arquitectura-capas.html",
+  "specification": {
+    "sha256": "b9ecdc18ac73573e331399f5c1f78ea79588626d0a9ffb8ce1c395f97ca9d511",
+    "bytes": 4236
+  },
+  "artifact": {
+    "sha256": "45250bca3e6ad6b65c902641ee7c71abe64995421a9b5de905d99c32553ffc38",
+    "bytes": 856562
+  }
+}

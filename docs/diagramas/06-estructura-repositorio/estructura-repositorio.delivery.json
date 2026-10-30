@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "c85136b8-90bc-48a7-85be-ad902d0f982e",
+  "status": "current",
+  "command": "deliver",
+  "type": "tree",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-estructura-repositorio\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-estructura-repositorio\\estructura-repositorio.html",
+  "specification": {
+    "sha256": "425665e46f0113c8a1663925d427a002e1471e043cd7d7e7c6c1b8d9d0318114",
+    "bytes": 2661
+  },
+  "artifact": {
+    "sha256": "6e19e0c58f340be5f85f3dc9049e99a255b15a38bc0532ba9f3fed81f3442a33",
+    "bytes": 859793
+  }
+}

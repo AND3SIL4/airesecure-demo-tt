@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AeroSecure AI — Arquitectura por capas (demo local)",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/06-arquitectura-capas/arquitectura-capas.html"
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "Operador / Supervisor", "sublabel": "navegador Chrome / Edge", "icon": "person", "pos": [40, 40], "size": [210, 56] },
+    { "id": "presentation", "type": "frontend", "label": "presentation", "sublabel": "pages · components · Three.js", "pos": [40, 150], "size": [210, 64] },
+    { "id": "application", "type": "frontend", "label": "application", "sublabel": "hooks · TanStack Query · stores", "pos": [300, 150], "size": [210, 64] },
+    { "id": "fe_infra", "type": "frontend", "label": "infrastructure", "sublabel": "cliente HTTP · cliente SSE", "pos": [560, 150], "size": [210, 64] },
+    { "id": "fe_domain", "type": "frontend", "label": "domain", "sublabel": "tipos · enums · reglas de UI", "pos": [300, 260], "size": [210, 64] },
+    { "id": "api", "type": "backend", "label": "api", "sublabel": "routers · DTOs · /api/stream", "pos": [560, 400], "size": [210, 64] },
+    { "id": "eventbus", "type": "messagebus", "label": "Event bus", "sublabel": "infrastructure · SSE broadcast", "pos": [820, 400], "size": [210, 64] },
+    { "id": "services", "type": "backend", "label": "services", "sublabel": "casos de uso · scoring · analítica", "pos": [560, 510], "size": [210, 64] },
+    { "id": "be_domain", "type": "backend", "label": "domain", "sublabel": "entidades · máquina de estados", "pos": [300, 510], "size": [210, 64] },
+    { "id": "repositories", "type": "backend", "label": "repositories", "sublabel": "SQLModel · consultas", "pos": [560, 620], "size": [210, 64] },
+    { "id": "simulator", "type": "messagebus", "label": "Simulador", "sublabel": "infrastructure · tarea asyncio", "pos": [820, 620], "size": [210, 64] },
+    { "id": "sqlite", "type": "database", "label": "SQLite", "sublabel": "data/aerosecure.db", "pos": [560, 730], "size": [210, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Frontend · React + Vite + TS (Bun, :5173)", "wraps": ["presentation", "application", "fe_infra", "fe_domain"] },
+    { "kind": "region", "label": "Backend · FastAPI (uv, :8000)", "wraps": ["api", "eventbus", "services", "be_domain", "repositories", "simulator", "sqlite"] }
+  ],
+  "connections": [
+    { "id": "c-user", "from": "user", "to": "presentation", "label": "usa" },
+    { "id": "c-pres-app", "from": "presentation", "to": "application" },
+    { "id": "c-app-infra", "from": "application", "to": "fe_infra" },
+    { "id": "c-app-domain", "from": "application", "to": "fe_domain" },
+    { "id": "c-rest", "from": "fe_infra", "to": "api", "label": "REST /api", "variant": "emphasis" },
+    { "id": "c-sse", "from": "api", "to": "fe_infra", "label": "SSE", "variant": "dashed" },
+    { "id": "c-api-svc", "from": "api", "to": "services" },
+    { "id": "c-svc-domain", "from": "services", "to": "be_domain", "label": "reglas" },
+    { "id": "c-svc-repo", "from": "services", "to": "repositories" },
+    { "id": "c-repo-db", "from": "repositories", "to": "sqlite", "label": "SQL" },
+    { "id": "c-svc-bus", "from": "services", "to": "eventbus", "label": "publica", "variant": "dashed" },
+    { "id": "c-bus-api", "from": "eventbus", "to": "api", "label": "eventos", "variant": "dashed" },
+    { "id": "c-sim-svc", "from": "simulator", "to": "services", "label": "evento simulado", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Regla de dependencias", "items": ["Cada capa solo llama a la inmediatamente inferior", "domain no depende de nada (Python y TS puros)", "infrastructure implementa puertos definidos arriba"] },
+    { "dot": "emerald", "title": "Puntos de extensión", "items": ["Simulador → fuentes reales (CCTV, sensores)", "Scoring por reglas → modelo de IA real", "SQLite → PostgreSQL cambiando solo repositories"] },
+    { "dot": "amber", "title": "Ejecución local", "items": ["Un comando levanta backend y frontend", "Vite hace proxy de /api a :8000", "Sin servicios externos ni claves"] }
+  ]
+}

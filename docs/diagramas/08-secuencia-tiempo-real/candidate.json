@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AeroSecure AI — Secuencia: alerta en tiempo real (SSE)",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/08-secuencia-tiempo-real/secuencia-tiempo-real.html"
+  },
+  "participants": [
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Frontend",
+      "sublabel": "EventSource"
+    },
+    {
+      "id": "sse",
+      "type": "backend",
+      "label": "api",
+      "sublabel": "GET /api/stream"
+    },
+    {
+      "id": "bus",
+      "type": "messagebus",
+      "label": "Event bus",
+      "sublabel": "colas por cliente"
+    },
+    {
+      "id": "sim",
+      "type": "messagebus",
+      "label": "Simulador",
+      "sublabel": "tarea asyncio",
+      "icon": "clock"
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "services",
+      "sublabel": "AlertService"
+    },
+    {
+      "id": "score",
+      "type": "backend",
+      "label": "services",
+      "sublabel": "ScoringService"
+    },
+    {
+      "id": "repo",
+      "type": "database",
+      "label": "repositories",
+      "sublabel": "SQLite"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 240,
+      "label": "Suscripción"
+    },
+    {
+      "from": 255,
+      "to": 480,
+      "label": "Generación y priorización"
+    },
+    {
+      "from": 487,
+      "to": 620,
+      "label": "Difusión"
+    }
+  ],
+  "messages": [
+    {
+      "id": "s1",
+      "from": "ui",
+      "to": "sse",
+      "y": 165,
+      "label": "GET /api/stream",
+      "variant": "emphasis",
+      "note": "conexión abierta; heartbeat cada 15 s"
+    },
+    {
+      "id": "s2",
+      "from": "sse",
+      "to": "bus",
+      "y": 215,
+      "label": "subscribe(cola)"
+    },
+    {
+      "id": "s3",
+      "from": "sim",
+      "to": "svc",
+      "y": 275,
+      "label": "evento simulado",
+      "variant": "dashed",
+      "note": "cada 45-90 s si está activo"
+    },
+    {
+      "id": "s4",
+      "from": "svc",
+      "to": "score",
+      "y": 335,
+      "label": "calcular(tipo, confianza, zona)"
+    },
+    {
+      "id": "s5",
+      "from": "score",
+      "to": "svc",
+      "y": 371,
+      "label": "score 87 + desglose",
+      "variant": "return",
+      "note": "confianza < umbral → solo estadística, fin"
+    },
+    {
+      "id": "s6",
+      "from": "svc",
+      "to": "repo",
+      "y": 431,
+      "label": "insert alerta nueva + timeline"
+    },
+    {
+      "id": "s7",
+      "from": "repo",
+      "to": "svc",
+      "y": 467,
+      "label": "ALT-2049",
+      "variant": "return"
+    },
+    {
+      "id": "s8",
+      "from": "svc",
+      "to": "bus",
+      "y": 500,
+      "label": "publish alert.created",
+      "variant": "dashed"
+    },
+    {
+      "id": "s9",
+      "from": "bus",
+      "to": "sse",
+      "y": 536,
+      "label": "evento por suscriptor",
+      "variant": "dashed"
+    },
+    {
+      "id": "s10",
+      "from": "sse",
+      "to": "ui",
+      "y": 572,
+      "label": "event: alert.created",
+      "variant": "emphasis",
+      "note": "invalida alertas, resumen y mapa; toast si es crítica"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "sse",
+      "from": 165,
+      "to": 578,
+      "type": "backend"
+    },
+    {
+      "participant": "svc",
+      "from": 275,
+      "to": 506,
+      "type": "backend"
+    },
+    {
+      "participant": "score",
+      "from": 335,
+      "to": 377,
+      "type": "backend"
+    },
+    {
+      "participant": "repo",
+      "from": 431,
+      "to": 473,
+      "type": "database"
+    },
+    {
+      "participant": "bus",
+      "from": 500,
+      "to": 542,
+      "type": "messagebus"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Tipos de evento SSE",
+      "items": [
+        "alert.created · alert.updated",
+        "incident.created · incident.updated",
+        "settings.updated · demo.reset · heartbeat"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Reconexión",
+      "items": [
+        "EventSource reconecta solo",
+        "Al reconectar, el frontend refresca sus queries"
+      ]
+    }
+  ]
+}

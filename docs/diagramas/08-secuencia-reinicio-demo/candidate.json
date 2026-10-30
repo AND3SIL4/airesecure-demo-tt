@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AeroSecure AI — Secuencia: reiniciar la demo",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/08-secuencia-reinicio-demo/secuencia-reinicio-demo.html"
+  },
+  "participants": [
+    {
+      "id": "sup",
+      "type": "external",
+      "label": "Supervisor",
+      "sublabel": "Supervisor A",
+      "icon": "person"
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Frontend",
+      "sublabel": "Configuración"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "api",
+      "sublabel": "router demo"
+    },
+    {
+      "id": "demo",
+      "type": "backend",
+      "label": "services",
+      "sublabel": "DemoService"
+    },
+    {
+      "id": "repo",
+      "type": "database",
+      "label": "repositories",
+      "sublabel": "SQLite + seed"
+    },
+    {
+      "id": "bus",
+      "type": "messagebus",
+      "label": "Event bus",
+      "sublabel": "SSE"
+    },
+    {
+      "id": "other",
+      "type": "frontend",
+      "label": "Otros clientes",
+      "sublabel": "pestañas abiertas"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 250,
+      "label": "Confirmación"
+    },
+    {
+      "from": 265,
+      "to": 500,
+      "label": "Reinicio y semilla"
+    },
+    {
+      "from": 510,
+      "to": 725,
+      "label": "Notificación"
+    }
+  ],
+  "messages": [
+    {
+      "id": "r1",
+      "from": "sup",
+      "to": "ui",
+      "y": 165,
+      "label": "Reiniciar demo"
+    },
+    {
+      "id": "r2",
+      "from": "ui",
+      "to": "sup",
+      "y": 201,
+      "label": "confirmar acción irreversible",
+      "variant": "return"
+    },
+    {
+      "id": "r3",
+      "from": "sup",
+      "to": "ui",
+      "y": 237,
+      "label": "acepta"
+    },
+    {
+      "id": "r4",
+      "from": "ui",
+      "to": "api",
+      "y": 285,
+      "label": "POST /api/demo/reset",
+      "variant": "emphasis"
+    },
+    {
+      "id": "r5",
+      "from": "api",
+      "to": "demo",
+      "y": 321,
+      "label": "reset(actor)",
+      "note": "pausa el simulador"
+    },
+    {
+      "id": "r6",
+      "from": "demo",
+      "to": "repo",
+      "y": 371,
+      "label": "recrear tablas"
+    },
+    {
+      "id": "r7",
+      "from": "demo",
+      "to": "repo",
+      "y": 407,
+      "label": "seed relativo a now",
+      "note": "catálogos, 30 días de histórico, 12 alertas activas"
+    },
+    {
+      "id": "r8",
+      "from": "repo",
+      "to": "demo",
+      "y": 487,
+      "label": "ok",
+      "variant": "return"
+    },
+    {
+      "id": "r9",
+      "from": "demo",
+      "to": "bus",
+      "y": 525,
+      "label": "publish demo.reset",
+      "variant": "dashed"
+    },
+    {
+      "id": "r10",
+      "from": "bus",
+      "to": "other",
+      "y": 561,
+      "label": "SSE demo.reset",
+      "variant": "dashed",
+      "note": "invalidan caché y vuelven al Resumen"
+    },
+    {
+      "id": "r11",
+      "from": "demo",
+      "to": "api",
+      "y": 621,
+      "label": "resumen de la semilla",
+      "variant": "return",
+      "note": "reanuda el simulador si estaba activo"
+    },
+    {
+      "id": "r12",
+      "from": "api",
+      "to": "ui",
+      "y": 671,
+      "label": "200 conteos sembrados",
+      "variant": "return"
+    },
+    {
+      "id": "r13",
+      "from": "ui",
+      "to": "sup",
+      "y": 707,
+      "label": "toast de éxito + Resumen",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "ui",
+      "from": 160,
+      "to": 713,
+      "type": "frontend"
+    },
+    {
+      "participant": "api",
+      "from": 285,
+      "to": 677,
+      "type": "backend"
+    },
+    {
+      "participant": "demo",
+      "from": 321,
+      "to": 627,
+      "type": "backend"
+    },
+    {
+      "participant": "repo",
+      "from": 371,
+      "to": 493,
+      "type": "database"
+    },
+    {
+      "participant": "bus",
+      "from": 525,
+      "to": 567,
+      "type": "messagebus"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Uso",
+      "items": [
+        "Antes de cada presentación",
+        "Solo visible para el perfil Supervisor"
+      ]
+    }
+  ]
+}

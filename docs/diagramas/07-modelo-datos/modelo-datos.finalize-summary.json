@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "erd",
+  "quality": "standard",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\candidate.json",
+    "sha256": "c5b01bb0c1be0037815b1a69a3dbbe4a19721237c591ce0734da052cccf9f5d6",
+    "bytes": 8225
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\modelo-datos.html",
+    "sha256": "0234c3b9b6296176e99fef7b44508a679ebe6111dd5b6e2746e5ad12ccbec941",
+    "bytes": 889433
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\modelo-datos.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\modelo-datos.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\modelo-datos.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 10423,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

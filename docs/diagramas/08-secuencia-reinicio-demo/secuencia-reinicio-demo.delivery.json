@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "27fd4d28-b5ea-4f71-9de5-57d6ae450d37",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-reinicio-demo\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-reinicio-demo\\secuencia-reinicio-demo.html",
+  "specification": {
+    "sha256": "9cfed629bc2ee12818e96c78149a4c046330fc7c257ad6e6ce5c78fd1375e6fe",
+    "bytes": 4410
+  },
+  "artifact": {
+    "sha256": "1a12304d47043975a3b4903b6c2ddbfa772546ee7f7032e209022ac43d63b567",
+    "bytes": 844575
+  }
+}

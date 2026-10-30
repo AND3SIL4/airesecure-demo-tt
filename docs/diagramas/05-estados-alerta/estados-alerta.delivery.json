@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "4b9b6759-04e4-4f79-97d8-ded5890459f4",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\05-estados-alerta\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\05-estados-alerta\\estados-alerta.html",
+  "specification": {
+    "sha256": "187addaa0881fedd408cddb29526efda855163e5727560f23df24476183d3962",
+    "bytes": 1732
+  },
+  "artifact": {
+    "sha256": "ebff8a782566fdd037e5704585ab64246e7e7ad34e7cb7fb14e33205d1d36be7",
+    "bytes": 833008
+  }
+}

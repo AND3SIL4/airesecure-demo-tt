@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "acd6d2b7-125f-4a69-81ad-90d1b6a0fdb8",
+  "status": "current",
+  "command": "deliver",
+  "type": "erd",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\07-modelo-datos\\modelo-datos.html",
+  "specification": {
+    "sha256": "b7ae93863fae7043950e97ce71072cb75800454c63c31fc6e845960a3ecf7484",
+    "bytes": 12009
+  },
+  "artifact": {
+    "sha256": "920bee44d45b5eff53fdc8110a119febf963a29bbe854aebe4078cd001fa2500",
+    "bytes": 889432
+  }
+}

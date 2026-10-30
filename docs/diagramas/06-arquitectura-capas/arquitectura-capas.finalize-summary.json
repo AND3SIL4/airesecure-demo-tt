@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\candidate.json",
+    "sha256": "b9ecdc18ac73573e331399f5c1f78ea79588626d0a9ffb8ce1c395f97ca9d511",
+    "bytes": 4236
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\arquitectura-capas.html",
+    "sha256": "45250bca3e6ad6b65c902641ee7c71abe64995421a9b5de905d99c32553ffc38",
+    "bytes": 856562
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\arquitectura-capas.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\arquitectura-capas.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\06-arquitectura-capas\\arquitectura-capas.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 10444,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\candidate.json",
+    "sha256": "246894104e90eb4c016dd0b7031bf690c95c642b9a93a2ac19acf09c90558b9f",
+    "bytes": 4319
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\secuencia-tiempo-real.html",
+    "sha256": "afa63347ad10126b2218daeeee4ea006e5066bd98b0a368242464f8dabaea983",
+    "bytes": 842588
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\secuencia-tiempo-real.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\secuencia-tiempo-real.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\secuencia-tiempo-real.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 11735,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

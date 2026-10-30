@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "bc2dd4a5-78dd-42f8-bb86-b17c953b6658",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-tiempo-real\\secuencia-tiempo-real.html",
+  "specification": {
+    "sha256": "246894104e90eb4c016dd0b7031bf690c95c642b9a93a2ac19acf09c90558b9f",
+    "bytes": 4319
+  },
+  "artifact": {
+    "sha256": "afa63347ad10126b2218daeeee4ea006e5066bd98b0a368242464f8dabaea983",
+    "bytes": 842588
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AeroSecure AI — Secuencia: confirmar una alerta",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/08-secuencia-confirmar-alerta/secuencia-confirmar-alerta.html"
+  },
+  "participants": [
+    {
+      "id": "op",
+      "type": "external",
+      "label": "Operador",
+      "sublabel": "Operador 01",
+      "icon": "person"
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Frontend",
+      "sublabel": "React UI"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "api",
+      "sublabel": "router alerts"
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "services",
+      "sublabel": "AlertService"
+    },
+    {
+      "id": "repo",
+      "type": "backend",
+      "label": "repositories",
+      "sublabel": "3 repositorios"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "SQLite",
+      "sublabel": "aerosecure.db"
+    },
+    {
+      "id": "bus",
+      "type": "messagebus",
+      "label": "Event bus",
+      "sublabel": "SSE"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 250,
+      "label": "Decisión humana"
+    },
+    {
+      "from": 260,
+      "to": 545,
+      "label": "Petición y validación"
+    },
+    {
+      "from": 552,
+      "to": 660,
+      "label": "Persistencia"
+    },
+    {
+      "from": 666,
+      "to": 862,
+      "label": "Respuesta y notificación"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "op",
+      "to": "ui",
+      "y": 165,
+      "label": "Confirmar incidente"
+    },
+    {
+      "id": "m2",
+      "from": "ui",
+      "to": "op",
+      "y": 201,
+      "label": "diálogo de confirmación",
+      "variant": "return"
+    },
+    {
+      "id": "m3",
+      "from": "op",
+      "to": "ui",
+      "y": 237,
+      "label": "acepta + nota"
+    },
+    {
+      "id": "m4",
+      "from": "ui",
+      "to": "api",
+      "y": 280,
+      "label": "POST /alerts/{id}/actions confirm",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m5",
+      "from": "api",
+      "to": "svc",
+      "y": 316,
+      "label": "confirm_alert(id, actor, nota)",
+      "note": "DTO validado con Pydantic"
+    },
+    {
+      "id": "m6",
+      "from": "svc",
+      "to": "repo",
+      "y": 366,
+      "label": "get(id)"
+    },
+    {
+      "id": "m7",
+      "from": "repo",
+      "to": "db",
+      "y": 402,
+      "label": "SELECT"
+    },
+    {
+      "id": "m8",
+      "from": "db",
+      "to": "repo",
+      "y": 438,
+      "label": "fila",
+      "variant": "return"
+    },
+    {
+      "id": "m9",
+      "from": "repo",
+      "to": "svc",
+      "y": 474,
+      "label": "Alert(en_revision)",
+      "variant": "return",
+      "note": "state_machine valida la transición; estado final → 409"
+    },
+    {
+      "id": "m10",
+      "from": "svc",
+      "to": "repo",
+      "y": 570,
+      "label": "alerta confirmada + INC nuevo + timeline"
+    },
+    {
+      "id": "m11",
+      "from": "repo",
+      "to": "db",
+      "y": 606,
+      "label": "transacción COMMIT"
+    },
+    {
+      "id": "m12",
+      "from": "db",
+      "to": "repo",
+      "y": 642,
+      "label": "ok",
+      "variant": "return"
+    },
+    {
+      "id": "m13",
+      "from": "svc",
+      "to": "bus",
+      "y": 680,
+      "label": "alert.updated + incident.created",
+      "variant": "dashed"
+    },
+    {
+      "id": "m14",
+      "from": "svc",
+      "to": "api",
+      "y": 716,
+      "label": "IncidentDTO",
+      "variant": "return"
+    },
+    {
+      "id": "m15",
+      "from": "api",
+      "to": "ui",
+      "y": 752,
+      "label": "201 incidente INC-0412",
+      "variant": "return"
+    },
+    {
+      "id": "m16",
+      "from": "bus",
+      "to": "ui",
+      "y": 788,
+      "label": "SSE: invalida caché",
+      "variant": "dashed",
+      "note": "otras pestañas también se actualizan"
+    },
+    {
+      "id": "m17",
+      "from": "ui",
+      "to": "op",
+      "y": 844,
+      "label": "toast + detalle del incidente",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "ui",
+      "from": 160,
+      "to": 850,
+      "type": "frontend"
+    },
+    {
+      "participant": "api",
+      "from": 280,
+      "to": 758,
+      "type": "backend"
+    },
+    {
+      "participant": "svc",
+      "from": 316,
+      "to": 722,
+      "type": "backend"
+    },
+    {
+      "participant": "repo",
+      "from": 366,
+      "to": 648,
+      "type": "backend"
+    },
+    {
+      "participant": "db",
+      "from": 402,
+      "to": 648,
+      "type": "database"
+    },
+    {
+      "participant": "bus",
+      "from": 680,
+      "to": 794,
+      "type": "messagebus"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Garantías",
+      "items": [
+        "La confirmación siempre parte de una persona",
+        "Alerta, incidente y timeline se guardan en una sola transacción"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Errores posibles",
+      "items": [
+        "404 alerta inexistente",
+        "409 transición inválida (ya procesada)",
+        "422 actor ausente o nota demasiado larga"
+      ]
+    }
+  ]
+}

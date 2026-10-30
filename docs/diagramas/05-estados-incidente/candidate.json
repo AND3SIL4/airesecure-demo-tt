@@ -1,0 +1,119 @@
+{
+  "schema_version": 3,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "AeroSecure AI — Ciclo de vida de un incidente",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/05-estados-incidente/estados-incidente.html"
+  },
+  "mainPath": [
+    "abierto",
+    "en_atencion",
+    "resuelto"
+  ],
+  "states": [
+    {
+      "id": "abierto",
+      "type": "start",
+      "label": "Abierto",
+      "sublabel": "creado al confirmar alerta",
+      "tag": "abierto",
+      "step": "01"
+    },
+    {
+      "id": "en_atencion",
+      "type": "active",
+      "label": "En atención",
+      "sublabel": "equipo asignado atiende",
+      "tag": "en_atencion",
+      "step": "02"
+    },
+    {
+      "id": "resuelto",
+      "type": "success",
+      "label": "Resuelto",
+      "sublabel": "nota de cierre",
+      "tag": "final",
+      "step": "03"
+    },
+    {
+      "id": "escalado",
+      "type": "external",
+      "label": "Escalado",
+      "sublabel": "equipo especializado",
+      "tag": "escalado"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t-start",
+      "from": "abierto",
+      "to": "en_atencion",
+      "label": "atender",
+      "note": "requiere equipo asignado"
+    },
+    {
+      "id": "t-resolve",
+      "from": "en_atencion",
+      "to": "resuelto",
+      "label": "resolver",
+      "note": "confirmación + nota",
+      "variant": "emphasis"
+    },
+    {
+      "id": "t-escalate",
+      "from": "en_atencion",
+      "to": "escalado",
+      "label": "escalar",
+      "variant": "security"
+    },
+    {
+      "id": "t-escalate-direct",
+      "from": "abierto",
+      "to": "escalado",
+      "label": "escalar",
+      "variant": "security"
+    },
+    {
+      "id": "t-takeover",
+      "from": "escalado",
+      "to": "en_atencion",
+      "label": "retomar"
+    },
+    {
+      "id": "t-resolve-esc",
+      "from": "escalado",
+      "to": "resuelto",
+      "label": "resolver",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Condiciones",
+      "items": [
+        "Atender requiere equipo asignado",
+        "Escalar requiere equipo destino + motivo y confirmación",
+        "Resolver requiere nota de cierre y confirmación"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Acciones sin cambio de estado",
+      "items": [
+        "Asignar o reasignar equipo (cualquier estado no final)",
+        "Comentar"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Métricas",
+      "items": [
+        "Respuesta: alerta creada → primera acción humana",
+        "Resolución: alerta creada → incidente resuelto"
+      ]
+    }
+  ]
+}

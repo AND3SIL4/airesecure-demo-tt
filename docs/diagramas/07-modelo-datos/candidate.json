@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "diagram_type": "erd",
+  "meta": {
+    "title": "AeroSecure AI — Modelo de datos (SQLite)",
+    "locale": "es",
+    "quality_profile": "standard",
+    "output": "docs/diagramas/07-modelo-datos/modelo-datos.html"
+  },
+  "layout": {
+    "mode": "grid",
+    "gapX": 90,
+    "gapY": 36
+  },
+  "entities": [
+    {
+      "id": "zones",
+      "label": "zones",
+      "tag": "catálogos",
+      "row": 0,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(16)",
+          "key": "pk"
+        },
+        {
+          "name": "name",
+          "type": "varchar(80)"
+        },
+        {
+          "name": "terminal",
+          "type": "varchar(8)"
+        },
+        {
+          "name": "criticality",
+          "type": "int 1-3"
+        },
+        {
+          "name": "restricted",
+          "type": "bool"
+        },
+        {
+          "name": "geom_x",
+          "type": "real"
+        },
+        {
+          "name": "geom_z",
+          "type": "real"
+        },
+        {
+          "name": "geom_w",
+          "type": "real"
+        },
+        {
+          "name": "geom_d",
+          "type": "real"
+        },
+        {
+          "name": "geom_h",
+          "type": "real"
+        }
+      ]
+    },
+    {
+      "id": "sources",
+      "label": "sources",
+      "tag": "catálogos",
+      "row": 1,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(16)",
+          "key": "pk"
+        },
+        {
+          "name": "kind",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "label",
+          "type": "varchar(80)"
+        },
+        {
+          "name": "zone_id",
+          "type": "varchar(16)",
+          "key": "fk",
+          "references": "zones.id"
+        }
+      ]
+    },
+    {
+      "id": "alert_types",
+      "label": "alert_types",
+      "tag": "catálogos",
+      "row": 2,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "code",
+          "type": "varchar(32)",
+          "key": "pk"
+        },
+        {
+          "name": "name",
+          "type": "varchar(80)"
+        },
+        {
+          "name": "default_severity",
+          "type": "varchar(8)"
+        },
+        {
+          "name": "scenario_weight",
+          "type": "int"
+        },
+        {
+          "name": "confidence_threshold",
+          "type": "real"
+        },
+        {
+          "name": "recommendation",
+          "type": "text"
+        },
+        {
+          "name": "protocol_json",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "teams",
+      "label": "teams",
+      "tag": "catálogos",
+      "row": 3,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(16)",
+          "key": "pk"
+        },
+        {
+          "name": "name",
+          "type": "varchar(80)"
+        },
+        {
+          "name": "specialty",
+          "type": "varchar(80)"
+        },
+        {
+          "name": "specialized",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "id": "users",
+      "label": "users",
+      "tag": "catálogos",
+      "row": 4,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(16)",
+          "key": "pk"
+        },
+        {
+          "name": "alias",
+          "type": "varchar(40)"
+        },
+        {
+          "name": "role",
+          "type": "varchar(16)"
+        }
+      ]
+    },
+    {
+      "id": "alerts",
+      "label": "alerts",
+      "tag": "operación",
+      "row": 0,
+      "col": 1,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(12)",
+          "key": "pk"
+        },
+        {
+          "name": "type_code",
+          "type": "varchar(32)",
+          "key": "fk",
+          "references": "alert_types.code"
+        },
+        {
+          "name": "zone_id",
+          "type": "varchar(16)",
+          "key": "fk",
+          "references": "zones.id"
+        },
+        {
+          "name": "source_id",
+          "type": "varchar(16)",
+          "key": "fk",
+          "references": "sources.id"
+        },
+        {
+          "name": "severity",
+          "type": "varchar(8)"
+        },
+        {
+          "name": "status",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "origin",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "detected_at",
+          "type": "datetime"
+        },
+        {
+          "name": "confidence",
+          "type": "real null"
+        },
+        {
+          "name": "score",
+          "type": "int 0-100"
+        },
+        {
+          "name": "score_breakdown_json",
+          "type": "text"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "recommendation",
+          "type": "text"
+        },
+        {
+          "name": "evidence_key",
+          "type": "varchar(64)"
+        },
+        {
+          "name": "dismiss_reason",
+          "type": "text null"
+        },
+        {
+          "name": "reported_by",
+          "type": "varchar(16) null",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "reviewed_by",
+          "type": "varchar(16) null",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "first_action_at",
+          "type": "datetime null"
+        },
+        {
+          "name": "closed_at",
+          "type": "datetime null"
+        }
+      ]
+    },
+    {
+      "id": "incidents",
+      "label": "incidents",
+      "tag": "operación",
+      "row": 1,
+      "col": 1,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "varchar(12)",
+          "key": "pk"
+        },
+        {
+          "name": "alert_id",
+          "type": "varchar(12)",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "alerts.id"
+        },
+        {
+          "name": "status",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "team_id",
+          "type": "varchar(16) null",
+          "key": "fk",
+          "references": "teams.id"
+        },
+        {
+          "name": "escalated_to_id",
+          "type": "varchar(16) null",
+          "key": "fk",
+          "references": "teams.id"
+        },
+        {
+          "name": "opened_by",
+          "type": "varchar(16)",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "opened_at",
+          "type": "datetime"
+        },
+        {
+          "name": "started_at",
+          "type": "datetime null"
+        },
+        {
+          "name": "escalated_at",
+          "type": "datetime null"
+        },
+        {
+          "name": "resolved_at",
+          "type": "datetime null"
+        },
+        {
+          "name": "resolution_note",
+          "type": "text null"
+        },
+        {
+          "name": "response_seconds",
+          "type": "int null"
+        },
+        {
+          "name": "resolution_seconds",
+          "type": "int null"
+        }
+      ]
+    },
+    {
+      "id": "timeline_events",
+      "label": "timeline_events",
+      "tag": "auditoría",
+      "row": 0,
+      "col": 2,
+      "width": 270,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "integer",
+          "key": "pk"
+        },
+        {
+          "name": "alert_id",
+          "type": "varchar(12) null",
+          "key": "fk",
+          "references": "alerts.id"
+        },
+        {
+          "name": "incident_id",
+          "type": "varchar(12) null",
+          "key": "fk",
+          "references": "incidents.id"
+        },
+        {
+          "name": "actor_id",
+          "type": "varchar(16) null",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "action",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "from_status",
+          "type": "varchar(16) null"
+        },
+        {
+          "name": "to_status",
+          "type": "varchar(16) null"
+        },
+        {
+          "name": "comment",
+          "type": "text null"
+        },
+        {
+          "name": "payload_json",
+          "type": "text null"
+        },
+        {
+          "name": "created_at",
+          "type": "datetime"
+        }
+      ]
+    },
+    {
+      "id": "app_settings",
+      "label": "app_settings",
+      "tag": "configuración",
+      "row": 1,
+      "col": 2,
+      "width": 270,
+      "attributes": [
+        {
+          "name": "key",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "value_json",
+          "type": "text"
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r-src-zone",
+      "from": "sources",
+      "to": "zones",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "label": "ubicada en"
+    },
+    {
+      "id": "r-alert-type",
+      "from": "alerts",
+      "to": "alert_types",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "r-alert-zone",
+      "from": "alerts",
+      "to": "zones",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "r-alert-src",
+      "from": "alerts",
+      "to": "sources",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "r-alert-user",
+      "from": "alerts",
+      "to": "users",
+      "fromCardinality": "many",
+      "fromOptional": true,
+      "toCardinality": "one",
+      "identifying": false
+    },
+    {
+      "id": "r-inc-alert",
+      "from": "incidents",
+      "to": "alerts",
+      "fromCardinality": "one",
+      "fromOptional": true,
+      "toCardinality": "one",
+      "label": "confirma"
+    },
+    {
+      "id": "r-inc-team",
+      "from": "incidents",
+      "to": "teams",
+      "fromCardinality": "many",
+      "fromOptional": true,
+      "toCardinality": "one",
+      "identifying": false
+    },
+    {
+      "id": "r-inc-user",
+      "from": "incidents",
+      "to": "users",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "r-tl-alert",
+      "from": "timeline_events",
+      "to": "alerts",
+      "fromCardinality": "many",
+      "fromOptional": true,
+      "toCardinality": "one",
+      "identifying": false
+    },
+    {
+      "id": "r-tl-inc",
+      "from": "timeline_events",
+      "to": "incidents",
+      "fromCardinality": "many",
+      "fromOptional": true,
+      "toCardinality": "one",
+      "identifying": false
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Claves legibles",
+      "items": [
+        "Alertas ALT-2048, incidentes INC-0412, cámaras CAM-T1-034",
+        "users y teams usan ids cortos (op-01, sup-a, eod)"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Enums (texto)",
+      "items": [
+        "severity: critica · alta · media · baja",
+        "alert.status: nueva · en_revision · confirmada · descartada",
+        "incident.status: abierto · en_atencion · escalado · resuelto"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Auditoría",
+      "items": [
+        "timeline_events es solo inserción",
+        "actor_id nulo = acción del sistema",
+        "La severidad del incidente se lee de su alerta"
+      ]
+    }
+  ]
+}

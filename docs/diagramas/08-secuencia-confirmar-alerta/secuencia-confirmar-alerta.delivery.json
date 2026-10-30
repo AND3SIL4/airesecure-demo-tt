@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "fab3ea14-0350-4786-94be-000e826f2abd",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-confirmar-alerta\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\08-secuencia-confirmar-alerta\\secuencia-confirmar-alerta.html",
+  "specification": {
+    "sha256": "c936516935745fbe32cd54a9cdbc6d547784388d575c7d91fa6056073351365b",
+    "bytes": 5191
+  },
+  "artifact": {
+    "sha256": "91c715a93610ca848593a9ce8406d773883425074497a8e6f3a41298d738d44d",
+    "bytes": 848168
+  }
+}

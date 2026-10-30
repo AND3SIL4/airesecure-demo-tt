@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "diagram_type": "tree",
+  "meta": {
+    "title": "AeroSecure AI — Estructura propuesta del repositorio",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/06-estructura-repositorio/estructura-repositorio.html"
+  },
+  "layout": { "direction": "right" },
+  "nodes": [
+    { "id": "root", "label": "aerosecure-ai/", "sublabel": "monorepo de la demo" },
+    { "id": "claude", "label": ".claude/", "parent": "root", "sublabel": "agentes, skills, comandos" },
+    { "id": "specify", "label": ".specify/ + specs/", "parent": "root", "sublabel": "Spec Kit" },
+    { "id": "docs", "label": "docs/", "parent": "root", "sublabel": "documentación + diagramas" },
+    { "id": "backend", "label": "backend/", "parent": "root", "sublabel": "FastAPI · uv" },
+    { "id": "frontend", "label": "frontend/", "parent": "root", "sublabel": "React · Vite · Bun" },
+    { "id": "scripts", "label": "start-demo.ps1", "parent": "root", "sublabel": "arranque con un comando" },
+    { "id": "be_app", "label": "app/", "parent": "backend", "sublabel": "main.py · config.py" },
+    { "id": "be_data", "label": "data/", "parent": "backend", "sublabel": "aerosecure.db (ignorado)" },
+    { "id": "be_api", "label": "api/", "parent": "be_app", "sublabel": "routers/ · schemas/ · deps.py" },
+    { "id": "be_services", "label": "services/", "parent": "be_app", "sublabel": "alert · incident · scoring · analytics · demo" },
+    { "id": "be_repos", "label": "repositories/", "parent": "be_app", "sublabel": "un repositorio por agregado" },
+    { "id": "be_domain", "label": "domain/", "parent": "be_app", "sublabel": "models · enums · state_machine · errors" },
+    { "id": "be_infra", "label": "infrastructure/", "parent": "be_app", "sublabel": "db · event_bus · simulator · seed/" },
+    { "id": "fe_src", "label": "src/", "parent": "frontend", "sublabel": "main.tsx · App.tsx · router.tsx" },
+    { "id": "fe_pres", "label": "presentation/", "parent": "fe_src", "sublabel": "pages/ · components/ · layout/ · map3d/" },
+    { "id": "fe_app", "label": "application/", "parent": "fe_src", "sublabel": "hooks/ · stores/ · queryKeys.ts" },
+    { "id": "fe_domain", "label": "domain/", "parent": "fe_src", "sublabel": "types.ts · severity.ts · status.ts" },
+    { "id": "fe_infra", "label": "infrastructure/", "parent": "fe_src", "sublabel": "http.ts · sse.ts · api/*.ts" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Convenciones", "items": ["Una carpeta por capa en back y front", "Los imports solo apuntan hacia capas inferiores", "Nombres de código en inglés; textos de UI en español"] }
+  ]
+}

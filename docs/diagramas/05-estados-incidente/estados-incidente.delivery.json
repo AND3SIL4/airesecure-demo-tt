@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "1e3e0dd3-0430-48b7-aba1-dbd2225cd0fc",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\05-estados-incidente\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\05-estados-incidente\\estados-incidente.html",
+  "specification": {
+    "sha256": "371ff5c13aa9932be1caee0c9e148ae0ebdea645ddc37b4805b0dca8b652405e",
+    "bytes": 2759
+  },
+  "artifact": {
+    "sha256": "5676a66f1d81fcdbd872412635875ea5b4358712b076c9dcbda479304a939e14",
+    "bytes": 836040
+  }
+}
