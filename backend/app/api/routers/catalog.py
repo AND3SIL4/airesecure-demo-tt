@@ -1,9 +1,16 @@
-"""Catálogos: GET /users, /me, /zones, /teams, /alert-types y /dismiss-reasons."""
+"""Catálogos: GET /users, /me, /zones, /sources, /teams, /alert-types y /dismiss-reasons."""
 
 from fastapi import APIRouter
 
 from app.api.deps import ActorDep, SessionDep
-from app.api.schemas.catalog import AlertTypeOut, DismissReasonOut, TeamOut, UserOut, ZoneOut
+from app.api.schemas.catalog import (
+    AlertTypeOut,
+    DismissReasonOut,
+    SourceOut,
+    TeamOut,
+    UserOut,
+    ZoneOut,
+)
 from app.services.catalog_service import CatalogService
 
 router = APIRouter(tags=["catalog"])
@@ -22,6 +29,11 @@ def get_me(actor: ActorDep) -> UserOut:
 @router.get("/zones", response_model=list[ZoneOut], response_model_by_alias=True)
 def list_zones(session: SessionDep) -> list[ZoneOut]:
     return [ZoneOut.from_view(z) for z in CatalogService(session).list_zones()]
+
+
+@router.get("/sources", response_model=list[SourceOut], response_model_by_alias=True)
+def list_sources(session: SessionDep) -> list[SourceOut]:
+    return [SourceOut.model_validate(s) for s in CatalogService(session).list_sources()]
 
 
 @router.get("/teams", response_model=list[TeamOut], response_model_by_alias=True)

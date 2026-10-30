@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <title>Ilustración: sala con bancos y una maleta sin acompañante (imagen ilustrativa, sin datos personales)</title>
+  <!-- Pared y techo -->
+  <rect width="320" height="180" fill="#e2e8f0"/>
+  <rect width="320" height="14" fill="#cbd5e1"/>
+  <rect x="30" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="140" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="250" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <!-- Ventanales -->
+  <rect x="20" y="26" width="120" height="62" rx="2" fill="#10264a"/>
+  <rect x="24" y="30" width="54" height="54" fill="#1d3b6e"/>
+  <rect x="82" y="30" width="54" height="54" fill="#1d3b6e"/>
+  <path d="M24 70 L78 52 L78 84 L24 84 Z" fill="#284b85" opacity="0.6"/>
+  <!-- Carrusel de equipaje al fondo -->
+  <rect x="236" y="70" width="76" height="30" rx="15" fill="#94a3b8"/>
+  <rect x="244" y="76" width="60" height="18" rx="9" fill="#64748b"/>
+  <rect x="250" y="40" width="48" height="16" rx="2" fill="#10264a"/>
+  <rect x="256" y="46" width="36" height="4" rx="2" fill="#1d5fd1"/>
+  <!-- Suelo -->
+  <path d="M0 108 H320 V180 H0 Z" fill="#b8c4d3"/>
+  <path d="M0 108 H320" stroke="#94a3b8" stroke-width="2"/>
+  <g stroke="#a7b4c5" stroke-width="1">
+    <path d="M40 108 L0 160"/><path d="M110 108 L80 180"/><path d="M180 108 L180 180"/>
+    <path d="M250 108 L280 180"/><path d="M310 108 L350 170"/>
+    <path d="M0 130 H320"/><path d="M0 155 H320"/>
+  </g>
+  <!-- Banco -->
+  <rect x="36" y="112" width="116" height="10" rx="2" fill="#475569"/>
+  <rect x="36" y="122" width="116" height="6" rx="2" fill="#334155"/>
+  <rect x="44" y="128" width="6" height="18" fill="#334155"/>
+  <rect x="138" y="128" width="6" height="18" fill="#334155"/>
+  <!-- Maleta (objeto detectado) -->
+  <rect x="203" y="113" width="2.5" height="9" fill="#334155"/>
+  <rect x="210.5" y="113" width="2.5" height="9" fill="#334155"/>
+  <rect x="202" y="112" width="12" height="3" rx="1.5" fill="#334155"/>
+  <rect x="192" y="120" width="32" height="38" rx="4" fill="#10264a"/>
+  <rect x="192" y="120" width="32" height="38" rx="4" fill="none" stroke="#0b1b33" stroke-width="1.5"/>
+  <path d="M200 124 V154 M208 124 V154 M216 124 V154" stroke="#1d3b6e" stroke-width="2"/>
+  <rect x="194" y="134" width="28" height="3" fill="#1d5fd1" opacity="0.8"/>
+  <circle cx="197" cy="160" r="2.5" fill="#0b1b33"/>
+  <circle cx="219" cy="160" r="2.5" fill="#0b1b33"/>
+  <ellipse cx="208" cy="163" rx="18" ry="2.5" fill="#64748b" opacity="0.35"/>
+</svg>

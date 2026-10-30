@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <title>Ilustración: sala de embarque con un mapa de calor de densidad elevada cerca de la puerta (imagen ilustrativa, sin datos personales)</title>
+  <defs>
+    <radialGradient id="heat" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ea580c" stop-opacity="0.75"/>
+      <stop offset="0.45" stop-color="#d97706" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="320" height="180" fill="#e2e8f0"/>
+  <rect width="320" height="14" fill="#cbd5e1"/>
+  <rect x="30" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="140" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="250" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <!-- Ventanal hacia la plataforma -->
+  <rect x="10" y="24" width="150" height="58" rx="2" fill="#10264a"/>
+  <rect x="14" y="28" width="142" height="50" fill="#1d3b6e"/>
+  <path d="M30 70 h70 l10 -6 h-60 Z" fill="#94a3b8" opacity="0.6"/>
+  <!-- Puerta de embarque y pantalla -->
+  <rect x="196" y="24" width="64" height="20" rx="2" fill="#10264a"/>
+  <text x="208" y="39" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#f8fafc">A</text>
+  <rect x="224" y="31" width="28" height="4" rx="2" fill="#1d5fd1"/>
+  <rect x="200" y="52" width="56" height="44" rx="2" fill="#475569"/>
+  <rect x="206" y="58" width="44" height="38" fill="#0b1b33"/>
+  <rect x="262" y="82" width="40" height="14" rx="2" fill="#94a3b8"/>
+  <!-- Suelo -->
+  <path d="M0 96 H320 V180 H0 Z" fill="#b8c4d3"/>
+  <path d="M0 96 H320" stroke="#94a3b8" stroke-width="2"/>
+  <g stroke="#a7b4c5" stroke-width="1">
+    <path d="M60 96 L20 180"/><path d="M160 96 L160 180"/><path d="M260 96 L300 180"/>
+    <path d="M0 122 H320"/><path d="M0 150 H320"/>
+  </g>
+  <!-- Asientos -->
+  <g fill="#475569">
+    <rect x="16" y="112" width="96" height="8" rx="2"/>
+    <rect x="16" y="140" width="96" height="8" rx="2"/>
+  </g>
+  <g fill="#334155">
+    <rect x="16" y="120" width="96" height="4" rx="1"/>
+    <rect x="16" y="148" width="96" height="4" rx="1"/>
+  </g>
+  <!-- Mapa de calor de densidad (patrón detectado) y marcas abstractas de ocupación -->
+  <ellipse cx="186" cy="132" rx="54" ry="34" fill="url(#heat)"/>
+  <g fill="#10264a" opacity="0.85">
+    <circle cx="160" cy="124" r="2.2"/><circle cx="170" cy="118" r="2.2"/><circle cx="178" cy="128" r="2.2"/>
+    <circle cx="186" cy="120" r="2.2"/><circle cx="194" cy="132" r="2.2"/><circle cx="202" cy="122" r="2.2"/>
+    <circle cx="210" cy="134" r="2.2"/><circle cx="184" cy="140" r="2.2"/><circle cx="172" cy="146" r="2.2"/>
+    <circle cx="196" cy="148" r="2.2"/><circle cx="216" cy="144" r="2.2"/><circle cx="164" cy="136" r="2.2"/>
+    <circle cx="206" cy="112" r="2.2"/><circle cx="222" cy="126" r="2.2"/><circle cx="152" cy="132" r="2.2"/>
+  </g>
+</svg>

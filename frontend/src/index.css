@@ -24,6 +24,18 @@
   --color-ok-text: #15803d;
 
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Resaltado azul de 2 s de una fila nueva o recién reportada (doc 09 §3.3, §5.4). */
+  --animate-row-highlight: row-highlight 2s ease-out;
+
+  @keyframes row-highlight {
+    from {
+      background-color: rgb(29 95 209 / 0.22);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
 }
 
 @layer base {

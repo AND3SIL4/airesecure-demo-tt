@@ -5,12 +5,15 @@ from dataclasses import dataclass
 
 from sqlmodel import Session
 
-from app.domain.catalogs import DISMISS_REASON_LABELS
+from app.domain.catalogs import DISMISS_REASON_LABELS, SEVERITY_ORDER
 from app.domain.enums import DismissReason, RiskLevel, Role, Severity
 from app.domain.errors import ACTOR_REQUERIDO, DomainError
-from app.domain.models import Team, User, Zone
+from app.domain.models import Source, Team, User, Zone
+from app.repositories.alert_repo import AlertRepository
 from app.repositories.catalog_repo import CatalogRepository
 from app.repositories.settings_repo import SettingsRepository
+
+_SEVERITY_BY_ORDER: dict[int, Severity] = {order: sev for sev, order in SEVERITY_ORDER.items()}
 
 
 @dataclass(frozen=True)
@@ -42,6 +45,7 @@ class CatalogService:
     def __init__(self, session: Session) -> None:
         self.catalog = CatalogRepository(session)
         self.settings = SettingsRepository(session)
+        self.alerts = AlertRepository(session)
 
     def list_users(self) -> list[User]:
         return self.catalog.list_users()
@@ -50,11 +54,18 @@ class CatalogService:
         return self.catalog.list_teams()
 
     def list_zones(self) -> list[ZoneView]:
-        # Punto de extensión (feature 002): riskLevel = severidad máxima de las alertas activas de la zona.
-        return [
-            ZoneView(zone=zone, risk_level=RiskLevel.NORMAL, active_alerts=0)
-            for zone in self.catalog.list_zones()
-        ]
+        """riskLevel = la severidad de mayor orden entre las alertas activas de la zona (o `normal`)."""
+        active = self.alerts.active_counts_by_zone()
+        views: list[ZoneView] = []
+        for zone in self.catalog.list_zones():
+            max_order, count = active.get(zone.id, (0, 0))
+            severity = _SEVERITY_BY_ORDER.get(max_order)
+            risk = RiskLevel(severity.value) if severity is not None and count > 0 else RiskLevel.NORMAL
+            views.append(ZoneView(zone=zone, risk_level=risk, active_alerts=count))
+        return views
+
+    def list_sources(self) -> list[Source]:
+        return self.catalog.list_sources()
 
     def list_alert_types(self) -> list[AlertTypeView]:
         settings = self.settings.get_all()

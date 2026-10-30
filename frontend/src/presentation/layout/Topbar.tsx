@@ -1,6 +1,7 @@
 import { Bell, OctagonAlert, Plus, Radio } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { openReportEvent } from '../../application/stores/reportEvent';
 import { AIRPORT_LABEL, UPCOMING_FEATURE_MESSAGE, viewTitleForPath } from '../../domain/navigation';
 import { Tooltip } from '../components/Tooltip';
 import { Clock } from './Clock';
@@ -58,7 +59,14 @@ export function Topbar() {
 
       <div className="flex shrink-0 items-center gap-2">
         <PendingButton icon={OctagonAlert} label="Críticas" compactBelowXl />
-        <PendingButton icon={Plus} label="Reportar evento" compactBelowXl />
+        <button
+          type="button"
+          onClick={openReportEvent}
+          className="inline-flex h-9 items-center gap-2 rounded-md border border-white/25 bg-white/5 px-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-white/15"
+        >
+          <Plus aria-hidden="true" className="size-4 shrink-0" />
+          <span className="sr-only xl:not-sr-only">Reportar evento</span>
+        </button>
         <PendingButton icon={Bell} label="Notificaciones" iconOnly tooltipSide="bottom-end" />
         <Tooltip content={UPCOMING_FEATURE_MESSAGE} side="bottom-end">
           <button

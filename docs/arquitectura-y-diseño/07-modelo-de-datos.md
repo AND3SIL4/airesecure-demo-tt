@@ -20,7 +20,7 @@ Base de datos **SQLite** en `backend/data/aerosecure.db`, con las tablas definid
 
 | Tabla | Propósito | Notas |
 |---|---|---|
-| `alerts` | Alertas generadas | `origin`: `seed`, `simulador`, `escenario` o `manual`. `confidence` es nula en los reportes manuales. `evidence_key` = `type_code`; apunta a `frontend/public/evidence/<key>.svg`. `reported_by` solo aplica en los reportes manuales |
+| `alerts` | Alertas generadas | `origin`: `seed`, `simulador`, `escenario` o `manual`. `confidence` es nula en los reportes manuales. `evidence_key` = `type_code`; apunta a `frontend/public/evidence/<key>.svg`. `reported_by` solo aplica en los reportes manuales. `dismiss_comment` guarda el texto libre del descarte (obligatorio con el motivo "otro") |
 | `incidents` | Incidentes confirmados | `alert_id` es **único** (relación 1 a 1 con su alerta). La severidad, la zona y el tipo se leen de la alerta (con JOIN) |
 
 ### Auditoría y configuración

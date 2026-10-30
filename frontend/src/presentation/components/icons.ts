@@ -10,19 +10,25 @@ import {
   Eye,
   FileText,
   FolderOpen,
+  FolderPlus,
   Info,
   LayoutDashboard,
   Map,
+  MessageSquare,
   OctagonAlert,
+  Play,
+  RotateCcw,
   Settings,
   Siren,
   Sparkles,
   TriangleAlert,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import type { NavIcon } from '../../domain/navigation';
 import type { SeverityIcon } from '../../domain/severity';
 import type { StatusIcon } from '../../domain/status';
+import type { TimelineIcon } from '../../domain/timeline';
 
 export const SEVERITY_ICONS: Record<SeverityIcon, LucideIcon> = {
   'octagon-alert': OctagonAlert,
@@ -50,5 +56,21 @@ export const NAV_ICONS: Record<NavIcon, LucideIcon> = {
   map: Map,
   'chart-line': ChartLine,
   'file-text': FileText,
+  settings: Settings,
+};
+
+export const TIMELINE_ICONS: Record<TimelineIcon, LucideIcon> = {
+  sparkles: Sparkles,
+  eye: Eye,
+  'check-circle': CircleCheck,
+  'x-circle': CircleX,
+  'message-square': MessageSquare,
+  'folder-plus': FolderPlus,
+  users: Users,
+  activity: Activity,
+  'arrow-up-right': ArrowUpRight,
+  'check-check': CheckCheck,
+  'rotate-ccw': RotateCcw,
+  play: Play,
   settings: Settings,
 };

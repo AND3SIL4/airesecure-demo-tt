@@ -40,3 +40,27 @@ export function formatClock(value: Date | string): string {
   const p = toParts(toDate(value));
   return `${p.day} ${shortMonth(p.month)} ${p.year} ${p.hour}:${p.minute}`;
 }
+
+const MINUTE_MS = 60 * 1000;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+
+/** Hora relativa corta (doc 09 §8): "hace 3 min", "hace 2 h", "hace 1 d". */
+export function formatRelative(value: Date | string, now: Date | number = Date.now()): string {
+  const nowMs = typeof now === 'number' ? now : now.getTime();
+  const diff = nowMs - toDate(value).getTime();
+  if (diff < MINUTE_MS) return 'hace un momento';
+  if (diff < HOUR_MS) return `hace ${Math.floor(diff / MINUTE_MS)} min`;
+  if (diff < DAY_MS) return `hace ${Math.floor(diff / HOUR_MS)} h`;
+  return `hace ${Math.floor(diff / DAY_MS)} d`;
+}
+
+/** Porcentaje entero a partir de un valor 0..1: `94 %`. */
+export function formatPercent(value: number): string {
+  return `${Math.round(value * 100)} %`;
+}
+
+/** Factor con dos decimales y coma decimal: `0,94`. */
+export function formatFactor(value: number): string {
+  return value.toLocaleString(DISPLAY_LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}

@@ -3,7 +3,7 @@
 from typing import Literal
 
 from app.api.schemas.base import ApiModel
-from app.domain.enums import DismissReason, RiskLevel, Role, Severity
+from app.domain.enums import DismissReason, RiskLevel, Role, Severity, SourceKind
 from app.services.catalog_service import AlertTypeView, DismissReasonView, ZoneView
 from app.services.health_service import HealthStatus
 
@@ -67,6 +67,13 @@ class ZoneOut(ApiModel):
             risk_level=view.risk_level,
             active_alerts=view.active_alerts,
         )
+
+
+class SourceOut(ApiModel):
+    id: str
+    kind: SourceKind
+    label: str
+    zone_id: str | None
 
 
 class TeamOut(ApiModel):

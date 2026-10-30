@@ -1,11 +1,13 @@
 """Traducción de excepciones al formato común `{error:{code,message,details}}` (doc 08 §1)."""
 
 import logging
+from collections.abc import Sequence
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic.alias_generators import to_camel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.schemas.base import ErrorBody, ErrorDetail
@@ -46,11 +48,51 @@ def error_response(
     return JSONResponse(status_code=status, content=body.model_dump(by_alias=True))
 
 
-def _field_name(loc: tuple[int | str, ...]) -> str:
-    parts = [str(p) for p in loc]
-    if len(parts) > 1 and parts[0] in {"body", "query", "path", "header", "cookie"}:
+_LOC_ROOTS = {"body", "query", "path", "header", "cookie"}
+
+
+def _camel(part: str) -> str:
+    return to_camel(part) if "_" in part else part
+
+
+def _field_name(loc: tuple[int | str, ...], body: Any) -> str:
+    parts: list[int | str] = list(loc)
+    is_body = bool(parts) and parts[0] == "body"
+    if parts and parts[0] in _LOC_ROOTS:
         parts = parts[1:]
-    return ".".join(parts)
+    # Uniones discriminadas: Pydantic añade la etiqueta (p. ej. "dismiss") a la ruta; se omite.
+    if is_body and isinstance(body, dict) and len(parts) > 1 and parts[0] == body.get("action"):
+        parts = parts[1:]
+    return ".".join(_camel(p) if isinstance(p, str) else str(p) for p in parts)
+
+
+def _spanish_message(err: dict[str, Any]) -> str:
+    """Traduce los tipos de error de Pydantic más comunes (research R6); el resto, "Valor inválido."."""
+    kind = err.get("type", "")
+    ctx: dict[str, Any] = err.get("ctx") or {}
+    if kind in {"missing", "union_tag_not_found"}:
+        return "Este campo es obligatorio."
+    if kind == "string_too_short":
+        return f"Debe tener al menos {ctx.get('min_length')} caracteres."
+    if kind == "string_too_long":
+        return f"Debe tener como máximo {ctx.get('max_length')} caracteres."
+    if kind in {"enum", "literal_error", "union_tag_invalid"}:
+        return "Valor no permitido."
+    if kind in {"int_parsing", "float_parsing"}:
+        return "Debe ser un número."
+    return "Valor inválido."
+
+
+def _validation_fields(errors: Sequence[Any], body: Any) -> list[dict[str, str]]:
+    fields: list[dict[str, str]] = []
+    for err in errors:
+        field = _field_name(tuple(err.get("loc", ())), body)
+        if err.get("type") in {"union_tag_not_found", "union_tag_invalid"}:
+            # Pydantic lo reporta sobre el cuerpo; el campo real es el discriminador (`action`).
+            discriminator = str((err.get("ctx") or {}).get("discriminator", "")).strip("'\"")
+            field = ".".join(p for p in (field, discriminator) if p)
+        fields.append({"field": field, "message": _spanish_message(err)})
+    return fields
 
 
 async def _domain_error_handler(_request: Request, exc: Exception) -> JSONResponse:
@@ -62,10 +104,7 @@ async def _domain_error_handler(_request: Request, exc: Exception) -> JSONRespon
 
 async def _validation_error_handler(_request: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, RequestValidationError)
-    fields = [
-        {"field": _field_name(tuple(err.get("loc", ()))), "message": err.get("msg", "")}
-        for err in exc.errors()
-    ]
+    fields = _validation_fields(exc.errors(), exc.body)
     return error_response(422, VALIDACION, "Hay campos faltantes o inválidos.", {"fields": fields})
 
 

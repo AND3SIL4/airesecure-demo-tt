@@ -1,5 +1,5 @@
 // Catálogos de la API (contracts/api-catalogs.md). Funciones sin estado sobre http.ts.
-import type { AlertType, DismissReason, Team, User, Zone } from '../../domain/types';
+import type { AlertType, DismissReason, Source, Team, User, Zone } from '../../domain/types';
 import { http } from '../http';
 
 export function getUsers() {
@@ -24,4 +24,8 @@ export function getAlertTypes() {
 
 export function getDismissReasons() {
   return http.get<DismissReason[]>('/dismiss-reasons');
+}
+
+export function getSources() {
+  return http.get<Source[]>('/sources');
 }

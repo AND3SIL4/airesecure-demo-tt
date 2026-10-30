@@ -1,4 +1,4 @@
-"""Siembra idempotente de catálogos y configuración inicial."""
+"""Siembra idempotente: catálogos, configuración inicial y alertas de hoy (solo si no hay alertas)."""
 
 import json
 from typing import Any
@@ -12,6 +12,7 @@ from app.domain.catalogs import (
 )
 from app.domain.enums import SourceKind
 from app.domain.models import AlertType, AppSetting, Source, Team, User, Zone
+from app.infrastructure.seed.alerts import seed_alerts
 from app.infrastructure.seed.catalogs import (
     ALERT_TYPES,
     CAMERAS,
@@ -94,3 +95,9 @@ def seed_catalogs(session: Session) -> None:
         session.merge(User(**user))
     _seed_settings(session)
     session.commit()
+
+
+def seed_all(session: Session) -> None:
+    """Catálogos (upsert) y, si la tabla está vacía, las alertas relativas a "ahora"."""
+    seed_catalogs(session)
+    seed_alerts(session, utcnow())

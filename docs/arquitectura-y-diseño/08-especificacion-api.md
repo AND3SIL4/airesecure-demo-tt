@@ -51,10 +51,12 @@ interface AlertSummary {
 }
 
 interface AlertDetail extends AlertSummary {
-  scoreBreakdown: { severityWeight: number; confidence: number; zoneFactor: number; zoneCriticality: number; score: number };
+  scoreBreakdown: { severityWeight: number; confidence: number; zoneFactor: number; zoneCriticality: number; score: number; manual: boolean };
   recommendation: string; protocol: string[];
   evidenceUrl: string; evidenceIsIllustrative: true;
-  dismissReason: string | null; reviewedBy: UserRef | null;
+  origin: 'seed' | 'simulador' | 'escenario' | 'manual';
+  dismissReason: string | null; dismissReasonLabel: string | null; dismissComment: string | null;
+  reviewedBy: UserRef | null; reportedBy: UserRef | null;
   firstActionAt: string | null; closedAt: string | null;
   timeline: TimelineEvent[];
 }
@@ -86,6 +88,7 @@ interface TimelineEvent {
 | GET | `/api/users` | `UserRef[]` (para el login simulado) |
 | GET | `/api/me` | Usuario del `X-Actor-Id` (obligatorio); 401 `ACTOR_REQUERIDO` si falta o no existe. Lo usa el front para validar el perfil guardado |
 | GET | `/api/zones` | `Zone[]` con geometría y `riskLevel` actual (la severidad máxima activa o `normal`) |
+| GET | `/api/sources` | `{ id, kind, label, zoneId }[]` (para el filtro por fuente) |
 | GET | `/api/teams` | `TeamRef[]` con `specialized` |
 | GET | `/api/alert-types` | Tipos con severidad por defecto, umbral, recomendación y protocolo |
 | GET | `/api/dismiss-reasons` | Catálogo de motivos de descarte |
@@ -100,10 +103,10 @@ interface TimelineEvent {
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/alerts` | Filtros: `status` (lista separada por comas; `activas` equivale a `nueva,en_revision`), `severity`, `zone`, `type`, `source`, `q`, `from`, `to`. Orden: `score`, `detectedAt` o `severity`. Paginado |
+| GET | `/api/alerts` | Filtros: `status` (lista separada por comas; `activas` equivale a `nueva,en_revision` y es el valor por defecto; para ver todos los estados hay que listarlos), `severity`, `zone`, `type`, `source`, `q`, `from`, `to`. Orden: `score`, `detectedAt` o `severity` (`campo:asc\|desc`, por defecto `score:desc`). Paginado. Los valores de filtro, orden o fecha inválidos se ignoran (no producen 422) |
 | GET | `/api/alerts/{id}` | `AlertDetail` |
 | POST | `/api/alerts` | Reporte manual. Body: `{ typeCode, zoneId, severity, description }`. Responde `201 AlertDetail` |
-| POST | `/api/alerts/{id}/actions` | Body según la acción (ver abajo). Responde `200 AlertDetail`, o `201 { alert, incident }` en `confirm` |
+| POST | `/api/alerts/{id}/actions` | Body según la acción (ver abajo). Responde `200 AlertDetail`, o `201 { alert: AlertDetail, incident: { id, status, alertId, openedAt } }` en `confirm` |
 
 **Acciones sobre una alerta**
 

@@ -165,7 +165,7 @@ Layout de 2 columnas (8/4):
 |---|---|
 | ≥ 1280 px | Layout completo |
 | 1024-1279 px | Los KPIs pasan a 3 + 2; Resumen a 2 columnas |
-| 768-1023 px (tablet) | Sidebar colapsado; detalle en 1 columna (acciones fijas abajo); tablas con scroll horizontal y columnas secundarias ocultas; en el Mapa, el panel lateral pasa a un drawer |
+| 768-1023 px (tablet) | Sidebar colapsado; detalle en 1 columna (el bloque de acciones, ubicación y confianza va primero, para que las acciones sean visibles sin desplazarse); tablas con scroll horizontal y columnas secundarias ocultas; en el Mapa, el panel lateral pasa a un drawer |
 | < 768 px | Fuera de alcance (se muestra igual pero sin optimizar) |
 
 ## 8. Microcopy (idioma y tono)

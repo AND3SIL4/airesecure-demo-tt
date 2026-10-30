@@ -5,6 +5,8 @@ import { RequireActor } from './presentation/layout/RequireActor';
 import { RequireSupervisor } from './presentation/layout/RequireSupervisor';
 import { RootLayout } from './presentation/layout/RootLayout';
 import { Shell } from './presentation/layout/Shell';
+import { AlertDetailPage } from './presentation/pages/AlertDetailPage';
+import { AlertsPage } from './presentation/pages/AlertsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
 import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
@@ -29,8 +31,8 @@ export const router = createBrowserRouter([
             element: <Shell />,
             children: [
               { index: true, element: <PlaceholderPage title={VIEW_TITLES.summary} showComponentPreview /> },
-              { path: '/alertas', element: <PlaceholderPage title={VIEW_TITLES.alerts} /> },
-              { path: '/alertas/:id', element: <PlaceholderPage title={VIEW_TITLES.alertDetail} /> },
+              { path: '/alertas', element: <AlertsPage /> },
+              { path: '/alertas/:id', element: <AlertDetailPage /> },
               { path: '/incidentes', element: <PlaceholderPage title={VIEW_TITLES.incidents} /> },
               { path: '/incidentes/:id', element: <PlaceholderPage title={VIEW_TITLES.incidentDetail} /> },
               { path: '/mapa', element: <PlaceholderPage title={VIEW_TITLES.map} /> },

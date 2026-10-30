@@ -1,6 +1,6 @@
 // Etiquetas legibles de los estados de alerta e incidente (doc 05 §2-3) para StatusBadge.
-// Las acciones permitidas se añadirán con las features 002 y 004.
-import type { AlertStatus, IncidentStatus } from './types';
+// Las acciones permitidas solo habilitan o deshabilitan botones; la validación real la hace el backend.
+import type { AlertActionName, AlertStatus, IncidentStatus } from './types';
 
 export type Status = AlertStatus | IncidentStatus;
 
@@ -82,3 +82,21 @@ export const STATUS_META: Record<Status, StatusMeta> = {
 
 export const ALERT_STATUSES: readonly AlertStatus[] = ['nueva', 'en_revision', 'confirmada', 'descartada'];
 export const INCIDENT_STATUSES: readonly IncidentStatus[] = ['abierto', 'en_atencion', 'escalado', 'resuelto'];
+
+/** Estados de origen permitidos por acción (doc 05 §2). `comment` se permite en cualquier estado. */
+const ALERT_ACTION_FROM: Record<AlertActionName, readonly AlertStatus[]> = {
+  review: ['nueva'],
+  confirm: ['nueva', 'en_revision'],
+  dismiss: ['nueva', 'en_revision'],
+  comment: ALERT_STATUSES,
+};
+
+const ALERT_ACTION_ORDER: readonly AlertActionName[] = ['review', 'confirm', 'dismiss', 'comment'];
+
+export function allowedAlertActions(status: AlertStatus): AlertActionName[] {
+  return ALERT_ACTION_ORDER.filter((action) => ALERT_ACTION_FROM[action].includes(status));
+}
+
+export function isActiveAlertStatus(status: AlertStatus): boolean {
+  return status === 'nueva' || status === 'en_revision';
+}

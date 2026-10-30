@@ -34,7 +34,7 @@ Las zonas, fuentes, tipos, equipos y usuarios están en el doc 07 §3 y en el do
 | Elemento | Cantidad | Detalle |
 |---|---|---|
 | Incidentes resueltos hoy | 6 | Para el KPI "Resueltos hoy" y su variación frente a ayer |
-| Alertas descartadas hoy | 3 | Para la tasa de falsos positivos |
+| Alertas descartadas hoy | 3 (+3 de la anomalía = 6 en total) | Para la tasa de falsos positivos; las 3 de la anomalía (Sala de embarque A, última hora) también cuentan |
 | Incidentes en curso | 3 | `INC` abierto (sin equipo, hace 20 min), en atención (Seguridad T1, hace 35 min) y escalado (Policía, hace 50 min) |
 | **Alertas activas** | **12** | Ver la tabla siguiente |
 
@@ -56,6 +56,8 @@ Las zonas, fuentes, tipos, equipos y usuarios están en el doc 07 §3 y en el do
 | 12 | Comportamiento anómalo | Media | nueva | Hall principal | CAM-T1-002 | 0,66 | 55 min |
 
 Las alertas en `en_revision` tienen `reviewed_by` y su evento `review` en la timeline.
+
+Las severidades de esta tabla son **fijas**. La elevación de un nivel por zona restringida (doc 05 §4.2) la aplica el simulador al generar eventos nuevos, no la semilla. Por eso la #7 (Puerta de servicio) se mantiene en Alta.
 
 ### Anomalía sembrada
 

@@ -59,7 +59,7 @@
 
 | Capa | Responsabilidad | Puede importar |
 |---|---|---|
-| `presentation/` | `pages/` (una por ruta), `components/` (UI reutilizable: `SeverityBadge`, `KpiCard`, `Timeline`, `ConfirmDialog`…), `layout/` (Sidebar, Topbar, DemoBanner), `map3d/` (escena de Three.js) | `application`, `domain` |
+| `presentation/` | `pages/` (una por ruta), `components/` (UI genérica reutilizable: `SeverityBadge`, `KpiCard`, `Timeline`, `ConfirmDialog`…), `features/<área>/` (componentes específicos de un área, p. ej. `features/alerts/`), `layout/` (Sidebar, Topbar, DemoBanner), `map3d/` (escena de Three.js) | `application`, `domain` |
 | `application/` | Hooks de casos de uso (`useAlerts`, `useAlertActions`, `useIncidents`, `useDashboard`, `useLiveEvents`), stores ligeros (perfil activo, toasts), `queryKeys.ts` | `infrastructure`, `domain` |
 | `domain/` | Tipos (`Alert`, `Incident`, `Zone`…), enums, metadatos de severidad y estado (etiqueta, color, icono), acciones permitidas por estado | Nada |
 | `infrastructure/` | `http.ts` (fetch con la cabecera `X-Actor-Id` y el manejo de errores), `sse.ts` (EventSource con reconexión), `api/*.ts` (un cliente por recurso) | `domain` |

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useReportEventOpen } from '../../application/stores/reportEvent';
 import { viewTitleForPath } from '../../domain/navigation';
+import { ReportEventDialog } from '../features/alerts/ReportEventDialog';
 import { DemoBanner } from './DemoBanner';
 import { Sidebar } from './Sidebar';
 import { SkipLink } from './SkipLink';
@@ -9,6 +11,7 @@ import { Topbar } from './Topbar';
 /** Shell de la aplicación (doc 09 §2): banner, sidebar, topbar y contenido. */
 export function Shell() {
   const { pathname } = useLocation();
+  const reportEventOpen = useReportEventOpen();
 
   useEffect(() => {
     document.title = `${viewTitleForPath(pathname)} · AeroSecure AI · Demo`;
@@ -27,6 +30,8 @@ export function Shell() {
           </main>
         </div>
       </div>
+      {/* Modal global "Reportar evento" (research R11): un solo montaje, abierto desde la Topbar o /alertas. */}
+      {reportEventOpen && <ReportEventDialog />}
     </div>
   );
 }

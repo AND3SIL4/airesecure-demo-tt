@@ -78,3 +78,159 @@ export const ROLE_LABELS: Record<Role, string> = {
   operador: 'Operador',
   supervisor: 'Supervisor',
 };
+
+// ---------------------------------------------------------------------------
+// Alertas (specs/002-alertas/contracts/api-alerts.md, doc 08 §2)
+// ---------------------------------------------------------------------------
+
+export type SourceKind = 'camara' | 'sensor' | 'reporte_manual' | 'analisis';
+
+export type AlertOrigin = 'seed' | 'simulador' | 'escenario' | 'manual';
+
+export type AlertActionName = 'review' | 'confirm' | 'dismiss' | 'comment';
+
+export type TimelineAction =
+  | 'created'
+  | 'review'
+  | 'confirm'
+  | 'dismiss'
+  | 'comment'
+  | 'incident_created'
+  | 'assign'
+  | 'start'
+  | 'escalate'
+  | 'resolve'
+  | 'demo_reset'
+  | 'scenario_triggered'
+  | 'settings_updated';
+
+export interface UserRef {
+  id: string;
+  alias: string;
+}
+
+export interface AlertTypeRef {
+  code: string;
+  name: string;
+}
+
+export interface ZoneRef {
+  id: string;
+  name: string;
+}
+
+export interface SourceRef {
+  id: string;
+  kind: SourceKind;
+  label: string;
+}
+
+/** Fuente del catálogo `GET /sources` (las lógicas no tienen zona). */
+export interface Source extends SourceRef {
+  zoneId: string | null;
+}
+
+export interface AlertSummary {
+  id: string;
+  type: AlertTypeRef;
+  severity: Severity;
+  status: AlertStatus;
+  zone: ZoneRef;
+  source: SourceRef;
+  /** ISO 8601 en UTC. */
+  detectedAt: string;
+  /** 0..1; null en los reportes manuales. */
+  confidence: number | null;
+  /** 0..100. */
+  score: number;
+  description: string;
+  incidentId: string | null;
+}
+
+export interface ScoreBreakdown {
+  severityWeight: number;
+  confidence: number;
+  zoneFactor: number;
+  zoneCriticality: number;
+  score: number;
+  manual: boolean;
+}
+
+export interface TimelineEvent {
+  id: number;
+  action: TimelineAction;
+  /** null = Sistema. */
+  actor: UserRef | null;
+  fromStatus: AlertStatus | IncidentStatus | null;
+  toStatus: AlertStatus | IncidentStatus | null;
+  comment: string | null;
+  payload: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface AlertDetail extends AlertSummary {
+  scoreBreakdown: ScoreBreakdown;
+  recommendation: string;
+  protocol: string[];
+  evidenceUrl: string;
+  evidenceIsIllustrative: boolean;
+  origin: AlertOrigin;
+  dismissReason: DismissReasonCode | null;
+  dismissReasonLabel: string | null;
+  dismissComment: string | null;
+  reviewedBy: UserRef | null;
+  reportedBy: UserRef | null;
+  firstActionAt: string | null;
+  closedAt: string | null;
+  timeline: TimelineEvent[];
+}
+
+export interface IncidentRef {
+  id: string;
+  status: IncidentStatus;
+  alertId: string;
+  openedAt: string;
+}
+
+/** Respuesta 201 de `confirm`. */
+export interface ConfirmAlertResult {
+  alert: AlertDetail;
+  incident: IncidentRef;
+}
+
+export interface Page<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export type AlertActionBody =
+  | { action: 'review' }
+  | { action: 'confirm'; note?: string }
+  | { action: 'dismiss'; reason: DismissReasonCode; comment?: string }
+  | { action: 'comment'; comment: string };
+
+export interface ManualAlertBody {
+  typeCode: string;
+  zoneId: string;
+  severity: Severity;
+  description: string;
+}
+
+export const SOURCE_KIND_LABELS: Record<SourceKind, string> = {
+  camara: 'Cámara',
+  sensor: 'Sensor de acceso',
+  reporte_manual: 'Reporte de operador',
+  analisis: 'Análisis de patrones',
+};
+
+/** Límites de texto compartidos con el backend (contracts/api-alerts.md). */
+export const TEXT_LIMITS = {
+  descriptionMin: 10,
+  descriptionMax: 500,
+  noteMax: 500,
+  commentMin: 3,
+  commentMax: 500,
+  dismissOtherMin: 10,
+} as const;

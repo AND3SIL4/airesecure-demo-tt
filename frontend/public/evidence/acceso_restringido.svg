@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <title>Ilustración: puerta de acceso restringido entreabierta con el lector encendido (imagen ilustrativa, sin datos personales)</title>
+  <rect width="320" height="180" fill="#e2e8f0"/>
+  <rect width="320" height="14" fill="#cbd5e1"/>
+  <rect x="40" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="200" y="5" width="40" height="3" rx="1.5" fill="#f8fafc"/>
+  <!-- Muro técnico -->
+  <rect x="0" y="14" width="320" height="136" fill="#d5dde7"/>
+  <g stroke="#c3cdd9" stroke-width="1">
+    <path d="M0 50 H320"/><path d="M0 90 H320"/><path d="M0 130 H320"/>
+  </g>
+  <!-- Señal de zona restringida -->
+  <rect x="120" y="52" width="58" height="34" rx="3" fill="#10264a"/>
+  <circle cx="136" cy="69" r="9" fill="none" stroke="#f8fafc" stroke-width="2.5"/>
+  <path d="M130 75 L142 63" stroke="#f8fafc" stroke-width="2.5"/>
+  <rect x="150" y="63" width="22" height="3" rx="1.5" fill="#f8fafc"/>
+  <rect x="150" y="70" width="16" height="3" rx="1.5" fill="#94a3b8"/>
+  <!-- Marco y puerta entreabierta (objeto detectado) -->
+  <rect x="198" y="48" width="56" height="104" fill="#475569"/>
+  <rect x="202" y="52" width="48" height="98" fill="#0b1b33"/>
+  <path d="M202 52 L232 58 L232 144 L202 150 Z" fill="#64748b"/>
+  <path d="M202 52 L232 58 L232 144 L202 150 Z" fill="none" stroke="#334155" stroke-width="1.5"/>
+  <rect x="225" y="96" width="3" height="10" rx="1.5" fill="#cbd5e1"/>
+  <path d="M232 58 L250 52 L250 150 L232 144 Z" fill="#1d3b6e" opacity="0.7"/>
+  <!-- Lector de acceso -->
+  <rect x="255" y="90" width="6" height="16" rx="1" fill="#10264a"/>
+  <circle cx="258" cy="94" r="1.6" fill="#f59e0b"/>
+  <rect x="256.5" y="99" width="3" height="4" rx="0.5" fill="#1d5fd1"/>
+  <!-- Suelo con franjas de advertencia -->
+  <path d="M0 150 H320 V180 H0 Z" fill="#b8c4d3"/>
+  <path d="M0 150 H320" stroke="#94a3b8" stroke-width="2"/>
+  <g fill="#d97706" opacity="0.75">
+    <path d="M196 151 h8 l-4 3.5 h-8 Z"/><path d="M210 151 h8 l-4 3.5 h-8 Z"/>
+    <path d="M224 151 h8 l-4 3.5 h-8 Z"/><path d="M238 151 h8 l-4 3.5 h-8 Z"/>
+    <path d="M252 151 h8 l-4 3.5 h-8 Z"/>
+  </g>
+  <g stroke="#a7b4c5" stroke-width="1">
+    <path d="M40 150 L10 180"/><path d="M120 150 L110 180"/><path d="M290 150 L310 180"/>
+  </g>
+</svg>

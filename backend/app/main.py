@@ -8,17 +8,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 
 from app.api.errors import register_error_handlers
-from app.api.routers import catalog, health
+from app.api.routers import alerts, catalog, health
 from app.config import APP_VERSION, CORS_ORIGINS
 from app.infrastructure.db import engine, init_db
-from app.infrastructure.seed import seed_catalogs
+from app.infrastructure.seed import seed_all
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     init_db()
     with Session(engine) as session:
-        seed_catalogs(session)
+        seed_all(session)
     yield
 
 
@@ -37,3 +37,4 @@ register_error_handlers(app)
 API_PREFIX = "/api"
 app.include_router(health.router, prefix=API_PREFIX)
 app.include_router(catalog.router, prefix=API_PREFIX)
+app.include_router(alerts.router, prefix=API_PREFIX)

@@ -36,3 +36,47 @@ class DismissReason(StrEnum):
     FALLA_CAMARA = "falla_camara"
     PERSONAL_AUTORIZADO = "personal_autorizado"
     OTRO = "otro"
+
+
+class AlertStatus(StrEnum):
+    NUEVA = "nueva"
+    EN_REVISION = "en_revision"
+    CONFIRMADA = "confirmada"
+    DESCARTADA = "descartada"
+
+
+class IncidentStatus(StrEnum):
+    ABIERTO = "abierto"
+    EN_ATENCION = "en_atencion"
+    ESCALADO = "escalado"
+    RESUELTO = "resuelto"
+
+
+class AlertOrigin(StrEnum):
+    SEED = "seed"
+    SIMULADOR = "simulador"
+    ESCENARIO = "escenario"
+    MANUAL = "manual"
+
+
+class AlertAction(StrEnum):
+    REVIEW = "review"
+    CONFIRM = "confirm"
+    DISMISS = "dismiss"
+    COMMENT = "comment"
+
+
+class TimelineAction(StrEnum):
+    CREATED = "created"
+    REVIEW = "review"
+    CONFIRM = "confirm"
+    DISMISS = "dismiss"
+    COMMENT = "comment"
+    INCIDENT_CREATED = "incident_created"
+    ASSIGN = "assign"
+    START = "start"
+    ESCALATE = "escalate"
+    RESOLVE = "resolve"
+    DEMO_RESET = "demo_reset"
+    SCENARIO_TRIGGERED = "scenario_triggered"
+    SETTINGS_UPDATED = "settings_updated"
