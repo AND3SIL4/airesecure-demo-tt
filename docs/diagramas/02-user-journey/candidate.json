@@ -1,0 +1,63 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AeroSecure AI — User journey del operador ante una alerta crítica",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/02-user-journey/user-journey.html"
+  },
+  "lanes": [
+    { "id": "op", "label": "Operador: hace / siente" },
+    { "id": "ui", "label": "Interfaz (touchpoint)" },
+    { "id": "sys", "label": "Sistema (backend)" }
+  ],
+  "phases": [
+    { "id": "p0", "label": "Ingresar", "fromCol": 0, "toCol": 0 },
+    { "id": "p1", "label": "Detectar", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
+    { "id": "p2", "label": "Entender", "fromCol": 2, "toCol": 2 },
+    { "id": "p3", "label": "Decidir", "fromCol": 3, "toCol": 3, "variant": "security" },
+    { "id": "p4", "label": "Responder", "fromCol": 4, "toCol": 4 },
+    { "id": "p5", "label": "Cerrar", "fromCol": 5, "toCol": 5 }
+  ],
+  "mainPath": ["j0", "j1", "j2", "j3", "j4", "j5"],
+  "nodes": [
+    { "id": "j0", "lane": "op", "col": 0, "type": "external", "label": "Elige perfil", "sublabel": "Operador 01", "tag": "tranquilo", "icon": "person" },
+    { "id": "j1", "lane": "op", "col": 1, "type": "external", "label": "Ve alerta crítica", "sublabel": "aviso + contador", "tag": "urgencia", "icon": "flag" },
+    { "id": "j2", "lane": "op", "col": 2, "type": "external", "label": "Revisa evidencia", "sublabel": "qué, dónde, por qué", "tag": "necesita contexto", "icon": "waiting" },
+    { "id": "j3", "lane": "op", "col": 3, "type": "external", "label": "Confirma alerta", "sublabel": "decisión humana", "tag": "con confianza", "icon": "decision" },
+    { "id": "j4", "lane": "op", "col": 4, "type": "external", "label": "Asigna y escala", "sublabel": "equipo + nota", "tag": "en control", "icon": "active" },
+    { "id": "j5", "lane": "op", "col": 5, "type": "external", "label": "Resuelve caso", "sublabel": "nota de cierre", "tag": "alivio", "icon": "success" },
+    { "id": "u0", "lane": "ui", "col": 0, "type": "frontend", "label": "Login simulado", "sublabel": "selector de perfil" },
+    { "id": "u1", "lane": "ui", "col": 1, "type": "frontend", "label": "Resumen", "sublabel": "toast, lista y mapa" },
+    { "id": "u2", "lane": "ui", "col": 2, "type": "frontend", "label": "Detalle de alerta", "sublabel": "score explicable" },
+    { "id": "u3", "lane": "ui", "col": 3, "type": "frontend", "label": "Diálogo confirmar", "sublabel": "acción con traza" },
+    { "id": "u4", "lane": "ui", "col": 4, "type": "frontend", "label": "Detalle incidente", "sublabel": "timeline en vivo" },
+    { "id": "u5", "lane": "ui", "col": 5, "type": "frontend", "label": "KPIs y análisis", "sublabel": "actualizados" },
+    { "id": "s1", "lane": "sys", "col": 1, "type": "messagebus", "label": "Emite alerta", "sublabel": "SSE alert.created" },
+    { "id": "s3", "lane": "sys", "col": 3, "type": "backend", "label": "Crea incidente", "sublabel": "INC abierto" },
+    { "id": "s4", "lane": "sys", "col": 4, "type": "database", "label": "Audita acción", "sublabel": "actor + hora" },
+    { "id": "s5", "lane": "sys", "col": 5, "type": "backend", "label": "Recalcula KPIs", "sublabel": "tiempos y tasas" }
+  ],
+  "edges": [
+    { "id": "m1", "from": "j0", "to": "j1" },
+    { "id": "m2", "from": "j1", "to": "j2" },
+    { "id": "m3", "from": "j2", "to": "j3" },
+    { "id": "m4", "from": "j3", "to": "j4" },
+    { "id": "m5", "from": "j4", "to": "j5" },
+    { "id": "t0", "from": "j0", "to": "u0", "variant": "dashed" },
+    { "id": "t1", "from": "u1", "to": "j1", "label": "notifica", "variant": "emphasis" },
+    { "id": "t2", "from": "j2", "to": "u2", "variant": "dashed" },
+    { "id": "t3", "from": "j3", "to": "u3", "variant": "dashed" },
+    { "id": "t4", "from": "j4", "to": "u4", "variant": "dashed" },
+    { "id": "t5", "from": "u5", "to": "j5", "label": "muestra cierre" },
+    { "id": "b1", "from": "s1", "to": "u1", "label": "push" },
+    { "id": "b3", "from": "u3", "to": "s3", "label": "POST" },
+    { "id": "b4", "from": "u4", "to": "s4", "label": "POST" },
+    { "id": "b5", "from": "s5", "to": "u5", "label": "datos" }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Momentos críticos", "items": ["Detectar: la alerta debe destacar sin saturar", "Decidir: la evidencia y el score deben explicar el porqué"] },
+    { "dot": "emerald", "title": "Oportunidades de diseño", "items": ["Atajo a críticas desde cualquier vista", "Confirmaciones en acciones irreversibles", "Timeline visible con actor y hora"] }
+  ]
+}

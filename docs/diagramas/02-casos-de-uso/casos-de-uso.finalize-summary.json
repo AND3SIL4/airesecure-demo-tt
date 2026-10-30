@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\candidate.json",
+    "sha256": "78247c7148ed277096e9faa36846d35673bdd40dc4ebbc55fef2279ed51ea00a",
+    "bytes": 4215
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\casos-de-uso.html",
+    "sha256": "6865898c0c6f75079f0b91d3ae88e21f0dffacc3f10390b8d038782cd4be76be",
+    "bytes": 854772
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\casos-de-uso.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\casos-de-uso.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\casos-de-uso.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 13677,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

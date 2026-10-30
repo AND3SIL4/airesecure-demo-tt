@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "eaea390e-fe7c-48cc-8b70-e64bb7932636",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\flujo-alerta-critica.html",
+  "specification": {
+    "sha256": "b2fe10a775eec25f84739bcd975d13f08e7c138feecb11d2cf04ea40eb5edf8f",
+    "bytes": 3955
+  },
+  "artifact": {
+    "sha256": "6405967cdebe073ed3e0a95f6d2deb201b8a5fa40d55d88259ee5b981e098fb1",
+    "bytes": 852140
+  }
+}

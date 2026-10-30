@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "9bbb2c6e-f415-4ce8-b1b2-6f00298ba7fd",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-casos-de-uso\\casos-de-uso.html",
+  "specification": {
+    "sha256": "7b15846e2e5fb2459ddfd28f27ce5c560087352b039c8332171e79d996e85cec",
+    "bytes": 4233
+  },
+  "artifact": {
+    "sha256": "3c4eb443a46635e5b7c5a68de6ee8c78109a66c4b92ad275b3690c987a54ab09",
+    "bytes": 854871
+  }
+}

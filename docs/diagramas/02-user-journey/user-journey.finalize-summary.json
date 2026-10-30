@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\candidate.json",
+    "sha256": "acf2f0115f2dab7260fd25d9bc24965985eccc68928a70fca0e766eca9763eb0",
+    "bytes": 4519
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\user-journey.html",
+    "sha256": "79f938532e777d70ca06c0694dd3dce6447493da547961b7be117154a446d7f7",
+    "bytes": 858656
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\user-journey.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\user-journey.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\user-journey.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 11580,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

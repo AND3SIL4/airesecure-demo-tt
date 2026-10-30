@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "fe2a22f7-153c-4a66-bf9d-6b9255b39f84",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\02-user-journey\\user-journey.html",
+  "specification": {
+    "sha256": "acf2f0115f2dab7260fd25d9bc24965985eccc68928a70fca0e766eca9763eb0",
+    "bytes": 4519
+  },
+  "artifact": {
+    "sha256": "79f938532e777d70ca06c0694dd3dce6447493da547961b7be117154a446d7f7",
+    "bytes": 858656
+  }
+}

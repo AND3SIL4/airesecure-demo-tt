@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\candidate.json",
+    "sha256": "b2fe10a775eec25f84739bcd975d13f08e7c138feecb11d2cf04ea40eb5edf8f",
+    "bytes": 3955
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\flujo-alerta-critica.html",
+    "sha256": "6405967cdebe073ed3e0a95f6d2deb201b8a5fa40d55d88259ee5b981e098fb1",
+    "bytes": 852140
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\flujo-alerta-critica.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\flujo-alerta-critica.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-alerta-critica\\flujo-alerta-critica.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 11466,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

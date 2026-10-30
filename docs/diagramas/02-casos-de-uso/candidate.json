@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AeroSecure AI — Diagrama de casos de uso (MVP demo)",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/02-casos-de-uso/casos-de-uso.html",
+    "legend": {
+      "entries": {
+        "external": { "label": "Actor" },
+        "frontend": { "label": "Casos de uso operativos" },
+        "backend": { "label": "Casos de uso de supervisión" },
+        "messagebus": { "label": "Casos de uso del sistema" },
+        "security": { "label": "Acceso" }
+      }
+    }
+  },
+  "components": [
+    { "id": "operador", "type": "external", "label": "Operador", "sublabel": "centro de monitoreo", "icon": "person", "pos": [40, 250], "size": [130, 64] },
+    { "id": "supervisor", "type": "external", "label": "Supervisor", "sublabel": "seguridad", "icon": "person", "pos": [640, 400], "size": [130, 64] },
+    { "id": "simulador", "type": "external", "label": "Simulador", "sublabel": "actor sistema", "icon": "clock", "pos": [40, 780], "size": [130, 64] },
+    { "id": "g_acceso", "type": "security", "label": "Iniciar sesión simulada", "sublabel": "UC-01", "pos": [280, 40], "size": [260, 56] },
+    { "id": "g_monitor", "type": "frontend", "label": "Monitorear la operación", "sublabel": "UC-02 resumen · UC-03 alertas · UC-04 mapa", "pos": [280, 130], "size": [260, 56] },
+    { "id": "g_alerta", "type": "frontend", "label": "Revisar y decidir alerta", "sublabel": "UC-05 a UC-08", "pos": [280, 220], "size": [260, 56] },
+    { "id": "g_incidente", "type": "frontend", "label": "Gestionar incidente", "sublabel": "UC-09 a UC-12", "pos": [280, 330], "size": [260, 56] },
+    { "id": "g_manual", "type": "frontend", "label": "Reportar evento manual", "sublabel": "UC-13", "pos": [280, 420], "size": [260, 56] },
+    { "id": "g_historial", "type": "frontend", "label": "Consultar historial", "sublabel": "UC-14 incidentes · UC-15 detalle", "pos": [280, 510], "size": [260, 56] },
+    { "id": "g_analisis", "type": "backend", "label": "Analizar y exportar", "sublabel": "UC-16 tendencias · UC-17 CSV", "pos": [280, 600], "size": [260, 56] },
+    { "id": "g_admin", "type": "backend", "label": "Administrar la demo", "sublabel": "UC-18 ajustes · UC-19 reinicio", "pos": [280, 690], "size": [260, 56] },
+    { "id": "g_sistema", "type": "messagebus", "label": "Generar y priorizar alertas", "sublabel": "UC-20 · UC-21", "pos": [280, 780], "size": [260, 56] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Sistema AeroSecure AI (demo local)", "wraps": ["g_acceso", "g_monitor", "g_alerta", "g_incidente", "g_manual", "g_historial", "g_analisis", "g_admin", "g_sistema"] }
+  ],
+  "connections": [
+    { "id": "op-acceso", "from": "operador", "to": "g_acceso" },
+    { "id": "op-monitor", "from": "operador", "to": "g_monitor" },
+    { "id": "op-alerta", "from": "operador", "to": "g_alerta" },
+    { "id": "op-incidente", "from": "operador", "to": "g_incidente", "toSide": "left" },
+    { "id": "op-manual", "from": "operador", "to": "g_manual" },
+    { "id": "op-historial", "from": "operador", "to": "g_historial" },
+    { "id": "sup-acceso", "from": "supervisor", "to": "g_acceso" },
+    { "id": "sup-monitor", "from": "supervisor", "to": "g_monitor" },
+    { "id": "sup-incidente", "from": "supervisor", "to": "g_incidente" },
+    { "id": "sup-historial", "from": "supervisor", "to": "g_historial" },
+    { "id": "sup-analisis", "from": "supervisor", "to": "g_analisis" },
+    { "id": "sup-admin", "from": "supervisor", "to": "g_admin" },
+    { "id": "sim-sistema", "from": "simulador", "to": "g_sistema", "label": "dispara" },
+    { "id": "include-incidente", "from": "g_alerta", "to": "g_incidente", "label": "«include»", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Operador", "items": ["Atiende alertas en primera instancia", "Confirma, descarta, asigna, escala y resuelve"] },
+    { "dot": "violet", "title": "Supervisor", "items": ["Gestiona incidentes y consulta el historial", "Analítica, exportación y configuración de la demo"] },
+    { "dot": "amber", "title": "Simulador", "items": ["Actor no humano del backend", "Emite eventos que se vuelven alertas"] }
+  ]
+}

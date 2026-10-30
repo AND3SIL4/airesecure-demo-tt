@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AeroSecure AI — Flujo conceptual de la solución (demo)",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/01-flujo-conceptual/flujo-conceptual.html"
+  },
+  "lanes": [
+    { "id": "fuentes", "label": "Fuentes de datos" },
+    { "id": "motor", "label": "Motor AeroSecure (backend)" },
+    { "id": "humano", "label": "Centro de monitoreo" },
+    { "id": "descartes", "label": "Cierre sin incidente", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "f1", "label": "1. Recolección", "fromCol": 0, "toCol": 0 },
+    { "id": "f2", "label": "2. Análisis", "fromCol": 1, "toCol": 1 },
+    { "id": "f3", "label": "3. Priorización", "fromCol": 2, "toCol": 2, "variant": "emphasis" },
+    { "id": "f4", "label": "4. Alertas", "fromCol": 3, "toCol": 3 },
+    { "id": "f5", "label": "5. Decisión humana", "fromCol": 4, "toCol": 5, "variant": "security" }
+  ],
+  "mainPath": ["fuentes_sim", "ingesta", "analisis", "scoring", "alerta", "panel", "revision", "incidente"],
+  "nodes": [
+    { "id": "fuentes_sim", "lane": "fuentes", "col": 0, "type": "external", "label": "Fuentes simuladas", "sublabel": "cámaras · sensores · reportes" },
+    { "id": "ingesta", "lane": "motor", "col": 0, "type": "backend", "label": "Ingesta de eventos", "sublabel": "normaliza zona y fuente" },
+    { "id": "analisis", "lane": "motor", "col": 1, "type": "backend", "label": "Análisis por reglas", "sublabel": "patrones y anomalías", "tag": "demostrativo" },
+    { "id": "scoring", "lane": "motor", "col": 2, "type": "backend", "label": "Score de riesgo", "sublabel": "severidad × confianza × zona" },
+    { "id": "alerta", "lane": "motor", "col": 3, "type": "messagebus", "label": "Alerta publicada", "sublabel": "evento SSE" },
+    { "id": "historico", "lane": "motor", "col": 5, "type": "database", "label": "Histórico", "sublabel": "SQLite + auditoría" },
+    { "id": "panel", "lane": "humano", "col": 3, "type": "frontend", "label": "Panel del operador", "sublabel": "resumen, lista y mapa" },
+    { "id": "revision", "lane": "humano", "col": 4, "type": "security", "label": "Revisión humana", "sublabel": "evidencia + recomendación", "icon": "decision" },
+    { "id": "incidente", "lane": "humano", "col": 5, "type": "frontend", "label": "Incidente confirmado", "sublabel": "asignar · escalar · resolver" },
+    { "id": "descartada", "lane": "descartes", "col": 5, "type": "security", "label": "Falso positivo", "sublabel": "motivo registrado" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "fuentes_sim", "to": "ingesta", "label": "eventos" },
+    { "id": "e2", "from": "ingesta", "to": "analisis" },
+    { "id": "e3", "from": "analisis", "to": "scoring", "label": "señal" },
+    { "id": "e4", "from": "scoring", "to": "alerta", "label": "≥ umbral", "variant": "emphasis" },
+    { "id": "e5", "from": "alerta", "to": "panel", "label": "tiempo real" },
+    { "id": "e6", "from": "panel", "to": "revision" },
+    { "id": "e7", "from": "revision", "to": "incidente", "label": "confirma", "variant": "emphasis" },
+    { "id": "e8", "from": "revision", "to": "descartada", "label": "descarta", "variant": "security", "role": "error" },
+    { "id": "e9", "from": "incidente", "to": "historico", "label": "registra", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Qué es simulado en la demo", "items": ["Fuentes: generador de eventos del backend", "Análisis: reglas estadísticas, no modelos de ML", "Evidencia: imágenes ilustrativas sin rostros"] },
+    { "dot": "rose", "title": "Principio rector", "items": ["La IA prioriza; la decisión es humana", "Ninguna alerta se convierte en incidente sin confirmación"] },
+    { "dot": "emerald", "title": "Retroalimentación", "items": ["El histórico alimenta tendencias y anomalías", "Los falsos positivos ajustan la tasa de confirmación"] }
+  ]
+}

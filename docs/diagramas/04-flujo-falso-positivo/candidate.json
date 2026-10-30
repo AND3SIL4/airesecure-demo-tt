@@ -1,0 +1,43 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AeroSecure AI — Flujo: descartar un falso positivo",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/04-flujo-falso-positivo/flujo-falso-positivo.html"
+  },
+  "lanes": [
+    { "id": "sistema", "label": "Sistema" },
+    { "id": "operador", "label": "Operador" },
+    { "id": "excepcion", "label": "Validaciones y desvíos", "variant": "exception" }
+  ],
+  "mainPath": ["generada", "abre", "revisa", "decide", "marca", "confirma", "descarta"],
+  "nodes": [
+    { "id": "generada", "lane": "sistema", "col": 0, "type": "backend", "label": "Alerta generada", "sublabel": "estado: nueva", "icon": "start" },
+    { "id": "descarta", "lane": "sistema", "col": 5, "type": "database", "label": "Descarta y audita", "sublabel": "motivo + actor + hora", "icon": "success" },
+    { "id": "abre", "lane": "operador", "col": 0, "type": "frontend", "label": "Abre la alerta", "sublabel": "estado: en revisión" },
+    { "id": "revisa", "lane": "operador", "col": 1, "type": "frontend", "label": "Revisa evidencia", "sublabel": "imagen, score, zona" },
+    { "id": "decide", "lane": "operador", "col": 2, "type": "security", "label": "¿Es falso positivo?", "sublabel": "decisión humana", "icon": "decision" },
+    { "id": "marca", "lane": "operador", "col": 3, "type": "frontend", "label": "Marcar falso positivo", "sublabel": "motivo + comentario" },
+    { "id": "confirma", "lane": "operador", "col": 4, "type": "security", "label": "Confirma acción", "sublabel": "diálogo irreversible" },
+    { "id": "critico", "lane": "excepcion", "col": 2, "type": "frontend", "label": "Flujo de atención", "sublabel": "ver alerta crítica" },
+    { "id": "valida", "lane": "excepcion", "col": 3, "type": "security", "label": "Motivo requerido", "sublabel": "error de validación", "icon": "failure" },
+    { "id": "cancela", "lane": "excepcion", "col": 4, "type": "frontend", "label": "Cancela", "sublabel": "sigue en revisión" }
+  ],
+  "edges": [
+    { "id": "f1", "from": "generada", "to": "abre" },
+    { "id": "f2", "from": "abre", "to": "revisa" },
+    { "id": "f3", "from": "revisa", "to": "decide" },
+    { "id": "f4", "from": "decide", "to": "marca", "label": "sí" },
+    { "id": "f5", "from": "decide", "to": "critico", "label": "no", "role": "branch" },
+    { "id": "f6", "from": "marca", "to": "confirma", "label": "motivo válido" },
+    { "id": "f7", "from": "marca", "to": "valida", "label": "sin motivo", "variant": "security", "role": "error" },
+    { "id": "f8", "from": "confirma", "to": "cancela", "label": "no", "role": "branch", "variant": "dashed" },
+    { "id": "f9", "from": "confirma", "to": "descarta", "label": "sí", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "amber", "title": "Motivos sugeridos", "items": ["Objeto identificado como pertenencia del personal", "Movimiento normal de pasajeros", "Falla o reflejo de cámara", "Otro (texto libre)"] },
+    { "dot": "cyan", "title": "Efecto en la demo", "items": ["Estado: descartada; no se crea incidente", "Sube la tasa de falsos positivos en Análisis"] }
+  ]
+}

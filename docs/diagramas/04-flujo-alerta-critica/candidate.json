@@ -1,0 +1,54 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AeroSecure AI — Flujo: atender una alerta crítica",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagramas/04-flujo-alerta-critica/flujo-alerta-critica.html"
+  },
+  "lanes": [
+    { "id": "sistema", "label": "Sistema" },
+    { "id": "operador", "label": "Operador" },
+    { "id": "equipo", "label": "Equipo de respuesta" },
+    { "id": "excepcion", "label": "Desvíos", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "ph_det", "label": "Detección", "fromCol": 0, "toCol": 1 },
+    { "id": "ph_rev", "label": "Revisión", "fromCol": 2, "toCol": 3, "variant": "security" },
+    { "id": "ph_resp", "label": "Respuesta y cierre", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": ["detecta", "notifica", "abre", "revisa", "decide", "crea_inc", "asigna", "atiende", "resuelve", "cierra"],
+  "nodes": [
+    { "id": "detecta", "lane": "sistema", "col": 0, "type": "backend", "label": "Alerta crítica", "sublabel": "estado: nueva", "icon": "start" },
+    { "id": "notifica", "lane": "sistema", "col": 1, "type": "messagebus", "label": "Notifica", "sublabel": "toast, contador, mapa" },
+    { "id": "crea_inc", "lane": "sistema", "col": 3, "type": "backend", "label": "Crea incidente", "sublabel": "alerta: confirmada" },
+    { "id": "cierra", "lane": "sistema", "col": 5, "type": "database", "label": "Registra cierre", "sublabel": "timeline + KPIs", "icon": "success" },
+    { "id": "abre", "lane": "operador", "col": 1, "type": "frontend", "label": "Abre la alerta", "sublabel": "estado: en revisión" },
+    { "id": "revisa", "lane": "operador", "col": 2, "type": "frontend", "label": "Revisa evidencia", "sublabel": "score, zona, protocolo" },
+    { "id": "decide", "lane": "operador", "col": 3, "type": "security", "label": "¿Requiere atención?", "sublabel": "decisión humana", "icon": "decision" },
+    { "id": "asigna", "lane": "operador", "col": 4, "type": "frontend", "label": "Asigna equipo", "sublabel": "nota · en atención" },
+    { "id": "resuelve", "lane": "operador", "col": 5, "type": "frontend", "label": "Resuelve", "sublabel": "nota obligatoria" },
+    { "id": "atiende", "lane": "equipo", "col": 4, "type": "external", "label": "Atiende en sitio", "sublabel": "según protocolo" },
+    { "id": "falso", "lane": "excepcion", "col": 3, "type": "security", "label": "Falso positivo", "sublabel": "ver flujo alterno", "icon": "stop" },
+    { "id": "escala", "lane": "excepcion", "col": 5, "type": "security", "label": "Escalar", "sublabel": "EOD, policía, médico" }
+  ],
+  "edges": [
+    { "id": "a1", "from": "detecta", "to": "notifica", "label": "SSE" },
+    { "id": "a2", "from": "notifica", "to": "abre" },
+    { "id": "a3", "from": "abre", "to": "revisa" },
+    { "id": "a4", "from": "revisa", "to": "decide" },
+    { "id": "a5", "from": "decide", "to": "crea_inc", "label": "sí: confirmar", "variant": "emphasis" },
+    { "id": "a6", "from": "decide", "to": "falso", "label": "no", "variant": "security", "role": "error" },
+    { "id": "a7", "from": "crea_inc", "to": "asigna" },
+    { "id": "a8", "from": "asigna", "to": "atiende", "label": "despacha" },
+    { "id": "a9", "from": "atiende", "to": "resuelve", "label": "controlado" },
+    { "id": "a10", "from": "atiende", "to": "escala", "label": "excede capacidad", "variant": "security", "role": "branch" },
+    { "id": "a11", "from": "escala", "to": "resuelve", "label": "atendido", "variant": "dashed" },
+    { "id": "a12", "from": "resuelve", "to": "cierra", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Confirmación obligatoria", "items": ["Confirmar, escalar y resolver piden diálogo de confirmación", "Resolver exige nota de cierre"] },
+    { "dot": "cyan", "title": "Trazabilidad", "items": ["Cada paso queda en la timeline con actor y hora", "La alerta y el incidente quedan vinculados"] }
+  ]
+}

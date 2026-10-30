@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "8287091d-931b-4e12-8d24-1ccea2629cbe",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\01-flujo-conceptual\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\01-flujo-conceptual\\flujo-conceptual.html",
+  "specification": {
+    "sha256": "b033d2f9df894e3cab7d7e6f3244f62048a6efabc1aca029cd08f80685df63df",
+    "bytes": 3938
+  },
+  "artifact": {
+    "sha256": "6dceba863289215fcde18ffe35e5296cdcefcc7980c8cf197a45c1fd164c84f4",
+    "bytes": 850692
+  }
+}

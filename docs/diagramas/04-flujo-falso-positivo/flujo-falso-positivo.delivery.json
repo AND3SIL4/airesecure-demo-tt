@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "a19042d2-63e9-4455-990d-d4f9cb93c56c",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\candidate.json",
+  "output": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\flujo-falso-positivo.html",
+  "specification": {
+    "sha256": "00e64669ce4106af2255556fa99bad7085a82ffc6d05069824b078431332dc17",
+    "bytes": 3154
+  },
+  "artifact": {
+    "sha256": "ee161472c614f4a400a0cb37bdf55165aec15b9d076e966c606cfb808ce0407d",
+    "bytes": 845749
+  }
+}

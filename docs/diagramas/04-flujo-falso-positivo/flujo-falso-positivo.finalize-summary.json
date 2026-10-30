@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\candidate.json",
+    "sha256": "00e64669ce4106af2255556fa99bad7085a82ffc6d05069824b078431332dc17",
+    "bytes": 3154
+  },
+  "artifact": {
+    "path": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\flujo-falso-positivo.html",
+    "sha256": "ee161472c614f4a400a0cb37bdf55165aec15b9d076e966c606cfb808ce0407d",
+    "bytes": 845749
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\flujo-falso-positivo.finalize.json",
+    "summaryReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\flujo-falso-positivo.finalize-summary.json",
+    "browserCheckReceipt": "C:\\development-projects\\airsecure-project\\docs\\diagramas\\04-flujo-falso-positivo\\flujo-falso-positivo.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T17:21:41.347Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 12434,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}
