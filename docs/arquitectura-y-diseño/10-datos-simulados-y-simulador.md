@@ -61,7 +61,7 @@ Las severidades de esta tabla son **fijas**. La elevación de un nivel por zona 
 
 ### Anomalía sembrada
 
-En los últimos 60 minutos hay **5** alertas de "Concentración inusual" en la Sala de embarque A: las #3 y #4, más 3 descartadas o confirmadas. Frente a una media histórica de ≈ 3/h en esa zona da ≈ **+65 %**, lo que aparece en el Resumen y en Análisis como "Aumento inusual · Sala de embarque A · +65 %".
+En los últimos 60 minutos hay **5** alertas de "Concentración inusual" en la Sala de embarque A: las #3 y #4, más 3 descartadas. Con la regla del doc 05 §7 (referencia mínima de 1 alerta/h), el Resumen y Análisis muestran "Aumento inusual · Sala de embarque A" y "Aumento inusual · Concentración inusual de personas" con la variación que resulte del cálculo (≈ +400 % con los datos sembrados). La cifra "+65 %" del mockup era solo ilustrativa.
 
 ## 5. Textos de las alertas
 

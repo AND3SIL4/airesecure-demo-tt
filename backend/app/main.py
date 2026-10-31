@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 
 from app.api.errors import register_error_handlers
-from app.api.routers import alerts, catalog, demo, health, incidents, stream
+from app.api.routers import alerts, catalog, dashboard, demo, health, incidents, stream
 from app.config import APP_VERSION, CORS_ORIGINS
 from app.infrastructure.db import engine, init_db
 from app.infrastructure.event_bus import EventBus, close_on_exit_signals
@@ -53,5 +53,6 @@ app.include_router(health.router, prefix=API_PREFIX)
 app.include_router(catalog.router, prefix=API_PREFIX)
 app.include_router(alerts.router, prefix=API_PREFIX)
 app.include_router(incidents.router, prefix=API_PREFIX)
+app.include_router(dashboard.router, prefix=API_PREFIX)
 app.include_router(stream.router, prefix=API_PREFIX)
 app.include_router(demo.router, prefix=API_PREFIX)

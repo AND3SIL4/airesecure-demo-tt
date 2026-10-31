@@ -97,7 +97,7 @@ interface TimelineEvent {
 
 | Método | Ruta | Respuesta |
 |---|---|---|
-| GET | `/api/dashboard/summary` | `{ kpis: { activeAlerts, criticalAlerts, openIncidents, resolvedToday, avgResponseSecondsToday }, deltas: {...vsYesterday}, topAlerts: AlertSummary[6], zones: ZoneStatus[], byCategory7d: {type, count}[], trend24h: {hour, count}[], anomalies: Anomaly[] }` |
+| GET | `/api/dashboard/summary` | `{ kpis: { activeAlerts, criticalAlerts, openIncidents, resolvedToday, avgResponseSecondsToday }, deltas: {...vsYesterday}, topAlerts: AlertSummary[6], zones: ZoneStatus[], byCategory7d: {type, count}[], trend24h: {hour, count}[], anomalies: Anomaly[] }`. Detalle: `specs/005-resumen/contracts/api-dashboard.md` (incluye `generatedAt`, `deltas` con `kind` pct/abs/none, `activeAlertMarkers` y `anomalies` con `hourlyMean` = referencia) |
 
 ### 3.3 Alertas
 

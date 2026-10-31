@@ -38,6 +38,18 @@
   }
 }
 
+/* Paleta categórica de los gráficos (contraste >= 3:1 sobre blanco; sin rojo, reservado a lo crítico).
+   `static`: las variables se emiten siempre porque Recharts las usa como `var(--color-chart-N)`. */
+@theme static {
+  --color-chart-1: #1d5fd1;
+  --color-chart-2: #10264a;
+  --color-chart-3: #0e7490;
+  --color-chart-4: #7c3aed;
+  --color-chart-5: #4d7c0f;
+  --color-chart-6: #78350f;
+  --color-chart-7: #64748b;
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);

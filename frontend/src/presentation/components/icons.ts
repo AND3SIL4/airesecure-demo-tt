@@ -1,6 +1,7 @@
 // Traducción de los nombres de icono del dominio a componentes de lucide-react.
 import {
   Activity,
+  BellRing,
   ArrowUpRight,
   ChartLine,
   CheckCheck,
@@ -21,10 +22,12 @@ import {
   Settings,
   Siren,
   Sparkles,
+  Timer,
   TriangleAlert,
   Users,
   type LucideIcon,
 } from 'lucide-react';
+import type { KpiIcon } from '../../domain/kpis';
 import type { NavIcon } from '../../domain/navigation';
 import type { SeverityIcon } from '../../domain/severity';
 import type { StatusIcon } from '../../domain/status';
@@ -73,4 +76,12 @@ export const TIMELINE_ICONS: Record<TimelineIcon, LucideIcon> = {
   'rotate-ccw': RotateCcw,
   play: Play,
   settings: Settings,
+};
+
+export const KPI_ICONS: Record<KpiIcon, LucideIcon> = {
+  'bell-ring': BellRing,
+  'octagon-alert': OctagonAlert,
+  'folder-open': FolderOpen,
+  'check-check': CheckCheck,
+  timer: Timer,
 };

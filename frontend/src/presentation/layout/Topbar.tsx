@@ -1,45 +1,48 @@
 import { Bell, OctagonAlert, Plus } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { useCallback, useId, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useCriticalCount } from '../../application/hooks/useCriticalCount';
 import { useLiveStatus } from '../../application/stores/liveStatus';
 import { useNotifications } from '../../application/stores/notifications';
 import { openReportEvent } from '../../application/stores/reportEvent';
-import { AIRPORT_LABEL, UPCOMING_FEATURE_MESSAGE, viewTitleForPath } from '../../domain/navigation';
+import { AIRPORT_LABEL, viewTitleForPath } from '../../domain/navigation';
 import { NotificationsPopover } from '../components/NotificationsPopover';
-import { Tooltip } from '../components/Tooltip';
 import { Clock } from './Clock';
 
-interface PendingButtonProps {
-  icon: LucideIcon;
-  label: string;
-  /** Muestra el texto solo desde 1280 px; por debajo queda el icono con el nombre accesible. */
-  compactBelowXl?: boolean;
-  iconOnly?: boolean;
-  tooltipSide?: 'bottom' | 'bottom-end';
-}
+const CRITICAL_ALERTS_LINK = '/alertas?status=activas&severity=critica';
 
-/** Botón de una función futura: enfocable, deshabilitado con aria-disabled y con tooltip. */
-function PendingButton({
-  icon: Icon,
-  label,
-  compactBelowXl = false,
-  iconOnly = false,
-  tooltipSide = 'bottom',
-}: PendingButtonProps) {
+/** "Críticas (N)": resaltado si N > 0 y enlace a las alertas críticas activas (HU-09). */
+function CriticalButton() {
+  const { data, isError } = useCriticalCount();
+  const count = data ?? 0;
+  const known = data !== undefined;
+  const active = count > 0;
+  const accessibleName = !known
+    ? isError
+      ? 'Alertas críticas activas (no disponible)'
+      : 'Alertas críticas activas (cargando)'
+    : count === 1
+      ? '1 alerta crítica activa'
+      : `${count} alertas críticas activas`;
+
   return (
-    <Tooltip content={UPCOMING_FEATURE_MESSAGE} side={tooltipSide}>
-      <button
-        type="button"
-        aria-disabled="true"
-        aria-label={iconOnly ? label : undefined}
-        onClick={(event) => event.preventDefault()}
-        className="inline-flex h-9 cursor-not-allowed items-center gap-2 rounded-md border border-white/15 px-3 text-sm font-medium text-slate-300 opacity-80"
-      >
-        <Icon aria-hidden="true" className="size-4 shrink-0" />
-        {!iconOnly && <span className={compactBelowXl ? 'sr-only xl:not-sr-only' : ''}>{label}</span>}
-      </button>
-    </Tooltip>
+    <Link
+      to={CRITICAL_ALERTS_LINK}
+      aria-label={accessibleName}
+      title={accessibleName}
+      className={`inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium transition-colors duration-200 ${
+        active
+          ? 'border-sev-critica bg-sev-critica text-white hover:bg-sev-critica-text'
+          : 'border-white/25 bg-white/5 text-white hover:bg-white/15'
+      }`}
+    >
+      <OctagonAlert aria-hidden="true" className="size-4 shrink-0" />
+      <span aria-hidden="true" className="tabular">
+        <span className="hidden xl:inline">Críticas </span>
+        <span className="xl:hidden">{known ? count : '–'}</span>
+        <span className="hidden xl:inline">({known ? count : '–'})</span>
+      </span>
+    </Link>
   );
 }
 
@@ -131,7 +134,7 @@ export function Topbar() {
       <Clock className="hidden text-sm text-slate-200 md:block" />
 
       <div className="flex shrink-0 items-center gap-2">
-        <PendingButton icon={OctagonAlert} label="Críticas" compactBelowXl />
+        <CriticalButton />
         <button
           type="button"
           onClick={openReportEvent}

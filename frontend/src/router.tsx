@@ -12,6 +12,7 @@ import { IncidentsPage } from './presentation/pages/IncidentsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
 import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
+import { SummaryPage } from './presentation/pages/SummaryPage';
 
 // Rutas según specs/001-fundacion/contracts/ui-routes.md.
 // RootLayout envuelve todo para que el Toaster quede dentro del contexto del router (Link sin recarga).
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
           {
             element: <Shell />,
             children: [
-              { index: true, element: <PlaceholderPage title={VIEW_TITLES.summary} showComponentPreview /> },
+              { index: true, element: <SummaryPage /> },
               { path: '/alertas', element: <AlertsPage /> },
               { path: '/alertas/:id', element: <AlertDetailPage /> },
               { path: '/incidentes', element: <IncidentsPage /> },

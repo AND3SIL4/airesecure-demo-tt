@@ -286,3 +286,76 @@ export const INCIDENT_TEXT_LIMITS = {
   resolutionNoteMin: 10,
   resolutionNoteMax: 500,
 } as const;
+
+// ---------------------------------------------------------------------------
+// Resumen (specs/005-resumen/contracts/api-dashboard.md, doc 08 §3.2)
+// ---------------------------------------------------------------------------
+
+export interface DashboardKpis {
+  activeAlerts: number;
+  criticalAlerts: number;
+  openIncidents: number;
+  resolvedToday: number;
+  /** null si hoy no hay incidentes con primera acción. */
+  avgResponseSecondsToday: number | null;
+}
+
+export type KpiKey = keyof DashboardKpis;
+
+/**
+ * Variación frente a ayer (de 00:00 a la misma hora).
+ * `pct`: porcentaje; `abs`: ayer = 0 y hoy > 0 (diferencia absoluta); `none`: sin datos de ayer.
+ */
+export type Delta =
+  | { kind: 'pct'; value: number | null; previous: number | null; pct: number }
+  | { kind: 'abs'; value: number | null; previous: number | null; diff: number }
+  | { kind: 'none'; value: number | null; previous: number | null };
+
+export interface ZoneStatus {
+  id: string;
+  name: string;
+  riskLevel: RiskLevel;
+  activeAlerts: number;
+}
+
+export interface AlertMarker {
+  id: string;
+  zoneId: string;
+  severity: Severity;
+}
+
+export interface CategoryCount {
+  typeCode: string;
+  typeName: string;
+  count: number;
+}
+
+export interface HourlyCount {
+  /** ISO 8601 con offset de Bogotá (inicio de la hora). */
+  hour: string;
+  count: number;
+}
+
+export type AnomalyScope = 'zone' | 'type';
+
+export interface Anomaly {
+  scope: AnomalyScope;
+  key: string;
+  label: string;
+  lastHour: number;
+  /** Media horaria de referencia (mínimo 1,0). */
+  hourlyMean: number;
+  variationPct: number;
+}
+
+export interface DashboardSummary {
+  generatedAt: string;
+  kpis: DashboardKpis;
+  deltas: Record<KpiKey, Delta>;
+  topAlerts: AlertSummary[];
+  zones: ZoneStatus[];
+  activeAlertMarkers: AlertMarker[];
+  byCategory7d: CategoryCount[];
+  trend24h: HourlyCount[];
+  anomalies: Anomaly[];
+}

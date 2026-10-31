@@ -46,3 +46,9 @@ export async function getActiveAlertsTotal(): Promise<number> {
   const page = await http.get<Page<AlertSummary>>('/alerts?status=activas&pageSize=1');
   return page.total;
 }
+
+/** Total de alertas críticas activas para el botón "Críticas (N)" (`pageSize=1`). */
+export async function getCriticalTotal(): Promise<number> {
+  const page = await http.get<Page<AlertSummary>>('/alerts?status=activas&severity=critica&pageSize=1');
+  return page.total;
+}

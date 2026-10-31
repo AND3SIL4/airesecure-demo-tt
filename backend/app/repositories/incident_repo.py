@@ -126,3 +126,42 @@ class IncidentRepository:
             .where(col(Incident.status).in_([s.value for s in IN_COURSE_INCIDENT_STATUSES]))
         )
         return int(self.session.exec(stmt).one())
+
+    def count_opened_between(self, start: datetime, end: datetime) -> int:
+        """Incidentes abiertos en [start, end), en cualquier estado."""
+        stmt = (
+            select(func.count())
+            .select_from(Incident)
+            .where(col(Incident.opened_at) >= start, col(Incident.opened_at) < end)
+        )
+        return int(self.session.exec(stmt).one())
+
+    def count_resolved_between(self, start: datetime, end: datetime) -> int:
+        """Incidentes resueltos en [start, end)."""
+        stmt = (
+            select(func.count())
+            .select_from(Incident)
+            .where(col(Incident.resolved_at) >= start, col(Incident.resolved_at) < end)
+        )
+        return int(self.session.exec(stmt).one())
+
+    def avg_response_between(self, start: datetime, end: datetime) -> float | None:
+        """Media de `response_seconds` de los incidentes abiertos en [start, end); None si no hay ninguno."""
+        stmt = select(func.avg(col(Incident.response_seconds))).where(
+            col(Incident.opened_at) >= start,
+            col(Incident.opened_at) < end,
+            col(Incident.response_seconds).is_not(None),
+        )
+        value = self.session.exec(stmt).one()
+        return None if value is None else float(value)
+
+    def counts_by_type_opened_since(self, since: datetime) -> dict[str, int]:
+        """Incidentes abiertos desde `since` por tipo de su alerta de origen (JOIN a alerts)."""
+        stmt = (
+            select(col(Alert.type_code), func.count())
+            .select_from(Incident)
+            .join(Alert, col(Alert.id) == col(Incident.alert_id))
+            .where(col(Incident.opened_at) >= since)
+            .group_by(col(Alert.type_code))
+        )
+        return {type_code: int(count) for type_code, count in self.session.exec(stmt)}

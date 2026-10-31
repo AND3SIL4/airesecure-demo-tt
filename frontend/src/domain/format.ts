@@ -100,3 +100,20 @@ export function dateKeyToIso(dateKey: string, edge: 'start' | 'end'): string {
   const time = edge === 'start' ? '00:00:00.000' : '23:59:59.999';
   return new Date(`${dateKey}T${time}${DISPLAY_UTC_OFFSET}`).toISOString();
 }
+
+const hourFormatter = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  timeZone: DISPLAY_TIME_ZONE,
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+/** Hora en America/Bogota: `09:00`. */
+export function formatHour(value: Date | string): string {
+  return hourFormatter.format(toDate(value));
+}
+
+/** Número con coma decimal (es-CO) y hasta `maxDigits` decimales. */
+export function formatNumber(value: number, maxDigits = 1): string {
+  return value.toLocaleString(DISPLAY_LOCALE, { maximumFractionDigits: maxDigits });
+}

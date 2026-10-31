@@ -19,6 +19,8 @@ export const queryKeys = {
     detail: (id: string) => ['alerts', 'detail', id] as const,
     /** Total de alertas pendientes (nueva + en revisión) para el badge del menú. */
     counts: ['alerts', 'counts'] as const,
+    /** Total de alertas críticas activas para el botón "Críticas (N)". */
+    criticalCount: ['alerts', 'criticalCount'] as const,
   },
   incidents: {
     /** Incluye las listas, los detalles y `incidents.counts`. */
@@ -31,6 +33,7 @@ export const queryKeys = {
   },
   dashboard: {
     all: ['dashboard'] as const,
+    summary: ['dashboard', 'summary'] as const,
   },
   settings: {
     all: ['settings'] as const,

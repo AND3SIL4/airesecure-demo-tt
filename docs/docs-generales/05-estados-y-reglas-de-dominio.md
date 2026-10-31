@@ -112,12 +112,13 @@ Ejemplo: Equipaje abandonado (crítica, 1,00) × 0,94 × Sala de equipajes (crit
 | Alertas activas | Alertas en `nueva` + `en_revision` |
 | Incidentes en curso | Incidentes en `abierto` + `en_atencion` + `escalado` |
 | Tasa de confirmación | `confirmadas / (confirmadas + descartadas)` en el rango |
-| Variación frente a ayer | Valor de hoy (00:00 → ahora) comparado con el de ayer (00:00 → la misma hora) |
+| Variación frente a ayer | Valor de hoy (00:00 → ahora, hora de Bogotá) comparado con el de ayer (00:00 → la misma hora). Para alertas activas y críticas (que son una foto del momento) se comparan las alertas **detectadas** en cada ventana; para incidentes en curso, los **abiertos** en cada ventana; para resueltos y tiempo de respuesta, los de cada ventana. Si ayer = 0 se muestra la diferencia absoluta; sin datos de ayer, "Sin datos de ayer" |
 
 ## 7. Detección de anomalías (por reglas, demostrativa)
 
 - Para cada **zona** y cada **tipo**, se compara el conteo de alertas de los últimos 60 minutos con la **media horaria de los últimos 7 días**.
-- Hay anomalía si `conteo ≥ 3` **y** `conteo ≥ 1,5 × media`. La variación se calcula como `(conteo / media − 1) × 100`, por ejemplo "+65 %".
+- Para evitar variaciones absurdas cuando la media horaria es casi nula, se usa una **referencia mínima de 1 alerta/h**: `referencia = max(media, 1)`.
+- Hay anomalía si `conteo ≥ 5` **y** `conteo ≥ 1,5 × referencia` (el mínimo de 5 se ajustó para la demo: con 3 aparecían avisos por coincidencias casuales). La variación se calcula como `(conteo / referencia − 1) × 100`, por ejemplo "+65 %".
 - Se recalcula en cada consulta a `/api/analytics/anomalies` y al final del ciclo de cada evento simulado. No se persiste.
 - En la interfaz se muestra siempre con la etiqueta **"Detección basada en reglas · demostrativa"**.
 

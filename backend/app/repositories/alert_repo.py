@@ -1,7 +1,8 @@
-"""Acceso a `alerts`: consultas con filtros, orden y paginación, generación de IDs y conteos por zona."""
+"""Acceso a `alerts`: consultas con filtros, orden y paginación, generación de IDs y conteos agregados."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from sqlalchemy import ColumnElement, Integer, case, cast, func, or_
@@ -119,3 +120,50 @@ class AlertRepository:
         return {
             zone_id: (int(max_order), int(count)) for zone_id, max_order, count in self.session.exec(stmt)
         }
+
+    def active_markers(self) -> Sequence[tuple[str, str, Severity]]:
+        """(id, zone_id, severidad) de cada alerta activa, para los marcadores del mini-mapa."""
+        stmt = (
+            select(col(Alert.id), col(Alert.zone_id), col(Alert.severity))
+            .where(col(Alert.status).in_([s.value for s in ACTIVE_ALERT_STATUSES]))
+            .order_by(col(Alert.id))
+        )
+        return [(alert_id, zone_id, Severity(sev)) for alert_id, zone_id, sev in self.session.exec(stmt)]
+
+    def count_detected_between(self, start: datetime, end: datetime, severity: Severity | None = None) -> int:
+        """Alertas detectadas en [start, end), en cualquier estado."""
+        stmt = (
+            select(func.count())
+            .select_from(Alert)
+            .where(col(Alert.detected_at) >= start, col(Alert.detected_at) < end)
+        )
+        if severity is not None:
+            stmt = stmt.where(col(Alert.severity) == severity.value)
+        return int(self.session.exec(stmt).one())
+
+    def counts_by_hour(self, since: datetime) -> dict[datetime, int]:
+        """Alertas detectadas desde `since` por hora UTC (clave = inicio de la hora, con tzinfo UTC)."""
+        bucket = func.strftime("%Y-%m-%d %H:00:00", col(Alert.detected_at))
+        stmt = select(bucket, func.count()).where(col(Alert.detected_at) >= since).group_by(bucket)
+        return {
+            datetime.fromisoformat(str(hour)).replace(tzinfo=UTC): int(count)
+            for hour, count in self.session.exec(stmt)
+        }
+
+    def counts_by_zone(self, since: datetime) -> dict[str, int]:
+        """Alertas detectadas desde `since` por zona, en cualquier estado."""
+        stmt = (
+            select(col(Alert.zone_id), func.count())
+            .where(col(Alert.detected_at) >= since)
+            .group_by(col(Alert.zone_id))
+        )
+        return {zone_id: int(count) for zone_id, count in self.session.exec(stmt)}
+
+    def counts_by_type(self, since: datetime) -> dict[str, int]:
+        """Alertas detectadas desde `since` por tipo, en cualquier estado."""
+        stmt = (
+            select(col(Alert.type_code), func.count())
+            .where(col(Alert.detected_at) >= since)
+            .group_by(col(Alert.type_code))
+        )
+        return {type_code: int(count) for type_code, count in self.session.exec(stmt)}
