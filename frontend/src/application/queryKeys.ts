@@ -15,7 +15,7 @@ export const queryKeys = {
   alerts: {
     all: ['alerts'] as const,
     lists: ['alerts', 'list'] as const,
-    list: (filters: AlertFilters) => ['alerts', 'list', filters] as const,
+    list: (filters: AlertFilters, pageSize: number) => ['alerts', 'list', filters, pageSize] as const,
     detail: (id: string) => ['alerts', 'detail', id] as const,
     /** Total de alertas pendientes (nueva + en revisión) para el badge del menú. */
     counts: ['alerts', 'counts'] as const,

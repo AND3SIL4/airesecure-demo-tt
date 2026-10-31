@@ -10,6 +10,7 @@ import { AlertsPage } from './presentation/pages/AlertsPage';
 import { IncidentDetailPage } from './presentation/pages/IncidentDetailPage';
 import { IncidentsPage } from './presentation/pages/IncidentsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
+import { MapRoute } from './presentation/pages/MapRoute';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
 import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
 import { SummaryPage } from './presentation/pages/SummaryPage';
@@ -38,7 +39,8 @@ export const router = createBrowserRouter([
               { path: '/alertas/:id', element: <AlertDetailPage /> },
               { path: '/incidentes', element: <IncidentsPage /> },
               { path: '/incidentes/:id', element: <IncidentDetailPage /> },
-              { path: '/mapa', element: <PlaceholderPage title={VIEW_TITLES.map} /> },
+              // Carga diferida: Three.js va en un chunk aparte (plan R8).
+              { path: '/mapa', element: <MapRoute /> },
               { path: '/analisis', element: <PlaceholderPage title={VIEW_TITLES.analysis} /> },
               {
                 element: <RequireSupervisor />,
