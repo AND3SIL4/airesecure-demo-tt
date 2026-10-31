@@ -35,6 +35,16 @@ class SettingsRepository:
         except (TypeError, ValueError):
             return default
 
+    def set(self, key: str, value: Any) -> None:
+        """Inserta o actualiza `key` con `value` (serializado como JSON). No hace commit."""
+        setting = self.session.get(AppSetting, key)
+        if setting is None:
+            self.session.add(AppSetting(key=key, value_json=json.dumps(value), updated_at=utcnow()))
+            return
+        setting.value_json = json.dumps(value)
+        setting.updated_at = utcnow()
+        self.session.add(setting)
+
     def increment(self, key: str) -> int:
         """Suma 1 al contador entero `key` (lo crea con 1 si no existe). No hace commit."""
         setting = self.session.get(AppSetting, key)

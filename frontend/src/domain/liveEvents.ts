@@ -1,6 +1,6 @@
 // Eventos en tiempo real de `GET /api/stream` (doc 08 §3.7, specs/003-tiempo-real/contracts/api-realtime.md).
 // Esta capa no importa nada fuera de domain.
-import type { AlertStatus, AlertSummary, IncidentStatus } from './types';
+import type { AlertStatus, AlertSummary, IncidentStatus, Settings } from './types';
 
 export const LIVE_EVENT_NAMES = [
   'alert.created',
@@ -17,7 +17,11 @@ export type LiveEventName = (typeof LIVE_EVENT_NAMES)[number];
 /** Perfil que originó el cambio; `null` = Sistema (simulador o escenario). */
 export type LiveActorId = string | null;
 
-export type AlertCreatedEvent = AlertSummary & { actorId: LiveActorId };
+/**
+ * `triggeredBy`: supervisor que disparó el escenario (`actorId` sigue siendo null = Sistema); null en el resto.
+ * Opcional por compatibilidad con emisores anteriores a 008.
+ */
+export type AlertCreatedEvent = AlertSummary & { actorId: LiveActorId; triggeredBy?: LiveActorId };
 
 export interface AlertUpdatedEvent {
   id: string;
@@ -37,11 +41,12 @@ export interface IncidentUpdatedEvent {
   actorId: LiveActorId;
 }
 
-/** La forma completa de `Settings` llega con la feature de configuración; aquí solo se invalida. */
-export type SettingsUpdatedEvent = Record<string, unknown>;
+/** Estado completo de la configuración tras el cambio (igual que `GET /settings`). */
+export type SettingsUpdatedEvent = Settings;
 
 export interface DemoResetEvent {
   resetAt: string;
+  actorId?: LiveActorId;
 }
 
 export interface HeartbeatEvent {

@@ -400,3 +400,48 @@ export interface AlertOutcomes {
   /** Acumulado desde la siembra (no depende del rango). */
   belowThreshold: number;
 }
+
+// ---------------------------------------------------------------------------
+// Configuración y demo (specs/008-configuracion-demo/contracts/api-settings.md, doc 08 §3.6)
+// ---------------------------------------------------------------------------
+
+export interface SimulatorSettings {
+  enabled: boolean;
+  intervalSeconds: number;
+  /** Solo lectura: el ciclo del simulador está activo. */
+  running: boolean;
+  /** Solo lectura: hora estimada del próximo evento (UTC) o null si está detenido. */
+  nextRunAt: string | null;
+}
+
+export interface Settings {
+  simulator: SimulatorSettings;
+  /** Umbral de confianza (0,50-0,99) por código de tipo de alerta. */
+  thresholds: Record<string, number>;
+  /** Eventos del simulador descartados por estar bajo el umbral (acumulado desde la siembra). */
+  belowThreshold: number;
+}
+
+/** Cuerpo parcial de `PUT /settings` (sin los campos de solo lectura). */
+export interface SettingsUpdate {
+  simulator?: { enabled?: boolean; intervalSeconds?: number };
+  thresholds?: Record<string, number>;
+}
+
+/** Respuesta de `POST /demo/reset`: conteos sembrados. */
+export interface ResetResult {
+  alerts: number;
+  incidents: number;
+  resetAt: string;
+}
+
+/** Escenario predefinido (`GET /demo/scenarios`); `severity` es la final (elevada si la zona es restringida). */
+export interface Scenario {
+  id: string;
+  name: string;
+  typeCode: string;
+  severity: Severity;
+  zoneId: string;
+  sourceId: string;
+  confidence: number;
+}

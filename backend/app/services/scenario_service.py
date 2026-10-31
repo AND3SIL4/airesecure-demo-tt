@@ -30,7 +30,8 @@ class ScenarioService:
 
     def trigger(self, scenario_id: str, actor: User) -> AlertDetailView:
         """Crea la alerta del escenario (origin escenario, actor Sistema) e inserta `scenario_triggered`
-        con el supervisor en la misma transacción; publica `alert.created` tras el commit."""
+        con el supervisor en la misma transacción; publica `alert.created` tras el commit con
+        `actorId: null` y `triggeredBy: <supervisor>` (spec 008 R5)."""
         scenario = find_scenario(scenario_id)
         if scenario is None:
             raise DomainError(NO_ENCONTRADO, "El escenario no existe.")
@@ -46,6 +47,7 @@ class ScenarioService:
                     payload={"scenarioId": scenario.id},
                 )
             ],
+            triggered_by=actor.id,
         )
         return self.alert_service.get_detail(alert.id)
 

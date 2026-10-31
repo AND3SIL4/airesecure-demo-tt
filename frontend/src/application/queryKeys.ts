@@ -49,5 +49,9 @@ export const queryKeys = {
   settings: {
     all: ['settings'] as const,
   },
+  demo: {
+    /** Escenarios predefinidos E-1 a E-4. */
+    scenarios: ['demo', 'scenarios'] as const,
+  },
   me: (actorId: string | null) => ['me', actorId] as const,
 };

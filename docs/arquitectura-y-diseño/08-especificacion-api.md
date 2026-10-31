@@ -149,13 +149,15 @@ Contrato detallado (rangos, formato de días en Bogotá, columnas del CSV): `spe
 
 ### 3.6 Configuración y demo (solo supervisor)
 
+Contrato detallado: `specs/008-configuracion-demo/contracts/api-settings.md`. `GET /api/settings` incluye además `simulator.running`, `simulator.nextRunAt` y `belowThreshold`. Cada `PUT` registra `settings_updated` en la timeline.
+
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/settings` | `{ simulator: { enabled, intervalSeconds }, thresholds: { [typeCode]: number } }` |
+| GET | `/api/settings` | `{ simulator: { enabled, intervalSeconds, running, nextRunAt }, thresholds: { [typeCode]: number }, belowThreshold }`. 403 `SOLO_SUPERVISOR` para operadores |
 | PUT | `/api/settings` | El mismo esquema (parcial). Valida intervalos de 15-300 s y umbrales de 0,50-0,99; emite `settings.updated` |
 | GET | `/api/demo/scenarios` | `{ id, name, typeCode, severity, zoneId, confidence }[]` (E-1 a E-4) |
 | POST | `/api/demo/scenarios/{id}/trigger` | Crea la alerta del escenario. Responde `201 AlertDetail` |
-| POST | `/api/demo/reset` | Vuelve a sembrar los datos. Responde `200 { alerts, incidents, resetAt }` |
+| POST | `/api/demo/reset` | Vuelve a sembrar los datos en una única transacción (conserva el simulador, restablece umbrales) y registra `demo_reset` con el actor. Responde `200 { alerts, incidents, resetAt }`; emite `demo.reset`. 403 `SOLO_SUPERVISOR` para operadores |
 
 ### 3.7 Tiempo real
 
@@ -168,12 +170,12 @@ Contrato detallado (rangos, formato de días en Bogotá, columnas del CSV): `spe
 
 | `event:` | `data:` | Efecto en el frontend |
 |---|---|---|
-| `alert.created` | `AlertSummary` + `actorId` (null = Sistema) | Invalida alertas, resumen y zonas; toast (persistente si es crítica) |
+| `alert.created` | `AlertSummary` + `actorId` (null = Sistema) + `triggeredBy` (id del supervisor que disparó el escenario, o null). El frontend no muestra el aviso a quien lo disparó | Invalida alertas, resumen y zonas; toast (persistente si es crítica) |
 | `alert.updated` | `{ id, status, actorId }` | Invalida la alerta, las listas y el resumen |
 | `incident.created` | `{ id, alertId, actorId }` | Invalida incidentes y resumen |
 | `incident.updated` | `{ id, status, actorId }` | Invalida el incidente, las listas y el resumen |
 | `settings.updated` | `Settings` | Invalida la configuración |
-| `demo.reset` | `{ resetAt }` | Invalida **toda** la caché y navega al Resumen |
+| `demo.reset` | `{ resetAt, actorId }` | Invalida **toda** la caché y navega al Resumen |
 | `heartbeat` | `{ ts }` | Ninguno (mantiene viva la conexión) |
 
 ## 4. Mapa de casos de uso a endpoints

@@ -45,14 +45,14 @@
 | `services/` | Casos de uso: `AlertService`, `IncidentService`, `ScoringService`, `AnalyticsService`, `CatalogService`, `DemoService`, `SettingsService`. Orquestan transacciones, aplican el dominio y publican eventos | `repositories`, `domain`, puertos (`EventPublisher`) | Conocer FastAPI o HTTP |
 | `repositories/` | Acceso a datos con SQLModel: consultas, filtros, paginación y generación de IDs | `domain`, `infrastructure.db` | Contener reglas de negocio |
 | `domain/` | Entidades (tablas SQLModel), enums, `state_machine.py`, `scoring.py`, `anomalies.py`, errores de dominio | Solo librerías estándar y SQLModel | Importar otras capas |
-| `infrastructure/` | `db.py` (engine y sesión), `event_bus.py` (pub/sub en memoria con `asyncio.Queue`), `simulator.py` (tarea en segundo plano), `seed/` (datos semilla) | `services` (solo el simulador, para invocar casos de uso), `domain` | — |
+| `infrastructure/` | `db.py` (engine y sesión), `event_bus.py` (pub/sub en memoria con `asyncio.Queue`), `simulator.py` (tarea en segundo plano), `seed/` (datos semilla) | `services` (solo el simulador y el reinicio de la demo `demo_reset`, para invocar casos de uso), `domain` | — |
 
 **Puertos:** `services` define la interfaz `EventPublisher` y `infrastructure.event_bus` la implementa. Así el bus se puede sustituir (por ejemplo, por Redis) sin tocar los servicios. Del mismo modo, `ScoringService` usa una función de dominio que más adelante puede reemplazarse por un modelo real.
 
 **Errores:** el dominio lanza `DomainError(code, message, details)` **sin código HTTP**. Un *exception handler* en `api/errors.py` mapea `code` → estado HTTP (ver doc 08 §1).
 
 **Excepciones permitidas y acotadas:**
-- `api/deps.py` puede importar `infrastructure.db` solo para proveer la sesión (`get_session`); `main.py` es la raíz de composición y puede importar cualquier capa.
+- `api/deps.py` puede importar `infrastructure.db` solo para proveer la sesión (`get_session`), y obtener de `app.state` los componentes de infraestructura (`EventBus`, `Simulator`, el reiniciador de la demo) expuestos a los servicios a través de sus puertos (`EventPublisher`, `DemoResetPort`); `main.py` es la raíz de composición y puede importar cualquier capa.
 - `domain/models.py` puede usar tipos de SQLAlchemy (base de SQLModel) para columnas personalizadas (`UtcDateTime`, enums guardados por valor).
 
 ### 2.2 Frontend (`frontend/src/`)

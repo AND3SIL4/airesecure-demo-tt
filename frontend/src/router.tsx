@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { VIEW_TITLES } from './domain/navigation';
 import { PublicLayout } from './presentation/layout/PublicLayout';
 import { RequireActor } from './presentation/layout/RequireActor';
 import { RequireSupervisor } from './presentation/layout/RequireSupervisor';
@@ -13,8 +12,8 @@ import { IncidentsPage } from './presentation/pages/IncidentsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
 import { MapRoute } from './presentation/pages/MapRoute';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
-import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
 import { ReportsPage } from './presentation/pages/ReportsPage';
+import { SettingsPage } from './presentation/pages/SettingsPage';
 import { SummaryPage } from './presentation/pages/SummaryPage';
 
 // Rutas según specs/001-fundacion/contracts/ui-routes.md.
@@ -48,7 +47,7 @@ export const router = createBrowserRouter([
                 element: <RequireSupervisor />,
                 children: [
                   { path: '/reportes', element: <ReportsPage /> },
-                  { path: '/configuracion', element: <PlaceholderPage title={VIEW_TITLES.settings} /> },
+                  { path: '/configuracion', element: <SettingsPage /> },
                 ],
               },
             ],

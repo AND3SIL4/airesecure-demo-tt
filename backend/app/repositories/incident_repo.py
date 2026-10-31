@@ -113,6 +113,9 @@ class IncidentRepository:
     def get(self, incident_id: str) -> Incident | None:
         return self.session.get(Incident, incident_id)
 
+    def count(self) -> int:
+        return int(self.session.exec(select(func.count()).select_from(Incident)).one())
+
     def next_id(self) -> str:
         """Máximo numérico + 1, con mínimo INC-0401."""
         number = cast(func.substr(col(Incident.id), len(INCIDENT_ID_PREFIX) + 1), Integer)

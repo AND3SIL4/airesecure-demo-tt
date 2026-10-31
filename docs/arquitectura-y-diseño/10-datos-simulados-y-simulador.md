@@ -6,7 +6,9 @@ Todos los datos son **ficticios**: ni nombres reales, ni rostros, ni datos perso
 
 La semilla se genera en cada `demo/reset` (y en el primer arranque) **a partir de la hora actual**. Así, la demo siempre muestra actividad de hoy, de las últimas horas y de los últimos 30 días, sin importar cuándo se presente. La generación usa una **semilla aleatoria fija** (`random.seed(2048)`), de modo que los datos tienen la misma forma en cada reinicio.
 
-Módulo: `backend/app/infrastructure/seed/` (`catalogs.py`, `history.py`, `active.py`, `scenarios.py`, `texts.py`).
+**Reinicio (`POST /api/demo/reset`)**: vacía y regenera todos los datos relativos a la hora actual, **conserva** el estado del simulador (encendido e intervalo) y **restablece** los umbrales a sus valores por defecto. Pausa el simulador durante la operación y lo reanuda si estaba encendido.
+
+Módulo: `backend/app/infrastructure/seed/` (`catalogs.py`, `history.py`, `today.py`, `alerts.py`, `plan.py`); plantillas de texto en `backend/app/domain/alert_texts.py` y escenarios en `backend/app/domain/scenarios.py`.
 
 ## 2. Catálogos
 

@@ -7,6 +7,7 @@ import type { AlertDetail } from '../domain/types';
 import { connectLiveEvents } from '../infrastructure/sse';
 import { queryKeys } from './queryKeys';
 import { getActorId } from './stores/actor';
+import { consumeLocalReset } from './stores/demoReset';
 import { reportLiveStatus, resetLiveStatus } from './stores/liveStatus';
 import {
   clearNotifications,
@@ -17,8 +18,8 @@ import {
 import { clearToasts, toast } from './stores/toasts';
 
 /** Los avisos se omiten para los cambios hechos por el perfil activo (los datos sí se invalidan). */
-function isOwnEvent(actorId: string | null): boolean {
-  return actorId !== null && actorId === getActorId();
+function isOwnEvent(actorId: string | null | undefined): boolean {
+  return actorId != null && actorId === getActorId();
 }
 
 /** Ventana mínima entre dos refrescos de la analítica (agregados de días: no necesitan cada evento). */
@@ -66,7 +67,8 @@ function handleEvent(event: LiveEvent, queryClient: QueryClient, goHome: () => v
       const alert = event.data;
       invalidateAlertData(queryClient);
       recordAlertArrival(alert.id);
-      if (isOwnEvent(alert.actorId)) return;
+      // Escenarios: `actorId` es null (Sistema) y `triggeredBy` identifica al supervisor, que ya ve su confirmación.
+      if (isOwnEvent(alert.actorId) || isOwnEvent(alert.triggeredBy)) return;
       pushNotification({
         id: alert.id,
         severity: alert.severity,
@@ -106,13 +108,18 @@ function handleEvent(event: LiveEvent, queryClient: QueryClient, goHome: () => v
       invalidateAnalytics(queryClient);
       return;
     case 'settings.updated':
-      void queryClient.invalidateQueries({ queryKey: queryKeys.settings.all });
+      // El evento trae el estado completo: se aplica directamente (las demás pestañas se sincronizan).
+      queryClient.setQueryData(queryKeys.settings.all, event.data);
+      // Los umbrales también se muestran en el catálogo de tipos.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.catalog.alertTypes });
       return;
     case 'demo.reset':
       cancelAnalyticsInvalidation();
       queryClient.clear();
       clearNotifications();
-      clearToasts();
+      // Si el reinicio lo lanzó el perfil activo (o esta pestaña hace poco), se conserva el toast
+      // con los conteos (useResetDemo). Se consume la marca local en cualquier caso.
+      if (!consumeLocalReset() && !isOwnEvent(event.data.actorId)) clearToasts();
       goHome();
       return;
     case 'heartbeat':

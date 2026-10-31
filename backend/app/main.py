@@ -9,9 +9,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 
 from app.api.errors import register_error_handlers
-from app.api.routers import alerts, analytics, catalog, dashboard, demo, health, incidents, reports, stream
+from app.api.routers import (
+    alerts,
+    analytics,
+    catalog,
+    dashboard,
+    demo,
+    health,
+    incidents,
+    reports,
+    settings,
+    stream,
+)
 from app.config import APP_VERSION, CORS_ORIGINS
 from app.infrastructure.db import engine, init_db
+from app.infrastructure.demo_reset import DemoResetter
 from app.infrastructure.event_bus import EventBus, close_on_exit_signals
 from app.infrastructure.seed import seed_all
 from app.infrastructure.simulator import Simulator
@@ -37,6 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="AeroSecure AI API", version=APP_VERSION, lifespan=lifespan)
 app.state.event_bus = EventBus()
 app.state.simulator = Simulator(engine, app.state.event_bus)
+app.state.demo_resetter = DemoResetter(engine, app.state.simulator)
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,3 +71,4 @@ app.include_router(analytics.router, prefix=API_PREFIX)
 app.include_router(reports.router, prefix=API_PREFIX)
 app.include_router(stream.router, prefix=API_PREFIX)
 app.include_router(demo.router, prefix=API_PREFIX)
+app.include_router(settings.router, prefix=API_PREFIX)

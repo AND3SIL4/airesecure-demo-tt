@@ -187,8 +187,11 @@ def _parse_statuses(values: list[str]) -> list[AlertStatus]:
     return statuses or [AlertStatus.NUEVA, AlertStatus.EN_REVISION]
 
 
-def _summary_payload(view: AlertView, actor_id: str | None) -> dict[str, Any]:
-    """`AlertSummary` (doc 08 §2) en camelCase + `actorId`, para el evento `alert.created`.
+def _summary_payload(
+    view: AlertView, actor_id: str | None, triggered_by: str | None = None
+) -> dict[str, Any]:
+    """`AlertSummary` (doc 08 §2) en camelCase + `actorId` + `triggeredBy` (supervisor que disparó el
+    escenario, o None), para el evento `alert.created`.
 
     Debe mantenerse sincronizado con `api/schemas/alerts.py::AlertSummaryOut` (mismo contrato).
     """
@@ -206,6 +209,7 @@ def _summary_payload(view: AlertView, actor_id: str | None) -> dict[str, Any]:
         "description": alert.description,
         "incidentId": view.incident_id,
         "actorId": actor_id,
+        "triggeredBy": triggered_by,
     }
 
 
@@ -412,11 +416,13 @@ class AlertService:
         *,
         actor: User | None = None,
         extra_timeline: Sequence[TimelineNote] | None = None,
+        triggered_by: str | None = None,
     ) -> Alert:
         """Crea una alerta `nueva` a partir de un evento detectado (simulador o escenario) y publica
-        `alert.created` tras el commit. `actor` nulo = Sistema. No aplica el umbral."""
+        `alert.created` tras el commit. `actor` nulo = Sistema. No aplica el umbral. `triggered_by` es el
+        supervisor que disparó el escenario (va en el evento para no mostrarle su propio aviso)."""
         begin_write(self.session)
-        alert, events = self._insert_detected(event, origin, actor, extra_timeline or [])
+        alert, events = self._insert_detected(event, origin, actor, extra_timeline or [], triggered_by)
         self.session.commit()
         self._publish(events)
         return alert
@@ -467,6 +473,7 @@ class AlertService:
         origin: AlertOrigin,
         actor: User | None,
         extra_timeline: Sequence[TimelineNote],
+        triggered_by: str | None = None,
     ) -> tuple[Alert, Sequence[LiveEvent]]:
         """Inserta la alerta detectada y sus eventos de timeline (sin commit). Devuelve la alerta y los
         eventos en vivo pendientes de publicar tras el commit."""
@@ -523,7 +530,7 @@ class AlertService:
                 )
             )
         view = AlertView(alert=alert, type=alert_type, zone=zone, source=source, incident_id=None)
-        return alert, [(EVENT_ALERT_CREATED, _summary_payload(view, actor_id))]
+        return alert, [(EVENT_ALERT_CREATED, _summary_payload(view, actor_id, triggered_by))]
 
     def _get_or_404(self, alert_id: str) -> Alert:
         alert = self.alerts.get(alert_id)
