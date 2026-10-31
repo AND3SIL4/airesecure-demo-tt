@@ -1,14 +1,11 @@
 <!--
 Sync Impact Report
-- Version change: (template) → 1.0.0
-- Principles defined: I. La documentación manda · II. Arquitectura por capas estricta · III. Humano en el bucle ·
-  IV. Transparencia de la IA simulada · V. Privacidad por diseño · VI. Accesibilidad · VII. Simplicidad y coste cero ·
-  VIII. Sin pruebas automatizadas · IX. Ejecución local con un comando · X. Idioma y nomenclatura
-- Added sections: Restricciones tecnológicas · Flujo de desarrollo · Governance
-- Removed sections: none
-- Templates requiring updates: ✅ none modified (plan/spec/tasks templates read this file at runtime).
-  ⚠ tasks-template.md contains test-task examples: /speckit-tasks MUST omit them per Principle VIII.
-- Deferred TODOs: none
+- Version change: 1.0.0 → 1.0.1 (PATCH: aclaración, sin cambios de principios)
+- Modified sections: Restricciones tecnológicas → la tipografía aprobada se cita como `@fontsource-variable/inter`
+  (variante variable del mismo paquete Inter, ya en uso desde la feature 001 y justificada en specs/001-fundacion/plan.md).
+- Added sections: none · Removed sections: none
+- Templates requiring updates: ✅ none
+- Approved by: usuario (2026-10-31)
 -->
 
 # AeroSecure AI (demo MVP) Constitution
@@ -76,7 +73,7 @@ usa JSON en camelCase, la cabecera `X-Actor-Id` y el formato de error `{ error: 
 | Capa | Stack aprobado |
 |---|---|
 | Backend | Python 3.12+, FastAPI, SQLModel, SQLite, uv; SSE con `StreamingResponse`; ruff |
-| Frontend | React 18, Vite, TypeScript (strict), Tailwind CSS, TanStack Query, React Router, Recharts, Three.js, lucide-react, `@fontsource/inter`; Bun como gestor y runtime; ESLint |
+| Frontend | React 18, Vite, TypeScript (strict), Tailwind CSS, TanStack Query, React Router, Recharts, Three.js, lucide-react, `@fontsource-variable/inter`; Bun como gestor y runtime; ESLint |
 | Herramientas | GitHub Spec Kit, Claude Code (agentes, skills y comandos de `.claude/`), Archify (solo para documentación), Git |
 
 Rendimiento objetivo: las vistas cargan en menos de 1 s en local, los eventos SSE llegan en 2 s o menos y el
@@ -100,4 +97,4 @@ PATCH para aclaraciones. Cada plan (`/speckit-plan`) MUST incluir un "Constituti
 I-X, y `layer-guardian` verifica su cumplimiento al cierre de cada feature. La guía operativa del día a día
 está en `CLAUDE.md`.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-30
+**Version**: 1.0.1 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-31
