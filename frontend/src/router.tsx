@@ -7,12 +7,14 @@ import { RootLayout } from './presentation/layout/RootLayout';
 import { Shell } from './presentation/layout/Shell';
 import { AlertDetailPage } from './presentation/pages/AlertDetailPage';
 import { AlertsPage } from './presentation/pages/AlertsPage';
+import { AnalysisPage } from './presentation/pages/AnalysisPage';
 import { IncidentDetailPage } from './presentation/pages/IncidentDetailPage';
 import { IncidentsPage } from './presentation/pages/IncidentsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
 import { MapRoute } from './presentation/pages/MapRoute';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
 import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
+import { ReportsPage } from './presentation/pages/ReportsPage';
 import { SummaryPage } from './presentation/pages/SummaryPage';
 
 // Rutas según specs/001-fundacion/contracts/ui-routes.md.
@@ -41,11 +43,11 @@ export const router = createBrowserRouter([
               { path: '/incidentes/:id', element: <IncidentDetailPage /> },
               // Carga diferida: Three.js va en un chunk aparte (plan R8).
               { path: '/mapa', element: <MapRoute /> },
-              { path: '/analisis', element: <PlaceholderPage title={VIEW_TITLES.analysis} /> },
+              { path: '/analisis', element: <AnalysisPage /> },
               {
                 element: <RequireSupervisor />,
                 children: [
-                  { path: '/reportes', element: <PlaceholderPage title={VIEW_TITLES.reports} /> },
+                  { path: '/reportes', element: <ReportsPage /> },
                   { path: '/configuracion', element: <PlaceholderPage title={VIEW_TITLES.settings} /> },
                 ],
               },

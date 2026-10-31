@@ -149,17 +149,15 @@ class IncidentService:
 
     # ---------- Consultas ----------
 
+    def list_all(self, query: IncidentListQuery, max_rows: int) -> list[IncidentView]:
+        """Los mismos filtros y orden que `list`, sin paginar (se ignoran `page` y `page_size`)."""
+        catalogs = self._catalogs()
+        rows = self.incidents.list_all(self._filters(query, catalogs), _parse_sort(query.sort), max_rows)
+        return [self._view(incident, alert, catalogs) for incident, alert in rows]
+
     def list(self, query: IncidentListQuery) -> IncidentPage:
         catalogs = self._catalogs()
-        filters = IncidentFilters(
-            status=_parse_statuses(query.status),
-            severity=[Severity(v) for v in split_valid(query.severity, {s.value for s in Severity})],
-            zone=split_valid(query.zone, set(catalogs.zones)),
-            type=split_valid(query.type, set(catalogs.types)),
-            q=clean(query.q),
-            date_from=parse_datetime(query.date_from),
-            date_to=parse_datetime(query.date_to),
-        )
+        filters = self._filters(query, catalogs)
         rows, total = self.incidents.list(filters, _parse_sort(query.sort), query.page, query.page_size)
         items = [self._view(incident, alert, catalogs) for incident, alert in rows]
         return IncidentPage(items=items, total=total, page=query.page, page_size=query.page_size)
@@ -273,6 +271,19 @@ class IncidentService:
         return self.get_detail(incident_id)
 
     # ---------- Internos ----------
+
+    @staticmethod
+    def _filters(query: IncidentListQuery, catalogs: _Catalogs) -> IncidentFilters:
+        """Normaliza los parámetros crudos: los valores desconocidos se ignoran."""
+        return IncidentFilters(
+            status=_parse_statuses(query.status),
+            severity=[Severity(v) for v in split_valid(query.severity, {s.value for s in Severity})],
+            zone=split_valid(query.zone, set(catalogs.zones)),
+            type=split_valid(query.type, set(catalogs.types)),
+            q=clean(query.q),
+            date_from=parse_datetime(query.date_from),
+            date_to=parse_datetime(query.date_to),
+        )
 
     def _catalogs(self) -> _Catalogs:
         return _Catalogs(

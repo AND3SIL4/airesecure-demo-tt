@@ -7,6 +7,7 @@ from pydantic import Field
 
 from app.api.schemas.alerts import AlertSummaryOut
 from app.api.schemas.base import ApiModel
+from app.domain.anomalies import Anomaly
 from app.domain.enums import RiskLevel, Severity
 from app.domain.metrics import Delta
 from app.services.dashboard_service import DashboardSummary
@@ -74,6 +75,17 @@ class AnomalyOut(ApiModel):
     hourly_mean: float
     variation_pct: float
 
+    @classmethod
+    def from_anomaly(cls, a: Anomaly) -> "AnomalyOut":
+        return cls(
+            scope=a.scope,
+            key=a.key,
+            label=a.label,
+            last_hour=a.last_hour,
+            hourly_mean=a.hourly_mean,
+            variation_pct=a.variation_pct,
+        )
+
 
 class DashboardSummaryOut(ApiModel):
     generated_at: datetime
@@ -123,15 +135,5 @@ class DashboardSummaryOut(ApiModel):
                 for c in s.by_category_7d
             ],
             trend_24h=[HourCountOut(hour=h.hour, count=h.count) for h in s.trend_24h],
-            anomalies=[
-                AnomalyOut(
-                    scope=a.scope,
-                    key=a.key,
-                    label=a.label,
-                    last_hour=a.last_hour,
-                    hourly_mean=a.hourly_mean,
-                    variation_pct=a.variation_pct,
-                )
-                for a in s.anomalies
-            ],
+            anomalies=[AnomalyOut.from_anomaly(a) for a in s.anomalies],
         )

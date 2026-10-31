@@ -21,11 +21,43 @@ function isOwnEvent(actorId: string | null): boolean {
   return actorId !== null && actorId === getActorId();
 }
 
+/** Ventana mínima entre dos refrescos de la analítica (agregados de días: no necesitan cada evento). */
+const ANALYTICS_THROTTLE_MS = 10_000;
+let analyticsLastRun = 0;
+let analyticsTimer: ReturnType<typeof setTimeout> | null = null;
+
+function runAnalyticsInvalidation(queryClient: QueryClient): void {
+  analyticsLastRun = Date.now();
+  // refetchType 'active' (por defecto): solo se relanzan las consultas de una vista Análisis montada.
+  void queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all, refetchType: 'active' });
+}
+
+/** Throttle con disparo final: como mucho una invalidación cada 10 s y nunca se pierde el último cambio. */
+function invalidateAnalytics(queryClient: QueryClient): void {
+  if (analyticsTimer !== null) return;
+  const wait = analyticsLastRun + ANALYTICS_THROTTLE_MS - Date.now();
+  if (wait <= 0) {
+    runAnalyticsInvalidation(queryClient);
+    return;
+  }
+  analyticsTimer = setTimeout(() => {
+    analyticsTimer = null;
+    runAnalyticsInvalidation(queryClient);
+  }, wait);
+}
+
+function cancelAnalyticsInvalidation(): void {
+  if (analyticsTimer !== null) clearTimeout(analyticsTimer);
+  analyticsTimer = null;
+  analyticsLastRun = 0;
+}
+
 function invalidateAlertData(queryClient: QueryClient): void {
   // `alerts.all` incluye las listas, los detalles y `alerts.counts`.
   void queryClient.invalidateQueries({ queryKey: queryKeys.alerts.all });
   void queryClient.invalidateQueries({ queryKey: queryKeys.catalog.zones });
   void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+  invalidateAnalytics(queryClient);
 }
 
 function handleEvent(event: LiveEvent, queryClient: QueryClient, goHome: () => void): void {
@@ -71,11 +103,13 @@ function handleEvent(event: LiveEvent, queryClient: QueryClient, goHome: () => v
       void queryClient.invalidateQueries({ queryKey: queryKeys.incidents.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.alerts.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      invalidateAnalytics(queryClient);
       return;
     case 'settings.updated':
       void queryClient.invalidateQueries({ queryKey: queryKeys.settings.all });
       return;
     case 'demo.reset':
+      cancelAnalyticsInvalidation();
       queryClient.clear();
       clearNotifications();
       clearToasts();
@@ -104,6 +138,7 @@ export function useLiveEvents(): void {
     });
     return () => {
       close();
+      cancelAnalyticsInvalidation();
       resetLiveStatus();
     };
   }, [queryClient, navigate]);

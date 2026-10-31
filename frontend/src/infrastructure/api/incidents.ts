@@ -4,7 +4,8 @@ import { resolveDateRange } from '../../domain/dateRanges';
 import type { IncidentActionBody, IncidentDetail, IncidentPage } from '../../domain/types';
 import { http } from '../http';
 
-function toQuery(filters: IncidentFilters, pageSize: number): string {
+/** Parámetros de filtro y orden comunes al listado y al CSV (sin `page` ni `pageSize`). */
+export function incidentFilterParams(filters: IncidentFilters): URLSearchParams {
   const params = new URLSearchParams();
   if (filters.status === IN_COURSE_SHORTCUT) params.set('status', IN_COURSE_SHORTCUT);
   else if (filters.status.length) params.set('status', filters.status.join(','));
@@ -16,6 +17,11 @@ function toQuery(filters: IncidentFilters, pageSize: number): string {
   if (from) params.set('from', from);
   if (to) params.set('to', to);
   params.set('sort', filters.sort);
+  return params;
+}
+
+function toQuery(filters: IncidentFilters, pageSize: number): string {
+  const params = incidentFilterParams(filters);
   params.set('page', String(filters.page));
   params.set('pageSize', String(pageSize));
   return params.toString();

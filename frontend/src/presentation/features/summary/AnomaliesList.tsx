@@ -14,10 +14,14 @@ const SCOPE_LABEL: Record<Anomaly['scope'], string> = {
   type: 'Por tipo',
 };
 
-/** Anomalías detectadas por reglas (doc 05 §7), siempre etiquetadas como demostrativas (HU-24, RF-B5). */
-export function AnomaliesList({ anomalies, className = '' }: AnomaliesListProps) {
+export interface AnomaliesContentProps {
+  anomalies: readonly Anomaly[];
+}
+
+/** Etiqueta "basada en reglas" y la lista (o su estado vacío), sin la tarjeta: se reutiliza en Análisis. */
+export function AnomaliesContent({ anomalies }: AnomaliesContentProps) {
   return (
-    <Card title="Anomalías" className={className}>
+    <>
       <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-demo-fg/30 bg-demo-bg px-2.5 py-0.5 text-xs font-medium text-demo-fg">
         <FlaskConical aria-hidden="true" className="size-3.5" />
         {RULE_BASED_LABEL}
@@ -50,6 +54,15 @@ export function AnomaliesList({ anomalies, className = '' }: AnomaliesListProps)
           ))}
         </ul>
       )}
+    </>
+  );
+}
+
+/** Anomalías detectadas por reglas (doc 05 §7), siempre etiquetadas como demostrativas (HU-24, RF-B5). */
+export function AnomaliesList({ anomalies, className = '' }: AnomaliesListProps) {
+  return (
+    <Card title="Anomalías" className={className}>
+      <AnomaliesContent anomalies={anomalies} />
     </Card>
   );
 }

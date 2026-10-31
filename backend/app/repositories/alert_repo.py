@@ -167,3 +167,14 @@ class AlertRepository:
             .group_by(col(Alert.type_code))
         )
         return {type_code: int(count) for type_code, count in self.session.exec(stmt)}
+
+    def outcome_counts_since(self, since: datetime) -> tuple[int, int]:
+        """(confirmadas, descartadas) entre las alertas detectadas desde `since`."""
+        decided = [AlertStatus.CONFIRMADA.value, AlertStatus.DESCARTADA.value]
+        stmt = (
+            select(col(Alert.status), func.count())
+            .where(col(Alert.detected_at) >= since, col(Alert.status).in_(decided))
+            .group_by(col(Alert.status))
+        )
+        counts = {str(status): int(count) for status, count in self.session.exec(stmt)}
+        return counts.get(AlertStatus.CONFIRMADA.value, 0), counts.get(AlertStatus.DESCARTADA.value, 0)

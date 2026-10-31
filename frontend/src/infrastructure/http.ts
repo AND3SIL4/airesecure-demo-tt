@@ -40,10 +40,41 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   );
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const headers: Record<string, string> = { Accept: 'application/json' };
+/** Cabecera `X-Actor-Id` del perfil activo (vacía si no hay perfil). */
+export function actorHeaders(): Record<string, string> {
   const actorId = actorProvider();
-  if (actorId) headers['X-Actor-Id'] = actorId;
+  return actorId ? { 'X-Actor-Id': actorId } : {};
+}
+
+export const API_BASE_URL = BASE_URL;
+
+export function networkError(status = 0): ApiError {
+  return new ApiError('RED', NETWORK_ERROR_MESSAGE, status);
+}
+
+function parseJson(text: string): unknown {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+/** Convierte una respuesta no 2xx (con su cuerpo en texto) en ApiError. */
+export function errorFromResponse(status: number, text: string): ApiError {
+  const payload = parseJson(text);
+  if (isApiErrorBody(payload)) {
+    const { code, message, details } = payload.error;
+    return new ApiError(code, message, status, details ?? {});
+  }
+  // Sin cuerpo de error común: el proxy de Vite responde 500 vacío si la API no está arriba.
+  if (status >= 500 && payload === null) return networkError(status);
+  return new ApiError('ERROR_INTERNO', UNEXPECTED_ERROR_MESSAGE, status);
+}
+
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const headers: Record<string, string> = { Accept: 'application/json', ...actorHeaders() };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
   let response: Response;
@@ -54,34 +85,16 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch {
-    throw new ApiError('RED', NETWORK_ERROR_MESSAGE, 0);
+    throw networkError();
   }
 
   const text = await response.text();
-  let payload: unknown = null;
-  if (text) {
-    try {
-      payload = JSON.parse(text);
-    } catch {
-      payload = null;
-    }
-  }
+  if (!response.ok) throw errorFromResponse(response.status, text);
 
-  if (!response.ok) {
-    if (isApiErrorBody(payload)) {
-      const { code, message, details } = payload.error;
-      throw new ApiError(code, message, response.status, details ?? {});
-    }
-    // Sin cuerpo de error común: el proxy de Vite responde 500 vacío si la API no está arriba.
-    if (response.status >= 500 && payload === null) {
-      throw new ApiError('RED', NETWORK_ERROR_MESSAGE, response.status);
-    }
-    throw new ApiError('ERROR_INTERNO', UNEXPECTED_ERROR_MESSAGE, response.status);
-  }
-
+  const payload = parseJson(text);
   if (payload === null && text) {
     // Respuesta 2xx que no es JSON (p. ej., el index.html de Vite si el proxy no responde).
-    throw new ApiError('RED', NETWORK_ERROR_MESSAGE, response.status);
+    throw networkError(response.status);
   }
 
   return payload as T;

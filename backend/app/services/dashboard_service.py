@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 
 from sqlmodel import Session
 
-from app.domain import anomalies as anomaly_rules
 from app.domain.anomalies import Anomaly
 from app.domain.enums import Severity
 from app.domain.metrics import Delta, delta
@@ -18,13 +17,12 @@ from app.repositories.alert_repo import AlertRepository
 from app.repositories.catalog_repo import CatalogRepository
 from app.repositories.incident_repo import IncidentRepository
 from app.services.alert_service import ACTIVE_SHORTCUT, AlertListQuery, AlertService, AlertView
+from app.services.analytics_service import AnalyticsService
 from app.services.catalog_service import CatalogService, ZoneView
 
 TOP_ALERTS = 6
 TREND_HOURS = 24
 CATEGORY_DAYS = 7
-ANOMALY_RECENT_MINUTES = 60
-ANOMALY_WINDOW_DAYS = 7
 
 
 @dataclass(frozen=True)
@@ -89,6 +87,7 @@ class DashboardService:
         self.catalog = CatalogRepository(session)
         self.alert_service = AlertService(session)
         self.catalog_service = CatalogService(session)
+        self.analytics = AnalyticsService(session)
 
     def summary(self, now: datetime) -> DashboardSummary:
         top_page = self.alert_service.list(AlertListQuery(status=[ACTIVE_SHORTCUT], page_size=TOP_ALERTS))
@@ -118,7 +117,7 @@ class DashboardService:
             ],
             by_category_7d=self._by_category(now),
             trend_24h=self._trend(now),
-            anomalies=self._anomalies(now),
+            anomalies=self.analytics.anomalies(now),
         )
 
     def _deltas(self, now: datetime, today_start: datetime, avg_today: float | None) -> KpiDeltas:
@@ -164,33 +163,3 @@ class DashboardService:
         counts = self.alerts.counts_by_hour(first)
         hours = [first + timedelta(hours=i) for i in range(TREND_HOURS)]
         return [HourCount(hour=to_bogota(h), count=counts.get(h, 0)) for h in hours]
-
-    def _anomalies(self, now: datetime) -> list[Anomaly]:
-        recent_since = now - timedelta(minutes=ANOMALY_RECENT_MINUTES)
-        week_since = now - timedelta(days=ANOMALY_WINDOW_DAYS)
-        # La referencia excluye la propia hora evaluada (doc 05 §7): 7 días menos la última hora.
-        hours = ANOMALY_WINDOW_DAYS * 24 - 1
-        zone_names = {z.id: z.name for z in self.catalog.list_zones()}
-        type_names = {t.code: t.name for t in self.catalog.list_alert_types()}
-        recent_zone = self.alerts.counts_by_zone(recent_since)
-        by_zone = anomaly_rules.detect(
-            "zone",
-            recent_zone,
-            _exclude(self.alerts.counts_by_zone(week_since), recent_zone),
-            zone_names,
-            hours=hours,
-        )
-        recent_type = self.alerts.counts_by_type(recent_since)
-        by_type = anomaly_rules.detect(
-            "type",
-            recent_type,
-            _exclude(self.alerts.counts_by_type(week_since), recent_type),
-            type_names,
-            hours=hours,
-        )
-        return by_zone + by_type
-
-
-def _exclude(weekly: dict[str, int], recent: dict[str, int]) -> dict[str, int]:
-    """Conteos de la ventana semanal sin la última hora evaluada."""
-    return {key: max(count - recent.get(key, 0), 0) for key, count in weekly.items()}

@@ -135,6 +135,8 @@ interface TimelineEvent {
 
 ### 3.5 Análisis y reportes
 
+Contrato detallado (rangos, formato de días en Bogotá, columnas del CSV): `specs/007-analisis-reportes/contracts/api-analytics.md`. `days` admite 7, 14 o 30 (otro valor → 30). Las rutas de analítica no requieren actor.
+
 | Método | Ruta | Parámetros y respuesta |
 |---|---|---|
 | GET | `/api/analytics/by-zone` | `?days=7\|14\|30` → `{ zoneId, zoneName, count }[]` |
@@ -143,7 +145,7 @@ interface TimelineEvent {
 | GET | `/api/analytics/times` | `?days=` → `{ avgResponseSeconds, avgResolutionSeconds, byDay: [...] }` |
 | GET | `/api/analytics/outcomes` | `?days=` → `{ confirmed, dismissed, confirmationRate, belowThreshold }` |
 | GET | `/api/analytics/anomalies` | `Anomaly[]` = `{ scope: 'zone'\|'type', key, label, lastHour, hourlyMean, variationPct }` |
-| GET | `/api/reports/incidents.csv` | Mismos filtros que `/incidents`. Devuelve `text/csv` en UTF-8 con BOM. **Solo supervisor** |
+| GET | `/api/reports/incidents.csv` | Mismos filtros que `/incidents` (sin paginar, máx. 5000 filas). Devuelve `text/csv` en UTF-8 con BOM, cabeceras en español, fechas en hora de Bogotá y `Content-Disposition` con `incidentes-YYYYMMDD-HHMM.csv`. **Solo supervisor** |
 
 ### 3.6 Configuración y demo (solo supervisor)
 

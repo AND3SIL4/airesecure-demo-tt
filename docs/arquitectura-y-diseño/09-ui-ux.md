@@ -95,7 +95,7 @@ Layout de 2 columnas (8/4):
 ### 3.8 Análisis (`/analisis`)
 - Selector de rango: 7, 14 o 30 días.
 - Grilla 2×3: Incidentes por zona (barras horizontales), Por tipo (barras), Evolución diaria (líneas apiladas por severidad), Confirmadas frente a falsos positivos (dona con %), Tiempos medios (2 KPIs y una línea) y Anomalías (lista con la etiqueta "Detección basada en reglas · demostrativa").
-- Cada gráfico tiene un título que responde una pregunta ("¿Dónde ocurren más incidentes?"), tooltips y su estado vacío.
+- Cada gráfico tiene un título que responde una pregunta, tooltips y su estado vacío: "¿Dónde ocurren más incidentes?", "¿Qué tipos predominan?", "¿Cómo evolucionan por severidad?", "¿Cuántas alertas se confirman?", "¿Cuánto tardamos en responder y resolver?" y "¿Hay comportamientos inusuales?". Cada bloque carga de forma independiente (un error no rompe los demás). El contador de eventos bajo umbral es acumulado desde la siembra.
 
 ### 3.9 Reportes (`/reportes`, supervisor)
 - Formulario de filtros (rango, severidad, zona, tipo y estado), vista previa (las 10 primeras filas y el total) y el botón "Descargar CSV".

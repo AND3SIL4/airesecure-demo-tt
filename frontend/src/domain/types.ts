@@ -359,3 +359,44 @@ export interface DashboardSummary {
   trend24h: HourlyCount[];
   anomalies: Anomaly[];
 }
+
+// ---------------------------------------------------------------------------
+// Análisis (specs/007-analisis-reportes/contracts/api-analytics.md, doc 08 §3.5)
+// ---------------------------------------------------------------------------
+
+export interface ZoneCount {
+  zoneId: string;
+  zoneName: string;
+  count: number;
+}
+
+/** Incidentes por día (fecha de Bogotá `YYYY-MM-DD`) con el desglose por severidad. */
+export interface DailySeverityCount {
+  date: string;
+  total: number;
+  critica: number;
+  alta: number;
+  media: number;
+  baja: number;
+}
+
+export interface DailyTimes {
+  date: string;
+  avgResponseSeconds: number | null;
+  avgResolutionSeconds: number | null;
+}
+
+export interface AnalyticsTimes {
+  avgResponseSeconds: number | null;
+  avgResolutionSeconds: number | null;
+  byDay: DailyTimes[];
+}
+
+export interface AlertOutcomes {
+  confirmed: number;
+  dismissed: number;
+  /** 0..1; null si no hay alertas decididas en el rango. */
+  confirmationRate: number | null;
+  /** Acumulado desde la siembra (no depende del rango). */
+  belowThreshold: number;
+}

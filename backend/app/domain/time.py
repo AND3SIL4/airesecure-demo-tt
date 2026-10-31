@@ -1,6 +1,6 @@
 """Hora local de presentación (America/Bogota, UTC-5 sin horario de verano). Sin zoneinfo (research R5)."""
 
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta, timezone
 
 BOGOTA_TZ = timezone(timedelta(hours=-5), "America/Bogota")
 
@@ -35,3 +35,8 @@ def same_window_yesterday(now: datetime) -> tuple[datetime, datetime]:
     """Ventana comparable de ayer: de las 00:00 de ayer a la misma hora de ayer (UTC)."""
     start = bogota_day_start(now) - timedelta(days=1)
     return start, _aware(now).astimezone(UTC) - timedelta(days=1)
+
+
+def bogota_date(dt: datetime) -> date:
+    """La fecha del calendario de Bogotá de un instante (UTC si no trae zona)."""
+    return to_bogota(dt).date()

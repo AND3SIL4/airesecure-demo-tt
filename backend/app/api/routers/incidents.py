@@ -5,14 +5,11 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Query
 
 from app.api.deps import ActorDep, PublisherDep, SessionDep
+from app.api.params import split_list
 from app.api.schemas.incidents import IncidentActionIn, IncidentDetailOut, IncidentPageOut
 from app.services.incident_service import IncidentListQuery, IncidentService
 
 router = APIRouter(prefix="/incidents", tags=["incidents"])
-
-
-def _csv(raw: str | None) -> list[str]:
-    return [part.strip() for part in raw.split(",") if part.strip()] if raw else []
 
 
 @router.get("", response_model=IncidentPageOut, response_model_by_alias=True)
@@ -30,10 +27,10 @@ def list_incidents(
     page_size: Annotated[int, Query(alias="pageSize", ge=1, le=100)] = 20,
 ) -> IncidentPageOut:
     query = IncidentListQuery(
-        status=_csv(status_),
-        severity=_csv(severity),
-        zone=_csv(zone),
-        type=_csv(type_),
+        status=split_list(status_),
+        severity=split_list(severity),
+        zone=split_list(zone),
+        type=split_list(type_),
         q=q,
         date_from=date_from,
         date_to=date_to,

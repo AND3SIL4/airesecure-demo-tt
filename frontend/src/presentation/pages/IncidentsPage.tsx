@@ -2,6 +2,7 @@ import { FolderOpen, SearchX } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAlertTypes, useZones } from '../../application/hooks/useCatalogs';
+import { useCurrentUser } from '../../application/hooks/useCurrentUser';
 import { useIncidents } from '../../application/hooks/useIncidents';
 import {
   INCIDENTS_PAGE_SIZE,
@@ -17,6 +18,7 @@ import { Pagination } from '../components/Pagination';
 import { Skeleton } from '../components/Skeleton';
 import { IncidentFilterBar } from '../features/incidents/IncidentFilterBar';
 import { IncidentTable } from '../features/incidents/IncidentTable';
+import { ExportCsvButton } from '../features/reports/ExportCsvButton';
 
 /** Registro de incidentes (doc 09 §3.5): filtros en la URL, tabla ordenable, paginación y 4 estados. */
 export function IncidentsPage() {
@@ -27,6 +29,8 @@ export function IncidentsPage() {
   const incidents = useIncidents(filters);
   const zones = useZones();
   const alertTypes = useAlertTypes();
+  const { user } = useCurrentUser();
+  const isSupervisor = user?.role === 'supervisor';
 
   const setFilters = useCallback(
     (next: IncidentFilters) => setSearchParams(incidentFiltersToSearchParams(next)),
@@ -101,11 +105,23 @@ export function IncidentsPage() {
 
   return (
     <section aria-labelledby="incidents-title" className="space-y-4">
-      <header>
-        <h1 id="incidents-title" className="text-2xl font-semibold text-slate-900">
-          Incidentes
-        </h1>
-        <p className="text-sm text-slate-600">Casos confirmados por una persona</p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 id="incidents-title" className="text-2xl font-semibold text-slate-900">
+            Incidentes
+          </h1>
+          <p className="text-sm text-slate-600">Casos confirmados por una persona</p>
+        </div>
+        {/* Solo supervisor (doc 09 §3.5): exporta todas las filas con los filtros activos. */}
+        {isSupervisor && (
+          <ExportCsvButton
+            filters={filters}
+            total={incidents.isPlaceholderData ? undefined : data?.total}
+            failed={incidents.isError}
+            label="Exportar CSV"
+            variant="secondary"
+          />
+        )}
       </header>
 
       <IncidentFilterBar

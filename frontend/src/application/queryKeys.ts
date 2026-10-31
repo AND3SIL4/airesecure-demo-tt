@@ -1,5 +1,6 @@
 // Claves jerárquicas de TanStack Query.
 import type { AlertFilters } from '../domain/alertFilters';
+import type { AnalyticsDays } from '../domain/analytics';
 import type { IncidentFilters } from '../domain/incidentFilters';
 
 export const queryKeys = {
@@ -26,7 +27,7 @@ export const queryKeys = {
     /** Incluye las listas, los detalles y `incidents.counts`. */
     all: ['incidents'] as const,
     lists: ['incidents', 'list'] as const,
-    list: (filters: IncidentFilters) => ['incidents', 'list', filters] as const,
+    list: (filters: IncidentFilters, pageSize: number) => ['incidents', 'list', filters, pageSize] as const,
     detail: (id: string) => ['incidents', 'detail', id] as const,
     /** Total de incidentes en curso para el badge del menú. */
     counts: ['incidents', 'counts'] as const,
@@ -34,6 +35,16 @@ export const queryKeys = {
   dashboard: {
     all: ['dashboard'] as const,
     summary: ['dashboard', 'summary'] as const,
+  },
+  analytics: {
+    /** Todos los bloques de Análisis; `useLiveEvents` lo invalida con los eventos de alertas e incidentes. */
+    all: ['analytics'] as const,
+    byZone: (days: AnalyticsDays) => ['analytics', 'byZone', days] as const,
+    byType: (days: AnalyticsDays) => ['analytics', 'byType', days] as const,
+    trend: (days: AnalyticsDays) => ['analytics', 'trend', days] as const,
+    times: (days: AnalyticsDays) => ['analytics', 'times', days] as const,
+    outcomes: (days: AnalyticsDays) => ['analytics', 'outcomes', days] as const,
+    anomalies: ['analytics', 'anomalies'] as const,
   },
   settings: {
     all: ['settings'] as const,
