@@ -127,9 +127,9 @@ function AlertDetailContent({ alert }: { alert: AlertDetail }) {
       </header>
 
       <div className="grid gap-4 lg:grid-cols-12">
-        {/* En tablet (1 columna) las acciones van primero para que estén siempre a la vista. */}
-        <aside aria-label="Acciones y contexto" className="order-first space-y-4 lg:order-last lg:col-span-4">
-          <Card title="Acciones">
+        {/* En tablet (1 columna) las acciones van primero, y ubicación y confianza lado a lado para no empujar la evidencia. */}
+        <aside aria-label="Acciones y contexto" className="order-first grid content-start gap-4 md:grid-cols-2 lg:order-last lg:col-span-4 lg:grid-cols-1">
+          <Card title="Acciones" className="md:col-span-2 lg:col-span-1">
             <AlertActionsPanel alert={alert} />
           </Card>
           <Card title="Ubicación">

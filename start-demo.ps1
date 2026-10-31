@@ -57,7 +57,8 @@ while ((Get-Date) -lt $deadline) {
     try {
         $health = Invoke-RestMethod -Uri "http://localhost:$apiPort/api/health" -TimeoutSec 2
         if ($health.status -eq 'ok') { $ready = $true; break }
-    } catch { Start-Sleep -Milliseconds 800 }
+    } catch { }
+    Start-Sleep -Milliseconds 800
 }
 if (-not $ready) {
     Write-Host 'La API no respondió en 60 s. Revisa la ventana "AeroSecure AI - API".' -ForegroundColor Yellow

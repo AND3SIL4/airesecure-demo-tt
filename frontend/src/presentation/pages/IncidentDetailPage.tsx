@@ -32,7 +32,7 @@ function DetailSkeleton() {
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-8">
           <Skeleton variant="card" label="Cargando la alerta de origen…" />
-          <Skeleton rows={5} label="Cargando la historia…" />
+          <Skeleton rows={5} label="Cargando el historial…" />
         </div>
         <div className="space-y-4 lg:col-span-4">
           <Skeleton variant="card" label="Cargando la gestión…" />
@@ -147,7 +147,7 @@ function IncidentDetailContent({ incident }: { incident: IncidentDetail }) {
               </div>
             </dl>
           </Card>
-          <Card title="Historia">
+          <Card title="Historial">
             <p className="mb-3 text-xs text-slate-600">Eventos de la alerta y del incidente en orden cronológico.</p>
             <Timeline events={incident.timeline} />
           </Card>
@@ -157,7 +157,7 @@ function IncidentDetailContent({ incident }: { incident: IncidentDetail }) {
   );
 }
 
-/** Detalle de incidente (doc 09 §3.6): encabezado, alerta de origen, historia combinada y gestión. */
+/** Detalle de incidente (doc 09 §3.6): encabezado, alerta de origen, historial combinado y gestión. */
 export function IncidentDetailPage() {
   const { id = '' } = useParams();
   const incident = useIncident(id);

@@ -265,7 +265,7 @@ export interface Incident {
   resolutionSeconds: number | null;
 }
 
-/** Detalle con la historia combinada (alerta + incidente) en orden ascendente. */
+/** Detalle con el historial combinado (alerta + incidente) en orden ascendente. */
 export interface IncidentDetail extends Incident {
   timeline: TimelineEvent[];
 }

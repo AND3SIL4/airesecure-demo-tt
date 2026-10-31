@@ -6,7 +6,7 @@
 
 1. Ejecutar `./start-demo.ps1` y esperar a ver "Uvicorn running on :8000" y "Vite ready on :5173".
 2. Abrir `http://localhost:5173` en Chrome o Edge, en pantalla completa (≥ 1280 px).
-3. Entrar como **Supervisor A**, ir a Configuración → **Reiniciar demo** y **apagar el simulador**, para una presentación controlada.
+3. Entrar como **Supervisor A**, ir a Configuración → **Reiniciar demo** (escribir `REINICIAR`) y **apagar el simulador**, para una presentación controlada.
 4. Cambiar el perfil a **Operador 01**.
 5. Opcional: abrir una segunda pestaña en Mapa para mostrar la sincronización en vivo.
 
@@ -15,14 +15,14 @@
 | # | Tiempo | Acción | Qué se muestra o se dice |
 |---|---|---|---|
 | 1 | 0:00 | Resumen | "De los datos a las decisiones": KPIs, alertas priorizadas por score, mini-mapa, tendencia. Se señala el banner de modo demostración |
-| 2 | 0:45 | Señalar la anomalía | "Aumento inusual en la Sala de embarque A, +65 %": detección basada en reglas |
+| 2 | 0:45 | Señalar la anomalía | "Aumento inusual · Sala de embarque A" (≈ +400 % frente a la referencia): detección basada en reglas, demostrativa |
 | 3 | 1:15 | (Supervisor en otra pestaña, o atajo) disparar el **escenario E-1** | La alerta crítica llega **en vivo**: toast, el contador sube y aparece en el mapa |
 | 4 | 1:45 | Abrir la alerta | Pasa a "En revisión" automáticamente. Evidencia ilustrativa, confianza del 94 %, **por qué se priorizó** (desglose del score), recomendación y protocolo |
 | 5 | 2:45 | **Confirmar incidente** con una nota | Diálogo de confirmación; se crea INC-xxxx; mensaje: "La IA prioriza, la persona decide" |
 | 6 | 3:15 | **Asignar** a Seguridad T1 y luego **Atender** | La timeline registra actor y hora |
 | 7 | 3:45 | **Escalar** a la Unidad EOD con un motivo | Estado "Escalado" |
 | 8 | 4:15 | **Resolver** con una nota de cierre | Estado "Resuelto"; los KPIs se actualizan |
-| 9 | 4:45 | Flujo alterno: abrir la alerta #3 (Concentración, media) → **Marcar como falso positivo** → motivo "Movimiento normal de pasajeros" | Estado "Descartada" con el motivo auditado; no se crea incidente |
+| 9 | 4:45 | Flujo alterno: abrir la alerta "Concentración inusual de personas" de la Sala de embarque A (CAM-T1-008, 78 %; tras reiniciar es ALT-2246) → **Marcar como falso positivo** → motivo "Movimiento normal de pasajeros" | Estado "Descartada" con el motivo auditado; no se crea incidente |
 | 10 | 5:30 | **Mapa 3D** | Zonas por riesgo, orbitar, hacer clic en una zona y en un marcador |
 | 11 | 6:15 | **Análisis** | Por zona y tipo, evolución, % de confirmadas frente a falsos positivos, tiempos |
 | 12 | 6:45 | (Supervisor) **Exportar CSV** | El archivo se abre en Excel |
@@ -69,3 +69,13 @@
 | Los datos se ven "viejos" | La base de datos se sembró hace días | Configuración → Reiniciar demo |
 | El mapa aparece en 2D | WebGL deshabilitado | Activar la aceleración por hardware en el navegador |
 | El puerto está ocupado | Hay otra instancia corriendo | Cerrar los procesos en `:8000` y `:5173` |
+
+## 5. Limitaciones conocidas
+
+| Tema | Detalle |
+|---|---|
+| KPI "Incidentes en curso" | El valor es la foto actual (abiertos + en atención + escalados), pero su variación compara los incidentes **abiertos** hoy frente a ayer (doc 05 §6). |
+| Cerca de la medianoche | La ventana "hoy" es corta: las variaciones del Resumen pueden mostrar "Sin datos de ayer/hoy" o diferencias absolutas, y los incidentes "de hoy" se concentran en pocos minutos. Preferible presentar en horario diurno o reiniciar la demo justo antes. |
+| Mapa 3D | Requiere WebGL; con aceleración por software funciona pero con menos fluidez. Sin WebGL se muestra el plano 2D. |
+| Primera visita en desarrollo | Vite compila cada vista la primera vez (1-3 s); con `bun run build` + `vite preview` no ocurre. |
+| Verificación automática | Las comprobaciones de este checklist se hicieron por API y capturas automatizadas (Edge headless). Quedan para una persona: navegación con GPU real, apertura del CSV en Excel, lectores de pantalla y uso táctil en tablet. |

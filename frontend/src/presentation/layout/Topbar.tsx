@@ -121,7 +121,7 @@ export function Topbar() {
   const title = viewTitleForPath(pathname);
 
   return (
-    <header className="sticky top-8 z-30 flex h-16 items-center gap-4 bg-navy-900 px-4 text-white lg:px-6">
+    <header className="on-dark sticky top-8 z-30 flex h-16 items-center gap-4 bg-navy-900 px-4 text-white lg:px-6">
       <div className="min-w-0 flex-1">
         <p className="truncate text-lg font-semibold" title={title}>
           {title}

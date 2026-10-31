@@ -50,7 +50,7 @@ export function DangerZone({ resetting, onReset }: DangerZoneProps) {
       </h2>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="max-w-2xl text-sm text-slate-700">
-          Reinicia la demo: borra alertas, incidentes e historia y genera datos nuevos relativos a la hora actual. Se
+          Reinicia la demo: borra alertas, incidentes e historial y genera datos nuevos relativos a la hora actual. Se
           conserva el estado del simulador; los umbrales vuelven a sus valores por defecto.
         </p>
         <Button variant="danger" icon={RotateCcw} onClick={() => setOpen(true)}>
@@ -66,7 +66,7 @@ export function DangerZone({ resetting, onReset }: DangerZoneProps) {
         preventClose={resetting}
         description={
           <>
-            Se borrarán todas las alertas, los incidentes y su historia, y se generarán datos nuevos. Todas las pestañas
+            Se borrarán todas las alertas, los incidentes y su historial, y se generarán datos nuevos. Todas las pestañas
             abiertas volverán al Resumen. <strong className="text-slate-900">Esta acción no se puede deshacer.</strong>
           </>
         }

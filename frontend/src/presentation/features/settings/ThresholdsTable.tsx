@@ -37,7 +37,7 @@ export function ThresholdsTable({ thresholds, typeNames, belowThreshold, saving,
 
   return (
     <form onSubmit={submit} noValidate className="space-y-3">
-      <div className="overflow-x-auto rounded-lg border border-slate-200">
+      <div className="relative overflow-x-auto rounded-lg border border-slate-200">
         <table className="w-full text-sm">
           <caption className="sr-only">Umbral de confianza por tipo de alerta</caption>
           <thead className="bg-slate-50 text-left text-xs font-semibold text-slate-600 uppercase">

@@ -55,7 +55,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="sticky top-8 flex h-[calc(100vh-2rem)] w-[72px] shrink-0 flex-col bg-navy-950 text-slate-200 lg:w-60">
+    <aside className="on-dark sticky top-8 flex h-[calc(100vh-2rem)] w-[72px] shrink-0 flex-col bg-navy-950 text-slate-200 lg:w-60">
       <div className="flex h-16 items-center justify-center px-4 lg:justify-start">
         <Logo tone="light" collapsible />
       </div>

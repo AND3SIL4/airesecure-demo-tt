@@ -104,9 +104,10 @@ export function AlertTable({
     }
   };
 
+  // `relative`: los textos sr-only (absolutos) de la tabla quedan dentro del scroll y no desbordan la página.
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-surface shadow-sm">
-      <table className="w-full min-w-[56rem] text-left text-sm">
+    <div className="relative overflow-x-auto rounded-lg border border-slate-200 bg-surface shadow-sm">
+      <table className="w-full min-w-[44rem] text-left text-sm lg:min-w-[56rem]">
         <caption className="sr-only">{caption}</caption>
         <thead className="border-b border-slate-200 bg-slate-50 text-xs text-slate-600 uppercase">
           <tr>

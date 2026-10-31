@@ -139,7 +139,7 @@ Layout de 2 columnas (8/4):
 | `*-text` (solo texto) | Variantes oscuras para texto sobre fondo claro (contraste AA): `brand-700` `#1A4FAE`, `sev-critica-text` `#B91C1C`, `sev-alta-text` `#C2410C`, `sev-media-text` `#B45309`, `ok-text` `#15803D` | — |
 
 ### 5.2 Tipografía e iconos
-- **Inter** (variable, autoalojada con `@fontsource/inter`), con números tabulares en KPIs y tablas.
+- **Inter** (variable, autoalojada con `@fontsource-variable/inter`), con números tabulares en KPIs y tablas.
 - Escala: 12 / 14 (base) / 16 / 20 / 24 / 32.
 - Iconos lucide de 16 y 20 px, con trazo uniforme.
 

@@ -88,7 +88,7 @@ aerosecure-ai/
 │     ├─ domain/            # models.py, enums.py, state_machine.py, scoring.py, anomalies.py, errors.py
 │     └─ infrastructure/    # db.py, event_bus.py, simulator.py, seed/
 ├─ frontend/
-│  ├─ package.json  bun.lockb  vite.config.ts  tailwind.config.ts
+│  ├─ package.json  bun.lock  vite.config.ts  eslint.config.js   # Tailwind v4 vía @tailwindcss/vite (tokens en src/index.css)
 │  ├─ public/evidence/      # imágenes ilustrativas sin rostros
 │  └─ src/
 │     ├─ main.tsx  App.tsx  router.tsx

@@ -100,9 +100,10 @@ export function IncidentTable({ incidents, sort, onSortChange, onOpen, caption }
     }
   };
 
+  // `relative`: los textos sr-only (absolutos) de la tabla quedan dentro del scroll y no desbordan la página.
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-surface shadow-sm">
-      <table className="w-full min-w-[52rem] text-left text-sm">
+    <div className="relative overflow-x-auto rounded-lg border border-slate-200 bg-surface shadow-sm">
+      <table className="w-full min-w-[46rem] text-left text-sm lg:min-w-[52rem]">
         <caption className="sr-only">{caption}</caption>
         <thead className="border-b border-slate-200 bg-slate-50 text-xs text-slate-600 uppercase">
           <tr>
@@ -127,7 +128,7 @@ export function IncidentTable({ incidents, sort, onSortChange, onOpen, caption }
             </th>
             <SortHeader field="openedAt" sort={sort} onSortChange={onSortChange} />
             <SortHeader field="responseSeconds" sort={sort} onSortChange={onSortChange} />
-            <th scope="col" className="px-2 py-2 font-semibold whitespace-nowrap">
+            <th scope="col" className="hidden px-2 py-2 font-semibold whitespace-nowrap lg:table-cell">
               T. resolución
             </th>
             <th scope="col" className="w-8 px-2 py-2">
@@ -167,7 +168,7 @@ export function IncidentTable({ incidents, sort, onSortChange, onOpen, caption }
               <td className="tabular px-2 py-2.5 whitespace-nowrap text-slate-700">
                 {durationCell(incident.responseSeconds)}
               </td>
-              <td className="tabular px-2 py-2.5 whitespace-nowrap text-slate-700">
+              <td className="tabular hidden px-2 py-2.5 whitespace-nowrap text-slate-700 lg:table-cell">
                 {durationCell(incident.resolutionSeconds)}
               </td>
               <td className="px-2 py-2.5 text-slate-400">

@@ -59,4 +59,3 @@ export function viewTitleForPath(pathname: string): string {
 }
 
 export const AIRPORT_LABEL = 'Aeropuerto Internacional Demo · Terminal 1';
-export const UPCOMING_FEATURE_MESSAGE = 'Disponible en una próxima versión';

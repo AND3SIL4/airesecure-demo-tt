@@ -64,6 +64,16 @@
     outline-offset: 2px;
   }
 
+  /* Sobre el navy del sidebar y la topbar el anillo brand-600 no llega a 3:1 (WCAG 1.4.11): se usa blanco.
+     Los paneles claros dentro de esas zonas (p. ej., el popover de notificaciones) recuperan el anillo brand. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-white);
+  }
+
+  .on-dark .on-light :focus-visible {
+    outline-color: var(--color-brand-600);
+  }
+
   dialog::backdrop {
     background-color: rgb(11 27 51 / 0.55);
   }

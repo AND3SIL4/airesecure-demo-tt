@@ -13,7 +13,7 @@ from app.infrastructure.db import get_session as _db_session
 from app.infrastructure.event_bus import EventBus
 from app.infrastructure.simulator import Simulator
 from app.services.catalog_service import CatalogService
-from app.services.ports import DemoResetPort, EventPublisher
+from app.services.ports import DemoResetPort, EventPublisher, EventSubscriber
 
 
 def get_session() -> Iterator[Session]:
@@ -64,6 +64,14 @@ def get_event_bus(request: Request) -> EventBus:
 
 
 EventBusDep = Annotated[EventBus, Depends(get_event_bus)]
+
+
+def get_subscriber(request: Request) -> EventSubscriber:
+    """El bus en memoria visto como puerto de suscripción (SSE) para la capa api."""
+    return get_event_bus(request)
+
+
+SubscriberDep = Annotated[EventSubscriber, Depends(get_subscriber)]
 
 
 def get_publisher(request: Request) -> EventPublisher:

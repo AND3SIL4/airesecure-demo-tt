@@ -12,8 +12,8 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from app.api.deps import EventBusDep
-from app.infrastructure.event_bus import EventBus
+from app.api.deps import SubscriberDep
+from app.services.ports import EventSubscriber
 
 router = APIRouter(tags=["stream"])
 
@@ -31,7 +31,7 @@ def _now_iso() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-async def _event_stream(request: Request, bus: EventBus) -> AsyncIterator[str]:
+async def _event_stream(request: Request, bus: EventSubscriber) -> AsyncIterator[str]:
     queue = bus.subscribe()
     try:
         yield f"retry: {RETRY_MILLISECONDS}\n\n"
@@ -52,5 +52,5 @@ async def _event_stream(request: Request, bus: EventBus) -> AsyncIterator[str]:
 
 
 @router.get("/stream", response_class=StreamingResponse)
-async def stream(request: Request, bus: EventBusDep) -> StreamingResponse:
+async def stream(request: Request, bus: SubscriberDep) -> StreamingResponse:
     return StreamingResponse(_event_stream(request, bus), media_type="text/event-stream", headers=_HEADERS)

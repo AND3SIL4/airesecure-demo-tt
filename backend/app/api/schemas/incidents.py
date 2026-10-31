@@ -70,7 +70,7 @@ class IncidentOut(ApiModel):
 
 
 class IncidentDetailOut(IncidentOut):
-    """`Incident` con la historia combinada (alerta de origen + incidente) en orden ascendente."""
+    """`Incident` con el historial combinado (alerta de origen + incidente) en orden ascendente."""
 
     timeline: list[TimelineEventOut]
 

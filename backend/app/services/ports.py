@@ -1,5 +1,6 @@
 """Puertos de la capa de servicios (doc 06 §2.1): la implementación vive en infrastructure."""
 
+import asyncio
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Protocol
@@ -9,6 +10,14 @@ class EventPublisher(Protocol):
     """Publica un evento en vivo (SSE). Se llama solo después de un commit exitoso."""
 
     def publish(self, event: str, data: dict[str, Any]) -> None: ...
+
+
+class EventSubscriber(Protocol):
+    """Suscripción a los eventos en vivo (SSE) para la capa api; la implementa el bus en memoria."""
+
+    def subscribe(self) -> "asyncio.Queue[tuple[str, dict[str, Any]] | None]": ...
+
+    def unsubscribe(self, queue: "asyncio.Queue[tuple[str, dict[str, Any]] | None]") -> None: ...
 
 
 class NullPublisher:

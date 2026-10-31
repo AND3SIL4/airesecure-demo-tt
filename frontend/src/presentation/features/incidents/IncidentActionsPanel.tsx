@@ -264,7 +264,7 @@ export function IncidentActionsPanel({ incident }: IncidentActionsPanelProps) {
           </Button>
         )}
       </div>
-      <p className="text-xs text-slate-600">Cada decisión queda registrada en la historia con tu perfil y la hora.</p>
+      <p className="text-xs text-slate-600">Cada decisión queda registrada en el historial con tu perfil y la hora.</p>
 
       {dialog === 'assign' && assign && teams.data && (
         <AssignTeamDialog

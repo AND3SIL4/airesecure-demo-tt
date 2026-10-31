@@ -34,7 +34,7 @@ Plantillas: [templates/api-client.ts](templates/api-client.ts), [templates/useRe
 ## Sistema visual (doc 09 §5)
 - Tokens de Tailwind: `navy-950/900`, `brand-600`, `surface`, `surface-muted`, `sev-critica|alta|media|baja`, `ok` y `demo`. El rojo **solo** se usa para lo crítico.
 - Componentes base: Button, SeverityBadge, StatusBadge, Card, KpiCard, Table, FilterBar, Select, Dialog/ConfirmDialog, Toast, Tooltip, Skeleton, EmptyState, ErrorState, Timeline, ConfidenceMeter, ScoreBreakdown, EvidenceViewer y MiniMap2D.
-- Tipografía Inter (`@fontsource/inter`), números tabulares; iconos `lucide-react` de 16 y 20 px.
+- Tipografía Inter (`@fontsource-variable/inter`), números tabulares; iconos `lucide-react` de 16 y 20 px.
 
 ## Accesibilidad (obligatoria)
 Severidad y estado con icono, texto y color; foco visible (`ring-2 ring-brand-600`); filas navegables con ↑/↓ y Enter; diálogos con foco atrapado, Esc y devolución del foco; `aria-live` polite para las nuevas y assertive para las críticas; `motion-safe:` en las animaciones.

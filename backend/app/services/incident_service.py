@@ -1,6 +1,6 @@
-"""Casos de uso del incidente: registro, detalle con historia combinada y acciones (doc 05 §3).
+"""Casos de uso del incidente: registro, detalle con historial combinado y acciones (doc 05 §3).
 
-Las escrituras van en una transacción serializada (`begin_write`), insertan su evento de historia y publican
+Las escrituras van en una transacción serializada (`begin_write`), insertan su evento de historial y publican
 `incident.updated` **después** del commit (research R5 de 004).
 """
 
@@ -184,7 +184,7 @@ class IncidentService:
     # ---------- Escrituras ----------
 
     def apply_action(self, incident_id: str, command: IncidentCommand, actor: User) -> IncidentDetailView:
-        """Aplica una acción humana en una sola transacción serializada (incidente + historia)."""
+        """Aplica una acción humana en una sola transacción serializada (incidente + historial)."""
         actor_id = actor.id
         begin_write(self.session)
         incident = self._get_or_404(incident_id)
