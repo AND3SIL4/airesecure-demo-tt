@@ -1,15 +1,18 @@
-"""Dependencias comunes de los routers: sesión, actor (X-Actor-Id) y rol de supervisor."""
+"""Dependencias comunes de los routers: sesión, actor (X-Actor-Id), rol de supervisor, bus y simulador."""
 
 from collections.abc import Iterator
 from typing import Annotated
 
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from sqlmodel import Session
 
 from app.domain.errors import SOLO_SUPERVISOR, DomainError
 from app.domain.models import User
 from app.infrastructure.db import get_session as _db_session
+from app.infrastructure.event_bus import EventBus
+from app.infrastructure.simulator import Simulator
 from app.services.catalog_service import CatalogService
+from app.services.ports import EventPublisher
 
 
 def get_session() -> Iterator[Session]:
@@ -36,3 +39,27 @@ def require_supervisor(actor: ActorDep) -> User:
 
 
 SupervisorDep = Annotated[User, Depends(require_supervisor)]
+
+
+def get_event_bus(request: Request) -> EventBus:
+    bus: EventBus = request.app.state.event_bus
+    return bus
+
+
+EventBusDep = Annotated[EventBus, Depends(get_event_bus)]
+
+
+def get_publisher(request: Request) -> EventPublisher:
+    """El bus en memoria visto como puerto de publicación de los servicios."""
+    return get_event_bus(request)
+
+
+PublisherDep = Annotated[EventPublisher, Depends(get_publisher)]
+
+
+def get_simulator(request: Request) -> Simulator:
+    simulator: Simulator = request.app.state.simulator
+    return simulator
+
+
+SimulatorDep = Annotated[Simulator, Depends(get_simulator)]

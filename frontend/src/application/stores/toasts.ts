@@ -1,5 +1,6 @@
 // Store de toasts con useSyncExternalStore (sin librerías de estado).
 import { useSyncExternalStore } from 'react';
+import type { Severity } from '../../domain/types';
 
 export type ToastKind = 'success' | 'error' | 'info';
 
@@ -14,16 +15,25 @@ export interface Toast {
   kind: ToastKind;
   message: string;
   persistent: boolean;
+  /** Se anuncia en la región `aria-live="assertive"` (errores y alertas críticas). */
+  assertive: boolean;
   action?: ToastAction;
+  /** Severidad a mostrar con SeverityBadge (avisos de alertas nuevas). */
+  severity?: Severity;
 }
 
 export interface ToastOptions {
   persistent?: boolean;
+  assertive?: boolean;
   action?: ToastAction;
+  severity?: Severity;
 }
 
 const AUTO_DISMISS_MS = 5000;
-const MAX_TOASTS = 5;
+/** Máximo de toasts no persistentes visibles (se descarta el más antiguo). */
+const MAX_TRANSIENT = 3;
+/** Tope de seguridad para los persistentes, para no tapar la pantalla. */
+const MAX_PERSISTENT = 5;
 
 let toasts: readonly Toast[] = [];
 let nextId = 1;
@@ -43,30 +53,43 @@ function getSnapshot(): readonly Toast[] {
   return toasts;
 }
 
-export function dismissToast(id: number): void {
+function clearTimer(id: number): void {
   const timer = timers.get(id);
-  if (timer) {
-    clearTimeout(timer);
-    timers.delete(id);
-  }
+  if (timer) clearTimeout(timer);
+  timers.delete(id);
+}
+
+export function dismissToast(id: number): void {
+  clearTimer(id);
   toasts = toasts.filter((t) => t.id !== id);
   emit();
 }
 
+/** Quita los más antiguos del grupo indicado hasta dejar `max`. */
+function trim(list: Toast[], persistent: boolean, max: number): void {
+  let count = list.filter((t) => t.persistent === persistent).length;
+  while (count > max) {
+    const index = list.findIndex((t) => t.persistent === persistent);
+    const [removed] = list.splice(index, 1);
+    if (removed) clearTimer(removed.id);
+    count -= 1;
+  }
+}
+
 function push(kind: ToastKind, message: string, options: ToastOptions = {}): number {
   const id = nextId++;
-  const toast: Toast = { id, kind, message, persistent: options.persistent ?? false, action: options.action };
+  const toast: Toast = {
+    id,
+    kind,
+    message,
+    persistent: options.persistent ?? false,
+    assertive: options.assertive ?? kind === 'error',
+    action: options.action,
+    severity: options.severity,
+  };
   const next = [...toasts, toast];
-  // Se descartan los más antiguos no persistentes si hay demasiados.
-  while (next.length > MAX_TOASTS) {
-    const index = next.findIndex((t) => !t.persistent);
-    const removed = next.splice(index === -1 ? 0 : index, 1)[0];
-    if (removed) {
-      const timer = timers.get(removed.id);
-      if (timer) clearTimeout(timer);
-      timers.delete(removed.id);
-    }
-  }
+  trim(next, false, MAX_TRANSIENT);
+  trim(next, true, MAX_PERSISTENT);
   toasts = next;
   if (!toast.persistent) {
     timers.set(
@@ -76,6 +99,13 @@ function push(kind: ToastKind, message: string, options: ToastOptions = {}): num
   }
   emit();
   return id;
+}
+
+/** Cierra todos los toasts (p. ej., al reiniciar la demo). */
+export function clearToasts(): void {
+  for (const id of timers.keys()) clearTimer(id);
+  toasts = [];
+  emit();
 }
 
 export const toast = {

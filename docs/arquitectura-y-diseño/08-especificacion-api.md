@@ -159,17 +159,17 @@ interface TimelineEvent {
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/stream` | `text/event-stream`. Un `heartbeat` cada 15 s |
-| GET | `/api/health` | `{ status: "ok", simulator: {...}, db: "ok" }` |
+| GET | `/api/stream` | `text/event-stream`. Un `heartbeat` cada 15 s. No requiere `X-Actor-Id` (EventSource no admite cabeceras; los datos no son sensibles en la demo). Primer mensaje `retry: 3000` |
+| GET | `/api/health` | `{ status: "ok", db: "ok", version, simulator: { enabled, intervalSeconds, running, belowThreshold } }` |
 
 **Eventos SSE**
 
 | `event:` | `data:` | Efecto en el frontend |
 |---|---|---|
-| `alert.created` | `AlertSummary` | Invalida alertas, resumen y zonas; toast (persistente si es crítica) |
-| `alert.updated` | `{ id, status, actor }` | Invalida la alerta, las listas y el resumen |
-| `incident.created` | `{ id, alertId }` | Invalida incidentes y resumen |
-| `incident.updated` | `{ id, status, actor }` | Invalida el incidente, las listas y el resumen |
+| `alert.created` | `AlertSummary` + `actorId` (null = Sistema) | Invalida alertas, resumen y zonas; toast (persistente si es crítica) |
+| `alert.updated` | `{ id, status, actorId }` | Invalida la alerta, las listas y el resumen |
+| `incident.created` | `{ id, alertId, actorId }` | Invalida incidentes y resumen |
+| `incident.updated` | `{ id, status, actorId }` | Invalida el incidente, las listas y el resumen |
 | `settings.updated` | `Settings` | Invalida la configuración |
 | `demo.reset` | `{ resetAt }` | Invalida **toda** la caché y navega al Resumen |
 | `heartbeat` | `{ ts }` | Ninguno (mantiene viva la conexión) |

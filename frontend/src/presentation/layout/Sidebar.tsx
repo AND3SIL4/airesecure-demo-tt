@@ -1,5 +1,6 @@
 import { LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAlertCounts } from '../../application/hooks/useAlertCounts';
 import { useCurrentUser } from '../../application/hooks/useCurrentUser';
 import { clearActor } from '../../application/stores/actor';
 import { navItemsForRole } from '../../domain/navigation';
@@ -8,11 +9,37 @@ import { NAV_ICONS } from '../components/icons';
 import { Logo } from '../components/Logo';
 import { Tooltip } from '../components/Tooltip';
 
+const ALERTS_PATH = '/alertas';
+
+/** Contador de pendientes junto a "Alertas": píldora en escritorio y mini-badge sobre el icono en modo colapsado. */
+function PendingBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  const text = count > 99 ? '99+' : String(count);
+  return (
+    <>
+      <span className="sr-only">, {count === 1 ? '1 alerta pendiente' : `${count} alertas pendientes`}</span>
+      <span
+        aria-hidden="true"
+        className="tabular hidden h-5 min-w-5 items-center justify-center rounded-full bg-white/15 px-1.5 text-xs font-semibold text-white lg:inline-flex"
+      >
+        {text}
+      </span>
+      <span
+        aria-hidden="true"
+        className="tabular absolute top-0.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-semibold text-white ring-2 ring-navy-950 lg:hidden"
+      >
+        {text}
+      </span>
+    </>
+  );
+}
+
 /** Navegación lateral (240 px; 72 px con iconos por debajo de 1024 px). */
 export function Sidebar() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const items = user ? navItemsForRole(user.role) : [];
+  const pending = useAlertCounts().data ?? 0;
   const RoleIcon = user?.role === 'supervisor' ? ShieldCheck : UserRound;
 
   const changeProfile = () => {
@@ -38,7 +65,7 @@ export function Sidebar() {
                     end={item.path === '/'}
                     className={({ isActive }) =>
                       [
-                        'flex h-10 w-full items-center justify-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 lg:justify-start',
+                        'relative flex h-10 w-full items-center justify-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 lg:justify-start',
                         'focus-visible:outline-offset-0',
                         isActive
                           ? 'bg-brand-600 text-white'
@@ -48,8 +75,7 @@ export function Sidebar() {
                   >
                     <Icon aria-hidden="true" className="size-5 shrink-0" />
                     <span className="sr-only lg:not-sr-only lg:flex-1">{item.label}</span>
-                    {/* Espacio reservado para los contadores (features 002 y 004). */}
-                    <span aria-hidden="true" className="hidden lg:inline-block" />
+                    {item.path === ALERTS_PATH && <PendingBadge count={pending} />}
                   </NavLink>
                 </Tooltip>
               </li>

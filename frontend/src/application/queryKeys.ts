@@ -16,6 +16,17 @@ export const queryKeys = {
     lists: ['alerts', 'list'] as const,
     list: (filters: AlertFilters) => ['alerts', 'list', filters] as const,
     detail: (id: string) => ['alerts', 'detail', id] as const,
+    /** Total de alertas pendientes (nueva + en revisión) para el badge del menú. */
+    counts: ['alerts', 'counts'] as const,
+  },
+  incidents: {
+    all: ['incidents'] as const,
+  },
+  dashboard: {
+    all: ['dashboard'] as const,
+  },
+  settings: {
+    all: ['settings'] as const,
   },
   me: (actorId: string | null) => ['me', actorId] as const,
 };

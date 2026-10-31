@@ -6,6 +6,7 @@ from typing import Any
 from sqlalchemy import text
 from sqlmodel import Session, select
 
+from app.domain.catalogs import utcnow
 from app.domain.models import AppSetting
 
 
@@ -24,3 +25,28 @@ class SettingsRepository:
     def get_all(self) -> dict[str, Any]:
         settings = self.session.exec(select(AppSetting)).all()
         return {s.key: json.loads(s.value_json) for s in settings}
+
+    def get_int(self, key: str, default: int) -> int:
+        value = self.get(key)
+        if value is None:
+            return default
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
+
+    def increment(self, key: str) -> int:
+        """Suma 1 al contador entero `key` (lo crea con 1 si no existe). No hace commit."""
+        setting = self.session.get(AppSetting, key)
+        if setting is None:
+            setting = AppSetting(key=key, value_json=json.dumps(1), updated_at=utcnow())
+            self.session.add(setting)
+            return 1
+        try:
+            current = int(json.loads(setting.value_json))
+        except (TypeError, ValueError):
+            current = 0
+        setting.value_json = json.dumps(current + 1)
+        setting.updated_at = utcnow()
+        self.session.add(setting)
+        return current + 1

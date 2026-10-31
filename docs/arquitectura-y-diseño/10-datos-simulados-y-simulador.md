@@ -96,7 +96,8 @@ La **recomendación** y el **protocolo** (de 3 a 5 pasos) se toman de `alert_typ
 | Ejecución | Tarea `asyncio` iniciada en el `lifespan` de FastAPI; se detiene limpiamente al apagar el servidor |
 | Configuración | `simulator.enabled` (por defecto `true`) y `simulator.interval_seconds` (por defecto 60). El intervalo real es aleatorio entre 0,75× y 1,5× el configurado |
 | Generación | 1) Tipo según `scenario_weight`. 2) Zona compatible: el acceso restringido solo en Servicio o Plataforma, el equipaje en Equipajes, Hall, Check-in o Embarque. 3) Fuente de esa zona. 4) Confianza uniforme entre 0,50 y 0,98. 5) Severidad por defecto del tipo, +1 nivel si la zona es restringida |
-| Umbral | Si la confianza es menor que el umbral del tipo, se registra como "bajo umbral" (contador en memoria más `app_settings`) y **no** crea alerta |
+| Compatibilidad de zonas | `acceso_restringido`: Puerta de servicio, Plataforma · `equipaje_abandonado`: Sala de equipajes, Hall, Check-in, Sala de embarque A · `objeto_inusual`: todas salvo Plataforma · `concentracion_personas`: Hall, Check-in, Filtro de seguridad, Migración, Sala de embarque A, Puertas 10-14 · `comportamiento_anomalo` y `permanencia_inusual`: todas las no restringidas · `reporte_operador`: nunca lo genera el simulador |
+| Umbral | Si la confianza es menor que el umbral del tipo, se registra como "bajo umbral" (contador persistente `stats.below_threshold` en `app_settings`, visible en `/api/health`) y **no** crea alerta |
 | Alerta | Se crea con `AlertService.create_from_event(...)` (`origin = simulador`, actor Sistema) y se publica `alert.created` |
 | Cambios en caliente | `PUT /settings` reprograma la próxima ejecución sin reiniciar |
 | Reinicio | `demo/reset` pausa el simulador, vuelve a sembrar los datos y lo reanuda si estaba activo |

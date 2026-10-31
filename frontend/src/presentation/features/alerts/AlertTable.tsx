@@ -15,8 +15,10 @@ export interface AlertTableProps {
   sort: AlertSort;
   onSortChange: (sort: AlertSort) => void;
   onOpen: (id: string) => void;
-  /** Id a resaltar 2 s (alerta recién reportada). */
+  /** Id a resaltar 2 s (alerta recién reportada); además se desplaza hasta su fila. */
   highlightId?: string | null;
+  /** Ids recién llegados en vivo a resaltar 2 s (sin desplazar la vista). */
+  highlightIds?: ReadonlySet<string>;
   /** Descripción accesible de la tabla. */
   caption: string;
 }
@@ -67,7 +69,15 @@ function SortHeader({ field, sort, onSortChange, className = '' }: SortHeaderPro
 }
 
 /** Tabla priorizada de alertas: filas enfocables (↑/↓ mueven el foco, Enter o clic abren el detalle). */
-export function AlertTable({ alerts, sort, onSortChange, onOpen, highlightId, caption }: AlertTableProps) {
+export function AlertTable({
+  alerts,
+  sort,
+  onSortChange,
+  onOpen,
+  highlightId,
+  highlightIds,
+  caption,
+}: AlertTableProps) {
   const highlightRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
@@ -116,11 +126,13 @@ export function AlertTable({ alerts, sort, onSortChange, onOpen, highlightId, ca
         </thead>
         <tbody className="divide-y divide-slate-100">
           {alerts.map((alert) => {
-            const highlighted = alert.id === highlightId;
+            const scrollTarget = alert.id === highlightId;
+            const highlighted = scrollTarget || (highlightIds?.has(alert.id) ?? false);
             return (
               <tr
                 key={alert.id}
-                ref={highlighted ? highlightRef : undefined}
+                ref={scrollTarget ? highlightRef : undefined}
+                data-alert-id={alert.id}
                 tabIndex={0}
                 aria-label={rowLabel(alert)}
                 onClick={() => onOpen(alert.id)}

@@ -4,7 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Query, Response, status
 
-from app.api.deps import ActorDep, SessionDep
+from app.api.deps import ActorDep, PublisherDep, SessionDep
 from app.api.schemas.alerts import (
     AlertActionIn,
     AlertDetailOut,
@@ -59,8 +59,11 @@ def list_alerts(
     response_model_by_alias=True,
     status_code=status.HTTP_201_CREATED,
 )
-def report_manual_alert(body: ManualAlertIn, session: SessionDep, actor: ActorDep) -> AlertDetailOut:
-    return AlertDetailOut.from_detail(AlertService(session).report_manual(body.to_command(), actor))
+def report_manual_alert(
+    body: ManualAlertIn, session: SessionDep, actor: ActorDep, publisher: PublisherDep
+) -> AlertDetailOut:
+    detail = AlertService(session, publisher).report_manual(body.to_command(), actor)
+    return AlertDetailOut.from_detail(detail)
 
 
 @router.get("/{alert_id}", response_model=AlertDetailOut, response_model_by_alias=True)
@@ -79,9 +82,10 @@ def apply_alert_action(
     body: Annotated[AlertActionIn, Body()],
     session: SessionDep,
     actor: ActorDep,
+    publisher: PublisherDep,
     response: Response,
 ) -> ConfirmOut | AlertDetailOut:
-    result = AlertService(session).apply_action(alert_id, body.to_command(), actor)
+    result = AlertService(session, publisher).apply_action(alert_id, body.to_command(), actor)
     if isinstance(body, ConfirmActionIn):
         response.status_code = status.HTTP_201_CREATED
         return ConfirmOut.from_result(result)

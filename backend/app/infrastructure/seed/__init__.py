@@ -8,6 +8,10 @@ from sqlmodel import Session
 from app.domain.catalogs import (
     DEFAULT_SIMULATOR_ENABLED,
     DEFAULT_SIMULATOR_INTERVAL_SECONDS,
+    SETTING_BELOW_THRESHOLD,
+    SETTING_SIMULATOR_ENABLED,
+    SETTING_SIMULATOR_INTERVAL,
+    SETTING_THRESHOLD_PREFIX,
     utcnow,
 )
 from app.domain.enums import SourceKind
@@ -71,12 +75,13 @@ def _seed_alert_types(session: Session) -> None:
 
 def _seed_settings(session: Session) -> None:
     defaults: dict[str, Any] = {
-        "simulator.enabled": DEFAULT_SIMULATOR_ENABLED,
-        "simulator.interval_seconds": DEFAULT_SIMULATOR_INTERVAL_SECONDS,
+        SETTING_SIMULATOR_ENABLED: DEFAULT_SIMULATOR_ENABLED,
+        SETTING_SIMULATOR_INTERVAL: DEFAULT_SIMULATOR_INTERVAL_SECONDS,
+        SETTING_BELOW_THRESHOLD: 0,
     }
     for t in ALERT_TYPES:
         if t["confidence_threshold"] is not None:
-            defaults[f"thresholds.{t['code']}"] = t["confidence_threshold"]
+            defaults[f"{SETTING_THRESHOLD_PREFIX}{t['code']}"] = t["confidence_threshold"]
     now = utcnow()
     for key, value in defaults.items():
         if session.get(AppSetting, key) is None:  # no sobrescribe los valores existentes

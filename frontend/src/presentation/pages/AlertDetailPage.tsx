@@ -1,9 +1,10 @@
 import { ArrowLeft, FlaskConical, UserRound } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAlert } from '../../application/hooks/useAlert';
 import { useAutoReview } from '../../application/hooks/useAutoReview';
 import { useZones } from '../../application/hooks/useCatalogs';
+import { registerActiveAlertView } from '../../application/stores/notifications';
 import { formatDateTime } from '../../domain/format';
 import type { AlertDetail } from '../../domain/types';
 import { Card } from '../components/Card';
@@ -186,6 +187,9 @@ export function AlertDetailPage() {
   const { id = '' } = useParams();
   const alert = useAlert(id);
   useAutoReview(alert.data);
+
+  // Registra la vista activa para el aviso "La alerta X fue … por otro usuario" (tiempo real).
+  useEffect(() => (id ? registerActiveAlertView(id) : undefined), [id]);
 
   if (alert.isPending) return <DetailSkeleton />;
 

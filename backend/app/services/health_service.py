@@ -7,7 +7,13 @@ from typing import Literal
 from sqlmodel import Session
 
 from app.config import APP_VERSION
-from app.domain.catalogs import DEFAULT_SIMULATOR_ENABLED, DEFAULT_SIMULATOR_INTERVAL_SECONDS
+from app.domain.catalogs import (
+    DEFAULT_SIMULATOR_ENABLED,
+    DEFAULT_SIMULATOR_INTERVAL_SECONDS,
+    SETTING_BELOW_THRESHOLD,
+    SETTING_SIMULATOR_ENABLED,
+    SETTING_SIMULATOR_INTERVAL,
+)
 from app.repositories.settings_repo import SettingsRepository
 
 logger = logging.getLogger(__name__)
@@ -18,6 +24,7 @@ class SimulatorStatus:
     enabled: bool
     interval_seconds: int
     running: bool
+    below_threshold: int
 
 
 @dataclass(frozen=True)
@@ -32,25 +39,31 @@ class HealthService:
     def __init__(self, session: Session) -> None:
         self.settings = SettingsRepository(session)
 
-    def check(self) -> HealthStatus:
+    def check(self, simulator_running: bool) -> HealthStatus:
+        """`simulator_running` lo aporta quien conoce el simulador real (la capa api, vía app.state)."""
         db_state: Literal["ok", "error"] = "ok"
         enabled = DEFAULT_SIMULATOR_ENABLED
         interval = DEFAULT_SIMULATOR_INTERVAL_SECONDS
+        below_threshold = 0
         try:
             self.settings.ping()
-            stored_enabled = self.settings.get("simulator.enabled")
-            stored_interval = self.settings.get("simulator.interval_seconds")
+            stored_enabled = self.settings.get(SETTING_SIMULATOR_ENABLED)
             if stored_enabled is not None:
                 enabled = bool(stored_enabled)
-            if stored_interval is not None:
-                interval = int(stored_interval)
+            interval = self.settings.get_int(SETTING_SIMULATOR_INTERVAL, DEFAULT_SIMULATOR_INTERVAL_SECONDS)
+            below_threshold = self.settings.get_int(SETTING_BELOW_THRESHOLD, 0)
         except Exception:
             logger.exception("La comprobación de salud de la base de datos falló")
             db_state = "error"
-        # `running` pasa a reflejar el simulador real en la feature 003.
         return HealthStatus(
             status="ok",
             db=db_state,
             version=APP_VERSION,
-            simulator=SimulatorStatus(enabled=enabled, interval_seconds=interval, running=False),
+            simulator=SimulatorStatus(
+                enabled=enabled,
+                interval_seconds=interval,
+                # En ejecución = tarea viva **y** habilitado en la configuración (spec 003, US2-5).
+                running=simulator_running and enabled,
+                below_threshold=below_threshold,
+            ),
         )

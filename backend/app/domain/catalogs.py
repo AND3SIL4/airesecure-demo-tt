@@ -23,6 +23,12 @@ SEVERITY_ORDER: dict[Severity, int] = {
 DEFAULT_SIMULATOR_ENABLED: bool = True
 DEFAULT_SIMULATOR_INTERVAL_SECONDS: int = 60
 
+# Claves de `app_settings` (doc 07).
+SETTING_SIMULATOR_ENABLED = "simulator.enabled"
+SETTING_SIMULATOR_INTERVAL = "simulator.interval_seconds"
+SETTING_THRESHOLD_PREFIX = "thresholds."
+SETTING_BELOW_THRESHOLD = "stats.below_threshold"  # contador persistente de eventos bajo umbral
+
 # Factor de zona según su criticidad (1..3).
 ZONE_FACTOR: dict[int, float] = {1: 0.60, 2: 0.80, 3: 1.00}
 

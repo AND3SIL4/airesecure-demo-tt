@@ -40,3 +40,9 @@ export function postAlertAction(id: string, body: AlertActionBody) {
 export function postManualAlert(body: ManualAlertBody) {
   return http.post<AlertDetail>('/alerts', body);
 }
+
+/** Total de alertas activas (nueva + en revisión): reutiliza el listado con `pageSize=1`. */
+export async function getActiveAlertsTotal(): Promise<number> {
+  const page = await http.get<Page<AlertSummary>>('/alerts?status=activas&pageSize=1');
+  return page.total;
+}

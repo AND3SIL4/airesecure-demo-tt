@@ -1,6 +1,11 @@
-"""Casos de uso de la alerta: lista priorizada, detalle, acciones humanas y reporte manual (doc 05 §2)."""
+"""Casos de uso de la alerta: lista, detalle, acciones humanas, reporte manual y detecciones (doc 05 §2).
+
+Las escrituras publican sus eventos en vivo **después** del commit (research R3 de 003).
+"""
 
 import json
+import random
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -8,7 +13,17 @@ from typing import Any
 from sqlmodel import Session
 
 from app.domain import alert_rules, state_machine
-from app.domain.catalogs import DISMISS_REASON_LABELS, utcnow
+from app.domain.alert_texts import render
+from app.domain.catalogs import (
+    DEFAULT_SIMULATOR_ENABLED,
+    DEFAULT_SIMULATOR_INTERVAL_SECONDS,
+    DISMISS_REASON_LABELS,
+    SETTING_BELOW_THRESHOLD,
+    SETTING_SIMULATOR_ENABLED,
+    SETTING_SIMULATOR_INTERVAL,
+    SETTING_THRESHOLD_PREFIX,
+    utcnow,
+)
 from app.domain.enums import (
     AlertAction,
     AlertOrigin,
@@ -21,17 +36,27 @@ from app.domain.enums import (
 from app.domain.errors import NO_ENCONTRADO, TRANSICION_INVALIDA, VALIDACION, DomainError
 from app.domain.models import Alert, AlertType, Incident, Source, TimelineEvent, User, Zone
 from app.domain.scoring import ScoreBreakdown, compute_score
+from app.domain.simulation import SimulatedEvent, draw_event, is_below_threshold
 from app.repositories.alert_repo import AlertFilters, AlertRepository, AlertSort, AlertSortField
 from app.repositories.catalog_repo import CatalogRepository
 from app.repositories.incident_repo import IncidentRepository
+from app.repositories.settings_repo import SettingsRepository
 from app.repositories.timeline_repo import TimelineRepository
 from app.repositories.transaction import begin_write
+from app.services.ports import EventPublisher, NullPublisher
 
 MANUAL_SOURCE_ID = "MANUAL"
 ACTIVE_SHORTCUT = "activas"
 DEFAULT_PAGE_SIZE = 20
 _SORT_FIELDS: frozenset[str] = frozenset({"score", "detectedAt", "severity"})
 _VALIDATION_MESSAGE = "Hay campos faltantes o inválidos."
+
+# Nombres de los eventos en vivo (doc 08 §3.7).
+EVENT_ALERT_CREATED = "alert.created"
+EVENT_ALERT_UPDATED = "alert.updated"
+EVENT_INCIDENT_CREATED = "incident.created"
+
+LiveEvent = tuple[str, dict[str, Any]]
 
 
 # ---------- Entradas ----------
@@ -68,6 +93,21 @@ class ManualAlertCommand:
     zone_id: str
     severity: Severity
     description: str
+
+
+@dataclass(frozen=True)
+class TimelineNote:
+    """Evento de timeline adicional que se registra junto al `created` de una alerta detectada."""
+
+    action: TimelineAction
+    actor_id: str | None
+    payload: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True)
+class SimulatorSettings:
+    enabled: bool
+    interval_seconds: int
 
 
 # ---------- Vistas ----------
@@ -177,13 +217,37 @@ def _validation_error(fields: list[alert_rules.FieldError]) -> DomainError:
     return DomainError(VALIDACION, _VALIDATION_MESSAGE, {"fields": fields})
 
 
+def _summary_payload(view: AlertView, actor_id: str | None) -> dict[str, Any]:
+    """`AlertSummary` (doc 08 §2) en camelCase + `actorId`, para el evento `alert.created`.
+
+    Debe mantenerse sincronizado con `api/schemas/alerts.py::AlertSummaryOut` (mismo contrato).
+    """
+    alert = view.alert
+    return {
+        "id": alert.id,
+        "type": {"code": view.type.code, "name": view.type.name},
+        "severity": alert.severity.value,
+        "status": alert.status.value,
+        "zone": {"id": view.zone.id, "name": view.zone.name},
+        "source": {"id": view.source.id, "kind": view.source.kind.value, "label": view.source.label},
+        "detectedAt": _iso(alert.detected_at),
+        "confidence": alert.confidence,
+        "score": alert.score,
+        "description": alert.description,
+        "incidentId": view.incident_id,
+        "actorId": actor_id,
+    }
+
+
 class AlertService:
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: Session, publisher: EventPublisher | None = None) -> None:
         self.session = session
+        self.publisher: EventPublisher = publisher if publisher is not None else NullPublisher()
         self.alerts = AlertRepository(session)
         self.incidents = IncidentRepository(session)
         self.timeline = TimelineRepository(session)
         self.catalog = CatalogRepository(session)
+        self.settings = SettingsRepository(session)
 
     # ---------- Consultas ----------
 
@@ -300,9 +364,17 @@ class AlertService:
                     created_at=now,
                 )
             )
-        self.session.commit()
-        # La publicación de eventos SSE (alert.updated / incident.created) llega con la feature 003.
+        new_status = alert.status.value
         incident_id = incident.id if incident is not None else None
+        events: list[LiveEvent] = [
+            (EVENT_ALERT_UPDATED, {"id": alert_id, "status": new_status, "actorId": actor_id})
+        ]
+        if incident_id is not None:
+            events.append(
+                (EVENT_INCIDENT_CREATED, {"id": incident_id, "alertId": alert_id, "actorId": actor_id})
+            )
+        self.session.commit()
+        self._publish(events)
         detail = self.get_detail(alert_id)
         return AlertActionResult(alert=detail, incident=detail.incident if incident_id else None)
 
@@ -354,11 +426,134 @@ class AlertService:
             )
         )
         alert_id = alert.id
+        source = self.catalog.get_source(MANUAL_SOURCE_ID)
+        if source is None:
+            raise RuntimeError(f"Falta la fuente lógica {MANUAL_SOURCE_ID}")
+        view = AlertView(alert=alert, type=alert_type, zone=zone, source=source, incident_id=None)
+        events: list[LiveEvent] = [(EVENT_ALERT_CREATED, _summary_payload(view, actor_id))]
         self.session.commit()
-        # La publicación del evento SSE alert.created llega con la feature 003.
+        self._publish(events)
         return self.get_detail(alert_id)
 
+    def create_from_event(
+        self,
+        event: SimulatedEvent,
+        origin: AlertOrigin,
+        *,
+        actor: User | None = None,
+        extra_timeline: Sequence[TimelineNote] | None = None,
+    ) -> Alert:
+        """Crea una alerta `nueva` a partir de un evento detectado (simulador o escenario) y publica
+        `alert.created` tras el commit. `actor` nulo = Sistema. No aplica el umbral."""
+        begin_write(self.session)
+        alert, events = self._insert_detected(event, origin, actor, extra_timeline or [])
+        self.session.commit()
+        self._publish(events)
+        return alert
+
+    def simulate_event(self, rng: random.Random) -> Alert | None:
+        """Un ciclo del simulador: sortea un evento; si su confianza es menor que el umbral efectivo del tipo,
+        suma 1 a `stats.below_threshold` y no crea alerta; si no, crea la alerta (origin simulador)."""
+        begin_write(self.session)
+        event = draw_event(
+            rng, self.catalog.list_alert_types(), self.catalog.list_zones(), self.catalog.list_sources()
+        )
+        if is_below_threshold(event.confidence, self._effective_threshold(event.type_code)):
+            self.settings.increment(SETTING_BELOW_THRESHOLD)
+            self.session.commit()
+            return None
+        alert, events = self._insert_detected(event, AlertOrigin.SIMULADOR, None, [])
+        self.session.commit()
+        self._publish(events)
+        return alert
+
+    def simulator_settings(self) -> SimulatorSettings:
+        """Configuración vigente del simulador (se lee en cada ciclo: los cambios aplican en caliente)."""
+        enabled = self.settings.get(SETTING_SIMULATOR_ENABLED)
+        interval = self.settings.get_int(SETTING_SIMULATOR_INTERVAL, DEFAULT_SIMULATOR_INTERVAL_SECONDS)
+        self.session.rollback()  # cierra la transacción de solo lectura
+        return SimulatorSettings(
+            enabled=DEFAULT_SIMULATOR_ENABLED if enabled is None else bool(enabled),
+            interval_seconds=max(1, interval),
+        )
+
     # ---------- Internos ----------
+
+    def _publish(self, events: Sequence[LiveEvent]) -> None:
+        for name, data in events:
+            self.publisher.publish(name, data)
+
+    def _effective_threshold(self, type_code: str) -> float | None:
+        """Umbral vigente del tipo: `thresholds.<code>` de `app_settings` o, si no hay, el del catálogo."""
+        alert_type = self.catalog.get_alert_type(type_code)
+        if alert_type is None or alert_type.confidence_threshold is None:
+            return None
+        override = self.settings.get(f"{SETTING_THRESHOLD_PREFIX}{type_code}")
+        return float(override) if override is not None else alert_type.confidence_threshold
+
+    def _insert_detected(
+        self,
+        event: SimulatedEvent,
+        origin: AlertOrigin,
+        actor: User | None,
+        extra_timeline: Sequence[TimelineNote],
+    ) -> tuple[Alert, Sequence[LiveEvent]]:
+        """Inserta la alerta detectada y sus eventos de timeline (sin commit). Devuelve la alerta y los
+        eventos en vivo pendientes de publicar tras el commit."""
+        alert_type = self.catalog.get_alert_type(event.type_code)
+        zone = self.catalog.get_zone(event.zone_id)
+        source = self.catalog.get_source(event.source_id)
+        if alert_type is None or zone is None or source is None:
+            raise RuntimeError(f"Catálogo incompleto para {event.type_code} en {event.zone_id}")
+        actor_id = actor.id if actor is not None else None
+        now = utcnow()
+        breakdown = compute_score(event.severity, event.confidence, zone.criticality)
+        alert = Alert(
+            id=self.alerts.next_id(),
+            type_code=alert_type.code,
+            zone_id=zone.id,
+            source_id=source.id,
+            severity=event.severity,
+            status=AlertStatus.NUEVA,
+            origin=origin,
+            detected_at=now,
+            confidence=event.confidence,
+            score=breakdown.score,
+            score_breakdown_json=breakdown.to_json(),
+            description=render(
+                alert_type.code,
+                event.template_index,
+                zona=zone.name,
+                fuente=source.label,
+                min=event.minutes,
+                n=event.people,
+            ),
+            recommendation=alert_type.recommendation,
+            evidence_key=alert_type.code,
+        )
+        self.alerts.add(alert)
+        self.session.flush()  # la alerta debe existir antes de sus eventos (FK)
+        self.timeline.add(
+            TimelineEvent(
+                alert_id=alert.id,
+                actor_id=actor_id,
+                action=TimelineAction.CREATED,
+                to_status=AlertStatus.NUEVA.value,
+                created_at=now,
+            )
+        )
+        for note in extra_timeline:
+            self.timeline.add(
+                TimelineEvent(
+                    alert_id=alert.id,
+                    actor_id=note.actor_id,
+                    action=note.action,
+                    payload_json=json.dumps(note.payload) if note.payload else None,
+                    created_at=now,
+                )
+            )
+        view = AlertView(alert=alert, type=alert_type, zone=zone, source=source, incident_id=None)
+        return alert, [(EVENT_ALERT_CREATED, _summary_payload(view, actor_id))]
 
     def _get_or_404(self, alert_id: str) -> Alert:
         alert = self.alerts.get(alert_id)

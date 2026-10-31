@@ -12,6 +12,7 @@ class SimulatorStatusOut(ApiModel):
     enabled: bool
     interval_seconds: int
     running: bool
+    below_threshold: int
 
 
 class HealthOut(ApiModel):
