@@ -59,3 +59,19 @@ export function payloadIncidentId(event: TimelineEvent): string | null {
   const value = event.payload?.['incidentId'];
   return typeof value === 'string' ? value : null;
 }
+
+/** Nombre del equipo del payload de `assign` y `escalate` (`{teamId, teamName}`), si lo hay. */
+export function payloadTeamName(event: TimelineEvent): string | null {
+  if (event.action !== 'assign' && event.action !== 'escalate') return null;
+  const name = event.payload?.['teamName'];
+  if (typeof name === 'string' && name.trim()) return name;
+  const id = event.payload?.['teamId'];
+  return typeof id === 'string' ? id : null;
+}
+
+/** Duración de la resolución del payload de `resolve` (`{resolutionSeconds}`), si la hay. */
+export function payloadResolutionSeconds(event: TimelineEvent): number | null {
+  if (event.action !== 'resolve') return null;
+  const value = event.payload?.['resolutionSeconds'];
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}

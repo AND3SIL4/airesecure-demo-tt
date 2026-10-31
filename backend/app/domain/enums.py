@@ -66,6 +66,14 @@ class AlertAction(StrEnum):
     COMMENT = "comment"
 
 
+class IncidentAction(StrEnum):
+    ASSIGN = "assign"
+    START = "start"
+    ESCALATE = "escalate"
+    RESOLVE = "resolve"
+    COMMENT = "comment"
+
+
 class TimelineAction(StrEnum):
     CREATED = "created"
     REVIEW = "review"

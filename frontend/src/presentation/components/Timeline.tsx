@@ -1,5 +1,12 @@
 import { ArrowRight } from 'lucide-react';
-import { SYSTEM_ACTOR_LABEL, payloadIncidentId, timelineActionMeta } from '../../domain/timeline';
+import { formatDuration } from '../../domain/format';
+import {
+  SYSTEM_ACTOR_LABEL,
+  payloadIncidentId,
+  payloadResolutionSeconds,
+  payloadTeamName,
+  timelineActionMeta,
+} from '../../domain/timeline';
 import type { TimelineEvent } from '../../domain/types';
 import { TIMELINE_ICONS } from './icons';
 import { RelativeTime } from './RelativeTime';
@@ -22,6 +29,8 @@ export function Timeline({ events, className = '' }: TimelineProps) {
         const meta = timelineActionMeta(event.action);
         const Icon = TIMELINE_ICONS[meta.icon];
         const incidentId = event.action === 'incident_created' ? payloadIncidentId(event) : null;
+        const teamName = payloadTeamName(event);
+        const resolutionSeconds = payloadResolutionSeconds(event);
         const isLast = index === events.length - 1;
         return (
           <li key={event.id} className="relative flex gap-3">
@@ -36,6 +45,10 @@ export function Timeline({ events, className = '' }: TimelineProps) {
                 <p className="text-sm text-slate-900">
                   <span className="font-semibold">{meta.label}</span>
                   {incidentId && <span className="tabular"> {incidentId}</span>}
+                  {teamName && <span>{event.action === 'escalate' ? ' a ' : ': '}{teamName}</span>}
+                  {resolutionSeconds !== null && (
+                    <span className="tabular text-slate-600"> en {formatDuration(resolutionSeconds)}</span>
+                  )}
                   <span className="text-slate-600"> · {event.actor?.alias ?? SYSTEM_ACTOR_LABEL}</span>
                 </p>
                 <RelativeTime value={event.createdAt} focusable className="text-xs text-slate-600" />

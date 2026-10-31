@@ -8,7 +8,7 @@ import { SYSTEM_ACTOR_LABEL, lastEventOf } from '../../../domain/timeline';
 import type { AlertActionBody, AlertDetail } from '../../../domain/types';
 import { Button } from '../../components/Button';
 import { RelativeTime } from '../../components/RelativeTime';
-import { CommentDialog } from './CommentDialog';
+import { CommentDialog } from '../../components/CommentDialog';
 import { ConfirmAlertDialog } from './ConfirmAlertDialog';
 import { DismissAlertDialog } from './DismissAlertDialog';
 
@@ -173,7 +173,7 @@ export function AlertActionsPanel({ alert }: AlertActionsPanelProps) {
       )}
       {dialog === 'comment' && (
         <CommentDialog
-          alertId={alert.id}
+          targetId={alert.id}
           loading={busy}
           onSubmit={(comment) => run({ action: 'comment', comment })}
           onCancel={() => setDialog(null)}

@@ -234,3 +234,55 @@ export const TEXT_LIMITS = {
   commentMax: 500,
   dismissOtherMin: 10,
 } as const;
+
+// ---------------------------------------------------------------------------
+// Incidentes (specs/004-incidentes/contracts/api-incidents.md, doc 08 §2)
+// ---------------------------------------------------------------------------
+
+export type IncidentActionName = 'assign' | 'start' | 'escalate' | 'resolve' | 'comment';
+
+export interface TeamRef {
+  id: string;
+  name: string;
+}
+
+export interface Incident {
+  id: string;
+  status: IncidentStatus;
+  alert: AlertSummary;
+  team: TeamRef | null;
+  escalatedTo: TeamRef | null;
+  openedBy: UserRef | null;
+  /** ISO 8601 en UTC. */
+  openedAt: string;
+  startedAt: string | null;
+  escalatedAt: string | null;
+  resolvedAt: string | null;
+  resolutionNote: string | null;
+  /** Segundos desde la detección hasta la primera acción humana. */
+  responseSeconds: number | null;
+  /** Segundos desde la detección hasta la resolución. */
+  resolutionSeconds: number | null;
+}
+
+/** Detalle con la historia combinada (alerta + incidente) en orden ascendente. */
+export interface IncidentDetail extends Incident {
+  timeline: TimelineEvent[];
+}
+
+export type IncidentPage = Page<Incident>;
+
+export type IncidentActionBody =
+  | { action: 'assign'; teamId: string; comment?: string }
+  | { action: 'start' }
+  | { action: 'escalate'; teamId: string; reason: string }
+  | { action: 'resolve'; note: string }
+  | { action: 'comment'; comment: string };
+
+/** Límites de texto de las acciones de incidente (data-model.md). */
+export const INCIDENT_TEXT_LIMITS = {
+  reasonMin: 10,
+  reasonMax: 500,
+  resolutionNoteMin: 10,
+  resolutionNoteMax: 500,
+} as const;

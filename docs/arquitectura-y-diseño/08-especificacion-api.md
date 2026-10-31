@@ -121,8 +121,8 @@ interface TimelineEvent {
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/incidents` | Filtros: `status`, `severity`, `zone`, `type`, `q`, `from`, `to`. Orden: `openedAt`, `severity` o `responseSeconds`. Paginado |
-| GET | `/api/incidents/{id}` | `Incident` con la timeline combinada |
+| GET | `/api/incidents` | Filtros: `status` (lista o el atajo `en_curso` = `abierto,en_atencion,escalado`; por defecto todos), `severity`, `zone`, `type` (de la alerta de origen), `q` (INC, ALT o descripción), `from`, `to` (sobre `openedAt`). Orden: `openedAt` (por defecto desc), `severity` o `responseSeconds` (nulos al final). Paginado. Valores inválidos se ignoran |
+| GET | `/api/incidents/{id}` | `Incident` con la timeline combinada (eventos de la alerta de origen + del incidente, orden cronológico). `responseSeconds` se calcula al crear el incidente (confirmación de la alerta) y `resolutionSeconds` al resolver |
 | POST | `/api/incidents/{id}/actions` | Responde `200 Incident` |
 
 ```json

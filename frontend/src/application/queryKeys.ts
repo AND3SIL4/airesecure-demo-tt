@@ -1,5 +1,6 @@
 // Claves jerárquicas de TanStack Query.
 import type { AlertFilters } from '../domain/alertFilters';
+import type { IncidentFilters } from '../domain/incidentFilters';
 
 export const queryKeys = {
   catalog: {
@@ -20,7 +21,13 @@ export const queryKeys = {
     counts: ['alerts', 'counts'] as const,
   },
   incidents: {
+    /** Incluye las listas, los detalles y `incidents.counts`. */
     all: ['incidents'] as const,
+    lists: ['incidents', 'list'] as const,
+    list: (filters: IncidentFilters) => ['incidents', 'list', filters] as const,
+    detail: (id: string) => ['incidents', 'detail', id] as const,
+    /** Total de incidentes en curso para el badge del menú. */
+    counts: ['incidents', 'counts'] as const,
   },
   dashboard: {
     all: ['dashboard'] as const,

@@ -2,6 +2,7 @@ import { LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAlertCounts } from '../../application/hooks/useAlertCounts';
 import { useCurrentUser } from '../../application/hooks/useCurrentUser';
+import { useIncidentCounts } from '../../application/hooks/useIncidentCounts';
 import { clearActor } from '../../application/stores/actor';
 import { navItemsForRole } from '../../domain/navigation';
 import { ROLE_LABELS } from '../../domain/types';
@@ -10,14 +11,15 @@ import { Logo } from '../components/Logo';
 import { Tooltip } from '../components/Tooltip';
 
 const ALERTS_PATH = '/alertas';
+const INCIDENTS_PATH = '/incidentes';
 
-/** Contador de pendientes junto a "Alertas": píldora en escritorio y mini-badge sobre el icono en modo colapsado. */
-function PendingBadge({ count }: { count: number }) {
+/** Contador junto a un ítem del menú: píldora en escritorio y mini-badge sobre el icono en modo colapsado. */
+function CountBadge({ count, srLabel }: { count: number; srLabel: (count: number) => string }) {
   if (count <= 0) return null;
   const text = count > 99 ? '99+' : String(count);
   return (
     <>
-      <span className="sr-only">, {count === 1 ? '1 alerta pendiente' : `${count} alertas pendientes`}</span>
+      <span className="sr-only">, {srLabel(count)}</span>
       <span
         aria-hidden="true"
         className="tabular hidden h-5 min-w-5 items-center justify-center rounded-full bg-white/15 px-1.5 text-xs font-semibold text-white lg:inline-flex"
@@ -34,12 +36,17 @@ function PendingBadge({ count }: { count: number }) {
   );
 }
 
+const pendingAlertsLabel = (count: number) => (count === 1 ? '1 alerta pendiente' : `${count} alertas pendientes`);
+const inCourseIncidentsLabel = (count: number) =>
+  count === 1 ? '1 incidente en curso' : `${count} incidentes en curso`;
+
 /** Navegación lateral (240 px; 72 px con iconos por debajo de 1024 px). */
 export function Sidebar() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const items = user ? navItemsForRole(user.role) : [];
   const pending = useAlertCounts().data ?? 0;
+  const inCourse = useIncidentCounts().data ?? 0;
   const RoleIcon = user?.role === 'supervisor' ? ShieldCheck : UserRound;
 
   const changeProfile = () => {
@@ -75,7 +82,8 @@ export function Sidebar() {
                   >
                     <Icon aria-hidden="true" className="size-5 shrink-0" />
                     <span className="sr-only lg:not-sr-only lg:flex-1">{item.label}</span>
-                    {item.path === ALERTS_PATH && <PendingBadge count={pending} />}
+                    {item.path === ALERTS_PATH && <CountBadge count={pending} srLabel={pendingAlertsLabel} />}
+                    {item.path === INCIDENTS_PATH && <CountBadge count={inCourse} srLabel={inCourseIncidentsLabel} />}
                   </NavLink>
                 </Tooltip>
               </li>

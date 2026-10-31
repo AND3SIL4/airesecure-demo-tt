@@ -12,6 +12,7 @@ from app.domain.enums import AlertStatus, Severity
 from app.domain.ids import ALERT_FIRST_NUMBER, ALERT_ID_PREFIX, format_alert_id
 from app.domain.models import Alert
 from app.domain.state_machine import ACTIVE_ALERT_STATUSES
+from app.domain.text import LIKE_ESCAPE, escape_like
 
 AlertSortField = Literal["score", "detectedAt", "severity"]
 
@@ -79,8 +80,13 @@ class AlertRepository:
         if filters.source:
             stmt = stmt.where(col(Alert.source_id).in_(filters.source))
         if filters.q:
-            like = f"%{filters.q}%"
-            stmt = stmt.where(or_(col(Alert.id).ilike(like), col(Alert.description).ilike(like)))
+            like = f"%{escape_like(filters.q)}%"
+            stmt = stmt.where(
+                or_(
+                    col(Alert.id).ilike(like, escape=LIKE_ESCAPE),
+                    col(Alert.description).ilike(like, escape=LIKE_ESCAPE),
+                )
+            )
         if filters.date_from is not None:
             stmt = stmt.where(col(Alert.detected_at) >= filters.date_from)
         if filters.date_to is not None:

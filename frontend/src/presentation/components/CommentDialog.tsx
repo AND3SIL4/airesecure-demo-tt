@@ -1,17 +1,28 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
-import { TEXT_LIMITS } from '../../../domain/types';
-import { Button } from '../../components/Button';
-import { Dialog } from '../../components/Dialog';
+import { TEXT_LIMITS } from '../../domain/types';
+import { Button } from './Button';
+import { Dialog } from './Dialog';
 
 export interface CommentDialogProps {
-  alertId: string;
+  /** Id de la alerta o del incidente comentado. */
+  targetId: string;
+  /** Texto del diálogo; por defecto, el de la alerta. */
+  description?: string;
   loading: boolean;
   onSubmit: (comment: string) => void;
   onCancel: () => void;
 }
 
-/** Comentario libre sobre la alerta (3 a 500 caracteres). Se monta solo mientras está abierto. */
-export function CommentDialog({ alertId, loading, onSubmit, onCancel }: CommentDialogProps) {
+const DEFAULT_DESCRIPTION = 'El comentario queda en el historial de la alerta con tu perfil y la hora.';
+
+/** Comentario libre sobre una alerta o un incidente (3 a 500 caracteres). Se monta solo mientras está abierto. */
+export function CommentDialog({
+  targetId,
+  description = DEFAULT_DESCRIPTION,
+  loading,
+  onSubmit,
+  onCancel,
+}: CommentDialogProps) {
   const [comment, setComment] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
@@ -34,8 +45,8 @@ export function CommentDialog({ alertId, loading, onSubmit, onCancel }: CommentD
     <Dialog
       open
       onClose={onCancel}
-      title={`Comentar ${alertId}`}
-      description="El comentario queda en el historial de la alerta con tu perfil y la hora."
+      title={`Comentar ${targetId}`}
+      description={description}
       preventClose={loading}
       initialFocusRef={fieldRef}
       footer={

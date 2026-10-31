@@ -56,7 +56,7 @@ Las reglas de este documento viven en la capa **domain** del backend (`app/domai
 | `comment` | Cualquier estado | (sin cambio) | Texto de 3 a 500 caracteres | No |
 
 - Al escalar, `escalated_to_id` toma el equipo especializado y `team_id` pasa a ser ese mismo equipo.
-- Al resolver se calculan `resolution_seconds` y `closed_at` de la alerta de origen.
+- Al resolver se calcula `resolution_seconds` (desde la detección de la alerta). El `closed_at` de la alerta se fija al confirmarla o descartarla (la alerta se cierra con la decisión humana; el incidente tiene su propio `resolved_at`).
 
 ## 4. Catálogos de dominio
 

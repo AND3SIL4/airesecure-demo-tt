@@ -1,21 +1,15 @@
-"""Siembra de alertas relativa a "ahora" (doc 10 §4 y specs/002-alertas/data-model.md §Datos semilla).
+"""Planificación de las alertas de hoy (doc 10 §4 y specs/002-alertas/data-model.md §Datos semilla).
 
 - Las 12 alertas activas del doc 10 §4.
 - 3 descartadas de hoy (hace 5, 3 y 2 h) y 3 descartadas de concentración en T1-EMBARQUE-A (anomalía).
-Se insertan en orden cronológico para que los IDs crezcan con el tiempo, y solo si no hay alertas.
+Devuelve planes (`PlannedAlert`); `plan.materialize` asigna los IDs en orden cronológico global.
 """
 
-import json
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-from sqlmodel import Session, func, select
-
-from app.domain.enums import AlertOrigin, AlertStatus, DismissReason, Severity, TimelineAction
-from app.domain.ids import ALERT_FIRST_NUMBER, format_alert_id
-from app.domain.models import Alert, AlertType, Source, TimelineEvent, Zone
-from app.domain.scoring import compute_score
-from app.infrastructure.seed.texts import render
+from app.domain.enums import AlertStatus, DismissReason, Severity
+from app.infrastructure.seed.plan import AlertBase, PlannedAlert, plan_dismissed, plan_pending
 
 
 @dataclass(frozen=True)
@@ -101,107 +95,37 @@ _DISMISSED: list[_SeedAlert] = [
 ]  # fmt: skip
 
 
-def _event(
-    alert_id: str,
-    action: TimelineAction,
-    at: datetime,
-    actor: str | None,
-    from_status: AlertStatus | None = None,
-    to_status: AlertStatus | None = None,
-    comment: str | None = None,
-    payload: dict[str, str] | None = None,
-) -> TimelineEvent:
-    return TimelineEvent(
-        alert_id=alert_id,
-        actor_id=actor,
-        action=action,
-        from_status=from_status.value if from_status else None,
-        to_status=to_status.value if to_status else None,
-        comment=comment,
-        payload_json=json.dumps(payload) if payload else None,
-        created_at=at,
-    )
-
-
-def _insert(session: Session, alert_id: str, spec: _SeedAlert, now: datetime) -> None:
-    alert_type = session.get(AlertType, spec.type_code)
-    zone = session.get(Zone, spec.zone_id)
-    source = session.get(Source, spec.source_id)
-    if alert_type is None or zone is None or source is None:
-        raise RuntimeError(f"Catálogo incompleto para sembrar {spec.type_code} en {spec.zone_id}")
-
-    detected_at = now - timedelta(minutes=spec.minutes_ago)
-    breakdown = compute_score(spec.severity, spec.confidence, zone.criticality)
-    alert = Alert(
-        id=alert_id,
+def _base(spec: _SeedAlert) -> AlertBase:
+    return AlertBase(
         type_code=spec.type_code,
+        severity=spec.severity,
         zone_id=spec.zone_id,
         source_id=spec.source_id,
-        severity=spec.severity,
-        status=spec.status,
-        origin=AlertOrigin.MANUAL if spec.reported_by else AlertOrigin.SEED,
-        detected_at=detected_at,
         confidence=spec.confidence,
-        score=breakdown.score,
-        score_breakdown_json=breakdown.to_json(),
-        description=render(
-            spec.type_code,
-            spec.template,
-            zona=zone.name,
-            fuente=source.label,
-            min=max(spec.minutes_ago, 5),
-            n=spec.n,
-        ),
-        recommendation=alert_type.recommendation,
-        evidence_key=spec.type_code,
+        detected_ago=timedelta(minutes=spec.minutes_ago),
+        template=spec.template,
+        minutes=max(spec.minutes_ago, 5),
+        people=spec.n,
         reported_by=spec.reported_by,
     )
-    events = [
-        _event(alert_id, TimelineAction.CREATED, detected_at, spec.reported_by, None, AlertStatus.NUEVA)
-    ]
 
-    if spec.reviewer is not None:
-        reviewed_at = detected_at + timedelta(minutes=spec.review_after_min)
-        alert.reviewed_by = spec.reviewer
-        alert.first_action_at = reviewed_at
-        events.append(
-            _event(alert_id, TimelineAction.REVIEW, reviewed_at, spec.reviewer,
-                   AlertStatus.NUEVA, AlertStatus.EN_REVISION)
-        )  # fmt: skip
 
+def _plan(spec: _SeedAlert) -> PlannedAlert:
+    base = _base(spec)
     if spec.dismissal is not None:
         d = spec.dismissal
-        reviewed_at = detected_at + timedelta(minutes=d.review_after_min)
-        dismissed_at = detected_at + timedelta(minutes=d.dismiss_after_min)
-        alert.reviewed_by = d.actor
-        alert.first_action_at = reviewed_at
-        alert.closed_at = dismissed_at
-        alert.dismiss_reason = d.reason.value
-        alert.dismiss_comment = d.comment
-        events.append(
-            _event(alert_id, TimelineAction.REVIEW, reviewed_at, d.actor,
-                   AlertStatus.NUEVA, AlertStatus.EN_REVISION)
-        )  # fmt: skip
-        events.append(
-            _event(alert_id, TimelineAction.DISMISS, dismissed_at, d.actor,
-                   AlertStatus.EN_REVISION, AlertStatus.DESCARTADA, d.comment, {"reason": d.reason.value})
-        )  # fmt: skip
-
-    session.add(alert)
-    session.flush()  # los eventos dependen de la alerta (FK)
-    for event in events:
-        session.add(event)
-    session.flush()
+        return plan_dismissed(
+            base,
+            d.actor,
+            timedelta(minutes=d.review_after_min),
+            timedelta(minutes=d.dismiss_after_min),
+            d.reason.value,
+            d.comment,
+        )
+    review = timedelta(minutes=spec.review_after_min) if spec.reviewer is not None else None
+    return plan_pending(base, spec.reviewer, review)
 
 
-def seed_alerts(session: Session, now: datetime) -> int:
-    """Siembra las alertas de hoy si la tabla está vacía. Devuelve cuántas se insertaron."""
-    existing = session.exec(select(func.count()).select_from(Alert)).one()
-    if existing > 0:
-        return 0
-    # Tabla vacía: los IDs se asignan localmente en orden cronológico (ALT-2001, ALT-2002, ...).
-    specs = sorted(_ACTIVE + _DISMISSED, key=lambda s: s.minutes_ago, reverse=True)
-    for offset, spec in enumerate(specs):
-        _insert(session, format_alert_id(ALERT_FIRST_NUMBER + offset), spec, now)
-    session.commit()
-    return len(specs)
+def plan_today_alerts() -> list[PlannedAlert]:
+    """Las 12 activas, las 3 descartadas de hoy y las 3 descartadas de la anomalía."""
+    return [_plan(spec) for spec in _ACTIVE + _DISMISSED]

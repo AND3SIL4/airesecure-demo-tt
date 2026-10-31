@@ -1,10 +1,46 @@
-"""Acceso a `incidents` (en la feature 002 solo se crean y se consultan por alerta)."""
+"""Acceso a `incidents`: alta, consulta, lista con JOIN a la alerta de origen y conteos (research R3)."""
 
-from sqlalchemy import Integer, cast, func
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Literal
+
+from sqlalchemy import ColumnElement, Integer, case, cast, func, or_
 from sqlmodel import Session, col, select
 
+from app.domain.catalogs import SEVERITY_ORDER
+from app.domain.enums import IncidentStatus, Severity
 from app.domain.ids import INCIDENT_FIRST_NUMBER, INCIDENT_ID_PREFIX, format_incident_id
-from app.domain.models import Incident
+from app.domain.models import Alert, Incident
+from app.domain.state_machine import IN_COURSE_INCIDENT_STATUSES
+from app.domain.text import LIKE_ESCAPE, escape_like
+
+IncidentSortField = Literal["openedAt", "severity", "responseSeconds"]
+
+
+@dataclass(frozen=True)
+class IncidentFilters:
+    """Filtros ya normalizados; una lista vacía significa "sin filtro"."""
+
+    status: list[IncidentStatus] = field(default_factory=list)
+    severity: list[Severity] = field(default_factory=list)
+    zone: list[str] = field(default_factory=list)
+    type: list[str] = field(default_factory=list)
+    q: str | None = None
+    date_from: datetime | None = None
+    date_to: datetime | None = None
+
+
+@dataclass(frozen=True)
+class IncidentSort:
+    field: IncidentSortField = "openedAt"
+    descending: bool = True
+
+
+def _severity_order() -> ColumnElement[Any]:
+    return case(
+        *[(col(Alert.severity) == sev.value, order) for sev, order in SEVERITY_ORDER.items()],
+        else_=0,
+    )
 
 
 class IncidentRepository:
@@ -14,6 +50,13 @@ class IncidentRepository:
     def add(self, incident: Incident) -> Incident:
         self.session.add(incident)
         return incident
+
+    def save(self, incident: Incident) -> Incident:
+        self.session.add(incident)
+        return incident
+
+    def get(self, incident_id: str) -> Incident | None:
+        return self.session.get(Incident, incident_id)
 
     def next_id(self) -> str:
         """Máximo numérico + 1, con mínimo INC-0401."""
@@ -31,3 +74,55 @@ class IncidentRepository:
             return {}
         stmt = select(Incident.alert_id, Incident.id).where(col(Incident.alert_id).in_(alert_ids))
         return {alert_id: incident_id for alert_id, incident_id in self.session.exec(stmt).all()}
+
+    def list(
+        self, filters: IncidentFilters, sort: IncidentSort, page: int, page_size: int
+    ) -> tuple[list[tuple[Incident, Alert]], int]:
+        """Incidentes con su alerta de origen (JOIN), filtrados, ordenados y paginados, más el total."""
+        stmt = select(Incident, Alert).join(Alert, col(Alert.id) == col(Incident.alert_id))
+        if filters.status:
+            stmt = stmt.where(col(Incident.status).in_([s.value for s in filters.status]))
+        if filters.severity:
+            stmt = stmt.where(col(Alert.severity).in_([s.value for s in filters.severity]))
+        if filters.zone:
+            stmt = stmt.where(col(Alert.zone_id).in_(filters.zone))
+        if filters.type:
+            stmt = stmt.where(col(Alert.type_code).in_(filters.type))
+        if filters.q:
+            like = f"%{escape_like(filters.q)}%"
+            stmt = stmt.where(
+                or_(
+                    col(Incident.id).ilike(like, escape=LIKE_ESCAPE),
+                    col(Alert.id).ilike(like, escape=LIKE_ESCAPE),
+                    col(Alert.description).ilike(like, escape=LIKE_ESCAPE),
+                )
+            )
+        if filters.date_from is not None:
+            stmt = stmt.where(col(Incident.opened_at) >= filters.date_from)
+        if filters.date_to is not None:
+            stmt = stmt.where(col(Incident.opened_at) <= filters.date_to)
+
+        total = int(self.session.exec(select(func.count()).select_from(stmt.subquery())).one())
+
+        order: list[Any] = []
+        key: ColumnElement[Any]
+        if sort.field == "severity":
+            key = _severity_order()
+        elif sort.field == "responseSeconds":
+            key = col(Incident.response_seconds)
+            order.append(col(Incident.response_seconds).is_(None))  # los nulos al final
+        else:
+            key = col(Incident.opened_at)
+        order.append(key.desc() if sort.descending else key.asc())
+        order.extend([col(Incident.opened_at).desc(), col(Incident.id).desc()])
+        stmt = stmt.order_by(*order).offset((page - 1) * page_size).limit(page_size)
+        return [(incident, alert) for incident, alert in self.session.exec(stmt).all()], total
+
+    def counts_in_course(self) -> int:
+        """Incidentes en curso: abierto + en_atencion + escalado (doc 05 §6)."""
+        stmt = (
+            select(func.count())
+            .select_from(Incident)
+            .where(col(Incident.status).in_([s.value for s in IN_COURSE_INCIDENT_STATUSES]))
+        )
+        return int(self.session.exec(stmt).one())

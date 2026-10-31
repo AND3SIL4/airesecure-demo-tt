@@ -7,6 +7,8 @@ import { RootLayout } from './presentation/layout/RootLayout';
 import { Shell } from './presentation/layout/Shell';
 import { AlertDetailPage } from './presentation/pages/AlertDetailPage';
 import { AlertsPage } from './presentation/pages/AlertsPage';
+import { IncidentDetailPage } from './presentation/pages/IncidentDetailPage';
+import { IncidentsPage } from './presentation/pages/IncidentsPage';
 import { LoginPage } from './presentation/pages/LoginPage';
 import { NotFoundPage } from './presentation/pages/NotFoundPage';
 import { PlaceholderPage } from './presentation/pages/PlaceholderPage';
@@ -33,8 +35,8 @@ export const router = createBrowserRouter([
               { index: true, element: <PlaceholderPage title={VIEW_TITLES.summary} showComponentPreview /> },
               { path: '/alertas', element: <AlertsPage /> },
               { path: '/alertas/:id', element: <AlertDetailPage /> },
-              { path: '/incidentes', element: <PlaceholderPage title={VIEW_TITLES.incidents} /> },
-              { path: '/incidentes/:id', element: <PlaceholderPage title={VIEW_TITLES.incidentDetail} /> },
+              { path: '/incidentes', element: <IncidentsPage /> },
+              { path: '/incidentes/:id', element: <IncidentDetailPage /> },
               { path: '/mapa', element: <PlaceholderPage title={VIEW_TITLES.map} /> },
               { path: '/analisis', element: <PlaceholderPage title={VIEW_TITLES.analysis} /> },
               {

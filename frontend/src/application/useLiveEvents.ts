@@ -67,6 +67,7 @@ function handleEvent(event: LiveEvent, queryClient: QueryClient, goHome: () => v
     }
     case 'incident.created':
     case 'incident.updated':
+      // `incidents.all` incluye las listas, los detalles y `incidents.counts` (badge del menú).
       void queryClient.invalidateQueries({ queryKey: queryKeys.incidents.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.alerts.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });

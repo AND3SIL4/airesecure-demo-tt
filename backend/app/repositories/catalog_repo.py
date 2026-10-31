@@ -33,6 +33,9 @@ class CatalogRepository:
     def list_teams(self) -> list[Team]:
         return list(self.session.exec(select(Team).order_by(col(Team.specialized), col(Team.id))).all())
 
+    def get_team(self, team_id: str) -> Team | None:
+        return self.session.get(Team, team_id)
+
     def list_alert_types(self) -> list[AlertType]:
         """Ordenados como el doc 05 §4.2: por peso en el simulador, con los manuales (peso 0) al final."""
         weight = col(AlertType.scenario_weight)

@@ -64,3 +64,39 @@ export function formatPercent(value: number): string {
 export function formatFactor(value: number): string {
   return value.toLocaleString(DISPLAY_LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
+/** Duración legible (doc 09 §8): "45 s", "4 min", "1 h 12 min", "2 d 3 h". */
+export function formatDuration(seconds: number): string {
+  const total = Math.max(0, Math.round(seconds));
+  if (total < 60) return `${total} s`;
+  const minutes = Math.floor(total / 60);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const restMinutes = minutes % 60;
+  if (hours < 24) return restMinutes ? `${hours} h ${restMinutes} min` : `${hours} h`;
+  const days = Math.floor(hours / 24);
+  const restHours = hours % 24;
+  return restHours ? `${days} d ${restHours} h` : `${days} d`;
+}
+
+/** Fecha de calendario `YYYY-MM-DD` en America/Bogota (para los inputs de fecha). */
+export function toDisplayDateKey(value: Date | string): string {
+  // en-CA formatea como YYYY-MM-DD.
+  return dateKeyFormatter.format(toDate(value));
+}
+
+const dateKeyFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: DISPLAY_TIME_ZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/** Offset fijo de America/Bogota (no tiene horario de verano). */
+export const DISPLAY_UTC_OFFSET = '-05:00';
+
+/** Inicio (00:00) o fin (23:59:59.999) de un día `YYYY-MM-DD` de Bogotá, en ISO UTC. */
+export function dateKeyToIso(dateKey: string, edge: 'start' | 'end'): string {
+  const time = edge === 'start' ? '00:00:00.000' : '23:59:59.999';
+  return new Date(`${dateKey}T${time}${DISPLAY_UTC_OFFSET}`).toISOString();
+}

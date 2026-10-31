@@ -11,7 +11,7 @@ Referencia visual: `mockup-airsecure-webapp.png`, con los ajustes de severidades
    ├─ /alertas                 Lista de alertas  (?status=&severity=&zone=&type=&source=&q=)
    │  ├─ /alertas/nueva        Reportar evento manual (modal sobre la lista)
    │  └─ /alertas/:id          Detalle de alerta
-   ├─ /incidentes              Registro de incidentes (?status=&severity=&zone=&type=&q=&from=&to=&sort=&page=)
+   ├─ /incidentes              Registro de incidentes (?status=&severity=&zone=&type=&q=&range=hoy|7d|30d|custom&from=&to=&sort=&page=; from/to solo con range=custom)
    │  └─ /incidentes/:id       Detalle de incidente
    ├─ /mapa                    Mapa 3D de la terminal (?zone=)
    ├─ /analisis                Análisis y tendencias (?days=7|14|30)

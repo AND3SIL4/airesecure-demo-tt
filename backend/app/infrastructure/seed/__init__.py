@@ -1,9 +1,10 @@
-"""Siembra idempotente: catálogos, configuración inicial y alertas de hoy (solo si no hay alertas)."""
+"""Siembra idempotente: catálogos, configuración inicial y, si no hay alertas, el histórico de 30 días, los
+incidentes de hoy y las alertas de hoy, materializados en orden cronológico (research R6 de 004)."""
 
 import json
 from typing import Any
 
-from sqlmodel import Session
+from sqlmodel import Session, func, select
 
 from app.domain.catalogs import (
     DEFAULT_SIMULATOR_ENABLED,
@@ -15,8 +16,8 @@ from app.domain.catalogs import (
     utcnow,
 )
 from app.domain.enums import SourceKind
-from app.domain.models import AlertType, AppSetting, Source, Team, User, Zone
-from app.infrastructure.seed.alerts import seed_alerts
+from app.domain.models import Alert, AlertType, AppSetting, Source, Team, User, Zone
+from app.infrastructure.seed.alerts import plan_today_alerts
 from app.infrastructure.seed.catalogs import (
     ALERT_TYPES,
     CAMERAS,
@@ -27,6 +28,9 @@ from app.infrastructure.seed.catalogs import (
     USERS,
     ZONES,
 )
+from app.infrastructure.seed.history import plan_history
+from app.infrastructure.seed.plan import materialize
+from app.infrastructure.seed.today import plan_today_incidents
 
 
 def _seed_zones(session: Session) -> None:
@@ -102,7 +106,18 @@ def seed_catalogs(session: Session) -> None:
     session.commit()
 
 
+def seed_records(session: Session) -> int:
+    """Si la tabla de alertas está vacía, materializa histórico + hoy. Devuelve las alertas insertadas."""
+    if session.exec(select(func.count()).select_from(Alert)).one() > 0:
+        return 0
+    now = utcnow()
+    zones = list(session.exec(select(Zone)).all())
+    sources = list(session.exec(select(Source)).all())
+    plans = plan_history(now, zones, sources) + plan_today_incidents(now) + plan_today_alerts()
+    return materialize(session, plans, now)
+
+
 def seed_all(session: Session) -> None:
-    """Catálogos (upsert) y, si la tabla está vacía, las alertas relativas a "ahora"."""
+    """Catálogos (upsert) y, si no hay alertas, el histórico y los datos de hoy relativos a "ahora"."""
     seed_catalogs(session)
-    seed_alerts(session, utcnow())
+    seed_records(session)

@@ -7,7 +7,7 @@ import json
 import random
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
 
 from sqlmodel import Session
@@ -33,7 +33,7 @@ from app.domain.enums import (
     Severity,
     TimelineAction,
 )
-from app.domain.errors import NO_ENCONTRADO, TRANSICION_INVALIDA, VALIDACION, DomainError
+from app.domain.errors import NO_ENCONTRADO, TRANSICION_INVALIDA, DomainError
 from app.domain.models import Alert, AlertType, Incident, Source, TimelineEvent, User, Zone
 from app.domain.scoring import ScoreBreakdown, compute_score
 from app.domain.simulation import SimulatedEvent, draw_event, is_below_threshold
@@ -43,20 +43,23 @@ from app.repositories.incident_repo import IncidentRepository
 from app.repositories.settings_repo import SettingsRepository
 from app.repositories.timeline_repo import TimelineRepository
 from app.repositories.transaction import begin_write
+from app.services.common import LiveEvent
+from app.services.common import clean as _clean
+from app.services.common import iso as _iso
+from app.services.common import parse_datetime as _parse_datetime
+from app.services.common import split_valid as _split_valid
+from app.services.common import validation_error as _validation_error
 from app.services.ports import EventPublisher, NullPublisher
 
 MANUAL_SOURCE_ID = "MANUAL"
 ACTIVE_SHORTCUT = "activas"
 DEFAULT_PAGE_SIZE = 20
 _SORT_FIELDS: frozenset[str] = frozenset({"score", "detectedAt", "severity"})
-_VALIDATION_MESSAGE = "Hay campos faltantes o inválidos."
 
 # Nombres de los eventos en vivo (doc 08 §3.7).
 EVENT_ALERT_CREATED = "alert.created"
 EVENT_ALERT_UPDATED = "alert.updated"
 EVENT_INCIDENT_CREATED = "incident.created"
-
-LiveEvent = tuple[str, dict[str, Any]]
 
 
 # ---------- Entradas ----------
@@ -158,24 +161,6 @@ class AlertActionResult:
 # ---------- Helpers puros ----------
 
 
-def _split_valid(values: list[str], allowed: set[str]) -> list[str]:
-    seen: list[str] = []
-    for value in values:
-        if value in allowed and value not in seen:
-            seen.append(value)
-    return seen
-
-
-def _parse_datetime(raw: str | None) -> datetime | None:
-    if not raw:
-        return None
-    try:
-        parsed = datetime.fromisoformat(raw.strip().replace(" ", "+"))
-    except ValueError:
-        return None
-    return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=UTC)
-
-
 def _parse_sort(raw: str | None) -> AlertSort:
     if not raw:
         return AlertSort()
@@ -200,21 +185,6 @@ def _parse_statuses(values: list[str]) -> list[AlertStatus]:
                 statuses.append(AlertStatus(item))
     # Sin estados válidos se aplica el valor por defecto: las activas.
     return statuses or [AlertStatus.NUEVA, AlertStatus.EN_REVISION]
-
-
-def _iso(dt: datetime | None) -> str | None:
-    return None if dt is None else dt.astimezone(UTC).isoformat().replace("+00:00", "Z")
-
-
-def _clean(text: str | None) -> str | None:
-    if text is None:
-        return None
-    stripped = text.strip()
-    return stripped or None
-
-
-def _validation_error(fields: list[alert_rules.FieldError]) -> DomainError:
-    return DomainError(VALIDACION, _VALIDATION_MESSAGE, {"fields": fields})
 
 
 def _summary_payload(view: AlertView, actor_id: str | None) -> dict[str, Any]:
@@ -601,7 +571,8 @@ class AlertService:
     ) -> Incident:
         to_status = state_machine.next_alert_status(current, AlertAction.CONFIRM)
         alert.status = to_status
-        alert.first_action_at = alert.first_action_at or now
+        first_action_at = alert.first_action_at or now
+        alert.first_action_at = first_action_at
         alert.closed_at = now
         incident = Incident(
             id=self.incidents.next_id(),
@@ -609,6 +580,8 @@ class AlertService:
             status=IncidentStatus.ABIERTO,
             opened_by=actor_id,
             opened_at=now,
+            # La primera acción humana ya ocurrió: el tiempo de respuesta se fija al crear (research R2).
+            response_seconds=max(0, int((first_action_at - alert.detected_at).total_seconds())),
         )
         self.incidents.add(incident)
         self.session.flush()  # el incidente debe existir antes de sus eventos (FK)
