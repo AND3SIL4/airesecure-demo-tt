@@ -14,6 +14,7 @@ Demo local de un centro de monitoreo para un aeropuerto ficticio ("Aeropuerto In
 | [uv](https://docs.astral.sh/uv/) | 0.4 o superior | Backend: descarga Python 3.12 y las dependencias |
 | [Bun](https://bun.sh/) | 1.1 o superior | Frontend: dependencias y servidor de desarrollo (no hace falta Node.js) |
 | Windows 11 + PowerShell | — | Script de arranque `start-demo.ps1` |
+| Ubuntu 22.04/24.04 + bash (alternativa) | — | Script de arranque `start-demo.sh` |
 | Chrome o Edge actualizados | — | Navegador de la demo (WebGL para el mapa 3D) |
 
 ## Arranque rápido
@@ -32,6 +33,18 @@ El script:
 - API y documentación interactiva: <http://localhost:8000/docs>
 
 Para detener la demo, cierra las ventanas "AeroSecure AI - API" y "AeroSecure AI - Web".
+
+### Arranque en Ubuntu / Linux
+
+```bash
+sudo apt update && sudo apt install -y git curl unzip ca-certificates iproute2
+curl -LsSf https://astral.sh/uv/install.sh | sh     # uv (gestiona Python 3.12)
+curl -fsSL https://bun.sh/install | bash            # Bun
+exec $SHELL -l                                      # recarga el PATH
+./start-demo.sh
+```
+
+Lanza la API y la web en segundo plano (logs en `.demo-logs/`) y las detiene con `Ctrl+C`. La web escucha en `0.0.0.0:5173` para abrirla desde otro equipo (`http://IP-del-servidor:5173`); la API queda en `127.0.0.1:8000` y la web la usa por el proxy `/api`. Para exponer también la API: `API_HOST=0.0.0.0 ./start-demo.sh`. Si hay cortafuegos: `sudo ufw allow 5173/tcp`.
 
 ### Arranque manual
 

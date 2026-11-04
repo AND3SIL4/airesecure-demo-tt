@@ -207,3 +207,6 @@ docs/diagramas/**/visual-check*/
 docs/diagramas/**/review-*/
 # Vite: caché de dependencias
 frontend/.vite/
+
+# Logs de start-demo.sh
+.demo-logs/
